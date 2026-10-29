@@ -1,0 +1,19 @@
+{
+  "name": "dictashadow-studio",
+  "version": "2.0.0",
+  "description": "DictaShadow Studio TP-7 - Swiss Editorial Acoustic Dictation & Shadowing Web App",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test-10-checks.js"
+  },
+  "keywords": [
+    "dictation",
+    "shadowing",
+    "english-learning",
+    "web-audio-api",
+    "pwa"
+  ],
+  "author": "DictaShadow Studio Team",
+  "license": "MIT"
+}

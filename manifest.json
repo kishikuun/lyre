@@ -1,0 +1,25 @@
+{
+  "name": "DictaShadow Studio - Chép Chính Tả & Shadowing",
+  "short_name": "DictaShadow",
+  "description": "Studio luyện nghe chép chính tả và Shadowing 100% Client-Side Web Audio",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#07090E",
+  "theme_color": "#07090E",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
+

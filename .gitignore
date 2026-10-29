@@ -1,0 +1,17 @@
+# Media files
+*.mp3
+*.wav
+*.ogg
+*.m4a
+*.srt
+*.vtt
+
+# Node / dependencies
+node_modules/
+npm-debug.log*
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

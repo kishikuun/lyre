@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DictaShadow Studio TP-7 · Chép Chính Tả & Shadowing Tiếng Anh</title>
+
+    <!-- Google Fonts: Newsreader (Editorial Serif) & Plus Jakarta Sans & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind Play CDN for layout primitives -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        editorial: ['"Newsreader"', 'serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    colors: {
+                        studio: {
+                            950: '#08090C',
+                            900: '#101319',
+                            850: '#151922',
+                            800: '#1C222E',
+                            border: 'rgba(255, 255, 255, 0.08)',
+                        },
+                        accent: {
+                            amber: '#D97706',
+                            sage: '#10B981',
+                            rose: '#F43F5E',
+                            cyan: '#38BDF8',
+                            indigo: '#818CF8'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- PWA Web App Manifest & App Icons -->
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+
+    <!-- Project Stylesheet -->
+    <link rel="stylesheet" href="css/studio.css" />
+</head>
+
+<body class="min-h-screen flex flex-col bg-studio-950 text-gray-200 selection:bg-amber-500/20 selection:text-amber-300">
+
+    <!-- ================= 1. THE MAGNETIC TAPE HEADER ================= -->
+    <header class="border-b border-studio-border bg-studio-950/90 backdrop-blur-md sticky top-0 z-40 px-3 sm:px-6 py-2.5 flex items-center justify-between">
+        
+        <!-- Left: Brand Moniker & Motorized Tape Reels -->
+        <div class="flex items-center space-x-3">
+            <div class="flex items-center gap-1.5 p-1 rounded-lg bg-studio-900 border border-studio-border shadow-inner">
+                <!-- Mini Motorized Tape Reel Left -->
+                <div id="tapeReelWheelLeft" class="tape-reel-wheel tape-paused"></div>
+                <!-- Mini Motorized Tape Reel Right -->
+                <div id="tapeReelWheelRight" class="tape-reel-wheel tape-paused"></div>
+            </div>
+
+            <div>
+                <div class="flex items-center gap-2">
+                    <h1 class="font-bold text-sm tracking-widest uppercase text-white font-mono">DICTASHADOW</h1>
+                    <span class="text-[9px] px-1.5 py-0.5 rounded bg-studio-850 text-gray-400 font-mono border border-studio-border">
+                        STUDIO TP-7
+                    </span>
+                </div>
+                <div class="flex items-center gap-2 text-[10px] font-mono text-gray-500">
+                    <span id="audioStatusLed" class="w-1.5 h-1.5 rounded-full bg-gray-600 transition"></span>
+                    <span id="audioStatusText">CHƯA NẠP BÀI</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center: Tactile Rocker Switch (Dictate vs Shadow) -->
+        <div class="tactile-rocker">
+            <button id="tabDictationBtn" class="rocker-pill active" title="Chế độ Chép chính tả">
+                ⌨ CHÉP CHÍNH TẢ
+            </button>
+            <button id="tabShadowingBtn" class="rocker-pill" title="Chế độ Nói đuổi Shadowing">
+                🎙 SHADOWING
+            </button>
+        </div>
+
+        <!-- Right: Utility Controls & Tape Carrier Slot -->
+        <div class="flex items-center space-x-2 text-xs font-mono">
+            <!-- Hidden native file pickers -->
+            <input type="file" id="audioInput" accept="audio/*,.mp3,.wav,.m4a" class="hidden" />
+            <input type="file" id="srtInput" accept=".srt,.vtt" class="hidden" />
+
+            <!-- Tape Insert Trigger (Load MP3 / SRT) -->
+            <button id="btnTriggerAudioInput"
+                class="tactile-btn flex items-center gap-1.5 text-accent-amber border-amber-500/30" title="Chọn file âm thanh">
+                <i data-lucide="disc" class="w-3.5 h-3.5"></i>
+                <span id="audioFileName" class="max-w-[90px] sm:max-w-[130px] truncate">1. Chọn Audio</span>
+            </button>
+
+            <button id="btnTriggerSrtInput"
+                class="tactile-btn flex items-center gap-1.5 text-gray-300" title="Chọn file phụ đề">
+                <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                <span id="srtFileName" class="max-w-[80px] sm:max-w-[110px] truncate">2. Chọn SRT</span>
+            </button>
+
+            <button id="btnLoadSample" class="tactile-btn hidden md:flex items-center gap-1 text-accent-amber border-amber-500/30" title="Nghe thử bài mẫu">
+                <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+                <span>Bài Mẫu</span>
+            </button>
+
+            <!-- Sentence Drawer List Trigger -->
+            <button id="btnOpenDrawer" class="tactile-btn flex items-center gap-1.5" title="Danh sách câu">
+                <i data-lucide="list" class="w-3.5 h-3.5 text-gray-400"></i>
+                <span id="headerProgressBadge" class="text-accent-amber font-bold font-mono">(0/0)</span>
+            </button>
+
+            <!-- Audio Rack Tray Toggle (Settings) -->
+            <button id="btnToggleAudioRack" class="tactile-btn p-2" title="Chỉnh âm thanh">
+                <i data-lucide="sliders" class="w-3.5 h-3.5 text-gray-300"></i>
+            </button>
+
+            <!-- Pro Hotkeys Dialog -->
+            <button id="btnOpenHotkeysModal" class="tactile-btn p-2" title="Xem bảng phím tắt">
+                <i data-lucide="help-circle" class="w-3.5 h-3.5 text-gray-300"></i>
+            </button>
+
+            <!-- Storage Clear -->
+            <button id="btnClearStorage" class="tactile-btn p-2 hover:text-accent-rose" title="Xóa dữ liệu đã lưu">
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-gray-400"></i>
+            </button>
+
+            <!-- Install PWA Button (Hidden by default) -->
+            <button id="btnInstallPWA" class="tactile-btn hidden items-center gap-1 text-accent-sage" title="Cài đặt ứng dụng">
+                <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                <span class="hidden sm:inline">Cài App</span>
+            </button>
+
+            <!-- Sửa SRT Trigger -->
+            <button id="btnOpenSrtEditor" class="tactile-btn flex items-center gap-1.5 text-accent-amber border-amber-500/30" title="Chỉnh sửa phụ đề">
+                <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
+                <span class="hidden sm:inline">Sửa SRT</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ================= 2. ERGONOMIC SHORTCUTS RIBBON ================= -->
+    <div class="bg-studio-950 border-b border-studio-border px-4 py-1.5 flex flex-wrap items-center justify-between text-[11px] font-mono text-gray-400">
+        <div class="flex items-center gap-3 overflow-x-auto">
+            <span class="text-gray-500 font-bold uppercase tracking-wider text-[10px]">Phím tắt:</span>
+            <span><b class="text-accent-amber bg-studio-900 px-1.5 py-0.5 rounded border border-studio-border">ESC</b> Dừng / Phát</span>
+            <span><b class="text-accent-amber bg-studio-900 px-1.5 py-0.5 rounded border border-studio-border">TAB</b> Lùi 2s</span>
+            <span><b class="text-gray-300 bg-studio-900 px-1.5 py-0.5 rounded border border-studio-border">Shift+TAB</b> Tiến 2s</span>
+            <span><b class="text-gray-300 bg-studio-900 px-1.5 py-0.5 rounded border border-studio-border">F4</b> Nghe lại</span>
+            <span><b class="text-accent-sage bg-studio-900 px-1.5 py-0.5 rounded border border-studio-border">Ctrl+Enter</b> Chấm điểm</span>
+            <span><b class="text-gray-400 bg-studio-900 px-1.5 py-0.5 rounded border border-studio-border">F5</b> Xem phụ đề</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <span id="headerSentenceCounter" class="text-gray-400 font-bold">CÂU 0 / 0</span>
+        </div>
+    </div>
+
+    <!-- ================= 3. THE CENTER STAGE (THE FOCUS ARENA) ================= -->
+    <main class="flex-1 w-full max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 flex flex-col justify-center">
+
+        <!-- A. EMPTY STATE (Khi chưa nạp bài) -->
+        <div id="emptyStateCard" class="bg-studio-900/60 border border-studio-border rounded-2xl p-8 sm:p-14 text-center shadow-2xl flex flex-col items-center justify-center">
+            <div class="w-14 h-14 rounded-2xl bg-studio-850 border border-studio-border flex items-center justify-center text-accent-amber mb-5 shadow-inner">
+                <i data-lucide="disc" class="w-7 h-7"></i>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-editorial italic text-white mb-2">Chào mừng bạn đến với DictaShadow Studio</h2>
+            <p class="text-gray-400 text-xs sm:text-sm max-w-md mb-8 leading-relaxed font-sans">
+                Hãy tải lên file âm thanh <span class="text-accent-amber font-semibold">Audio MP3</span> và file <span class="text-gray-200 font-semibold">Phụ đề SRT</span> ở thanh trên để bắt đầu luyện tập.
+            </p>
+            <button id="btnLoadSampleEmpty"
+                class="tactile-btn px-5 py-3 rounded-xl text-accent-amber border-amber-500/40 font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/10">
+                <i data-lucide="zap" class="w-4 h-4"></i>
+                <span>Thử bài mẫu có sẵn (Track 01)</span>
+            </button>
+        </div>
+
+        <!-- B. ACTIVE WORKSPACE ARENA -->
+        <div id="workspaceArea" class="hidden flex flex-col gap-6">
+
+            <!-- TAB 1: THE OPTICAL TYPEWRITER (DICTATION SANCTUARY) -->
+            <div id="dictationSection" class="flex flex-col gap-5">
+                
+                <!-- Subtitle Reveal & Manuscript Meta -->
+                <div class="flex items-center justify-between pb-3 border-b border-studio-border/60">
+                    <div class="flex items-center gap-2">
+                        <div class="tactile-rocker">
+                            <button id="btnModeStandard" class="rocker-pill active">
+                                CHÉP CẢ CÂU
+                            </button>
+                            <button id="btnModeStream" class="rocker-pill">
+                                ĐIỀN TỪNG TỪ
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button id="btnToggleSoundFX" class="tactile-btn text-xs text-gray-300" title="Bật/Tắt âm thanh gõ phím">
+                            <i data-lucide="volume-2" id="soundFXIcon" class="w-3.5 h-3.5 text-accent-amber"></i>
+                            <span id="soundFXLabel" class="hidden sm:inline">Âm phím: Bật</span>
+                        </button>
+                        <button id="btnToggleSub" class="tactile-btn text-xs text-gray-300" title="Ẩn/Hiện phụ đề để đối chiếu">
+                            <i data-lucide="eye-off" id="subToggleIcon" class="w-3.5 h-3.5 text-accent-amber"></i>
+                            <span id="subToggleLabel">Xem phụ đề (F5)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Subtitle Reference Dropdown (Hidden by default) -->
+                <div id="subDisplayCard" class="hidden bg-studio-900 border border-studio-border rounded-xl p-4 shadow-xl">
+                    <div class="text-[10px] font-mono uppercase tracking-wider text-gray-400 mb-1 flex items-center gap-1.5">
+                        <i data-lucide="subtitles" class="w-3 h-3 text-accent-amber"></i> Lời thoại gốc
+                    </div>
+                    <p id="subDisplayText" class="font-editorial italic text-lg sm:text-xl text-amber-200/95 leading-relaxed select-text">
+                        ...
+                    </p>
+                </div>
+
+                <!-- Standard Dictation Manuscript Canvas -->
+                <div id="standardModeArea" class="bg-studio-900 border border-studio-border rounded-xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+                    <div class="flex items-center justify-between text-xs font-mono text-gray-400 pb-3 mb-4 border-b border-studio-border/60">
+                        <span class="text-[11px] uppercase tracking-wider font-bold text-gray-300 flex items-center gap-1.5">
+                            <i data-lucide="pen-tool" class="w-3.5 h-3.5 text-accent-amber"></i>
+                            Khu vực chép chính tả
+                        </span>
+                        <span>Số từ: <b id="statWordsCount" class="text-white">0/0</b></span>
+                    </div>
+
+                    <!-- Borderless Pure Editorial Textarea -->
+                    <textarea id="dictationTextarea" rows="4" spellcheck="false" autocomplete="off"
+                        placeholder="Nghe và gõ lại câu bạn nghe được... (ESC: Dừng/Phát, TAB: Lùi 2s, Ctrl+Enter: Chấm điểm)"
+                        class="w-full bg-transparent border-0 font-editorial text-xl sm:text-2xl lg:text-3xl text-white outline-none placeholder:text-gray-600 resize-none leading-relaxed tracking-wide"></textarea>
+
+                    <!-- Typewriter Action Controls -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-studio-border/60 mt-3">
+                        <div class="flex items-center gap-2.5">
+                            <button id="btnCheckDiff"
+                                class="tactile-btn px-5 py-2.5 rounded-lg bg-accent-amber text-studio-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20">
+                                <i data-lucide="check-check" class="w-4 h-4"></i>
+                                <span>Chấm Điểm (Ctrl + Enter)</span>
+                            </button>
+
+                            <button id="btnHintLetter" class="tactile-btn text-accent-amber border-amber-500/30">
+                                <i data-lucide="lightbulb" class="w-3.5 h-3.5"></i>
+                                <span>Gợi Ý</span>
+                            </button>
+
+                            <button id="btnClearDictation" class="tactile-btn text-gray-400 hover:text-white">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                <span>Xóa</span>
+                            </button>
+                        </div>
+
+                        <span class="text-[11px] font-mono text-gray-500 hidden sm:inline">
+                            TAB: Lùi 2s · ESC: Dừng/Phát
+                        </span>
+                    </div>
+
+                    <!-- THERMAL SCANLINE & EMBOSSED RESULTS STAMP -->
+                    <div id="diffResultsCard" class="hidden relative pt-6 mt-4 border-t border-studio-border/60">
+                        <div id="thermalScanline" class="thermal-scanline"></div>
+
+                        <div class="flex items-center justify-between text-xs font-mono mb-3">
+                            <span class="font-bold text-gray-300 flex items-center gap-1.5">
+                                <i data-lucide="award" class="w-4 h-4 text-accent-sage"></i>
+                                Kết quả đối chiếu:
+                            </span>
+                            <div id="embossedStamp" class="embossed-stamp stamp-grade-s">
+                                <span id="diffGradeText" class="text-xs font-black tracking-widest">GRADE S</span>
+                                <span id="diffScoreText" class="text-[10px] font-mono tracking-normal opacity-90">100% CHÍNH XÁC</span>
+                            </div>
+                        </div>
+
+                        <div id="diffBadgesContainer" class="font-editorial text-xl sm:text-2xl lg:text-3xl leading-loose p-5 sm:p-6 rounded-lg bg-studio-950 border border-studio-border flex flex-wrap gap-2 items-center">
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-4 text-[11px] text-gray-400 font-mono pt-3">
+                            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-accent-sage"></span> Xanh: Đúng</span>
+                            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-accent-rose"></span> Đỏ: Sai</span>
+                            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-accent-amber"></span> Vàng: Bỏ sót</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Masked Stream Typing Flow Area -->
+                <div id="streamModeArea" class="hidden bg-studio-900 border border-studio-border rounded-xl p-6 shadow-2xl space-y-4">
+                    <div class="flex items-center justify-between pb-3 border-b border-studio-border/60 text-xs font-mono">
+                        <span class="font-bold text-gray-300">Điền từ theo mạch nghe</span>
+                        <div class="flex items-center gap-4">
+                            <span>Tốc độ: <b id="statWPM" class="text-accent-amber">0</b> từ/phút</span>
+                            <span>Chính xác: <b id="statAccuracy" class="text-accent-sage">100%</b></span>
+                        </div>
+                    </div>
+
+                    <div id="streamContainer"
+                        class="p-6 rounded-xl bg-studio-950 border border-studio-border min-h-[140px] flex flex-wrap gap-3 items-center content-start select-none font-editorial text-xl sm:text-2xl leading-relaxed shadow-inner">
+                    </div>
+
+                    <div class="relative">
+                        <input type="text" id="streamTypeInput" autocomplete="off" spellcheck="false"
+                            placeholder="Gõ từ bạn nghe được (Bấm Space để sang từ tiếp theo)..."
+                            class="w-full bg-studio-850 border border-studio-border focus:border-accent-amber rounded-xl px-4 py-3.5 text-lg font-mono text-white outline-none placeholder:text-gray-600 transition pr-28">
+                        <div class="absolute right-3 top-3.5 text-xs text-gray-500 font-mono">
+                            <span class="px-1.5 py-0.5 rounded bg-studio-900 border border-studio-border text-gray-300">Space</span> sang từ
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: THE HARMONIC RESONANCE LAB (SHADOWING STAGE) -->
+            <div id="shadowingSection" class="hidden flex flex-col gap-5">
+
+                <!-- Shadowing Command Strip -->
+                <div class="bg-studio-900 border border-studio-border rounded-xl p-4 shadow-xl flex flex-col gap-3">
+                    <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-studio-border/60">
+                        <!-- Mode Selector -->
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            <span class="text-[10px] font-mono text-gray-400 uppercase tracking-wider mr-1">Chế Độ:</span>
+                            <button data-mode="normal" class="shadowing-mode-btn px-3 py-1.5 rounded-lg bg-accent-amber text-studio-950 font-bold text-xs shadow-md">
+                                Tự do
+                            </button>
+                            <button data-mode="echo" class="shadowing-mode-btn px-3 py-1.5 rounded-lg bg-studio-850 text-gray-400 font-medium text-xs border border-studio-border">
+                                Nhắc lại (Echo)
+                            </button>
+                            <button data-mode="simultaneous" class="shadowing-mode-btn px-3 py-1.5 rounded-lg bg-studio-850 text-gray-400 font-medium text-xs border border-studio-border">
+                                Nói đuổi
+                            </button>
+                            <button data-mode="blind" class="shadowing-mode-btn px-3 py-1.5 rounded-lg bg-studio-850 text-gray-400 font-medium text-xs border border-studio-border">
+                                Luyện tai (Ẩn chữ)
+                            </button>
+                        </div>
+
+                        <!-- 4 Guided Steps -->
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            <span class="text-[10px] font-mono text-gray-400 uppercase tracking-wider mr-1">Quy Trình:</span>
+                            <button data-step="1" class="shadowing-step-btn px-2.5 py-1 rounded bg-studio-800 text-accent-amber font-mono font-bold text-xs border border-amber-500/30">1. Bắt nhịp</button>
+                            <button data-step="2" class="shadowing-step-btn px-2.5 py-1 rounded bg-studio-850 text-gray-400 font-mono text-xs border border-studio-border">2. Nhẩm khẩu hình</button>
+                            <button data-step="3" class="shadowing-step-btn px-2.5 py-1 rounded bg-studio-850 text-gray-400 font-mono text-xs border border-studio-border">3. Nói đuổi</button>
+                            <button data-step="4" class="shadowing-step-btn px-2.5 py-1 rounded bg-studio-850 text-gray-400 font-mono text-xs border border-studio-border">4. So sánh giọng</button>
+                        </div>
+                    </div>
+
+                    <!-- Step Instruction -->
+                    <div id="stepInstruction" class="text-xs text-gray-300 font-mono bg-studio-950 p-2.5 rounded-lg border border-studio-border/60">
+                        🎧 <b>Bước 1: Bắt nhịp</b> — Nghe người bản xứ nói, chú ý từ in đậm (trọng âm), nối âm (‿) và ngữ điệu (↗ ↘).
+                    </div>
+
+                    <!-- Echo Loop Controls (Hidden by default) -->
+                    <div id="echoControlsBar" class="hidden flex flex-wrap items-center justify-between gap-3 pt-1 text-xs font-mono text-gray-300 bg-studio-850/50 p-2.5 rounded-lg border border-studio-border">
+                        <div class="flex items-center gap-4">
+                            <div class="flex items-center gap-2">
+                                <span class="text-accent-amber font-bold">Lặp lại:</span>
+                                <select id="echoLoopsSelect" class="bg-studio-900 border border-studio-border text-white text-xs rounded px-2 py-1 outline-none">
+                                    <option value="1">1 lần</option>
+                                    <option value="2">2 lần</option>
+                                    <option value="3">3 lần</option>
+                                    <option value="inf">Vô tận (∞)</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-accent-amber font-bold">Thời gian nghỉ:</span>
+                                <select id="echoPauseSelect" class="bg-studio-900 border border-studio-border text-white text-xs rounded px-2 py-1 outline-none">
+                                    <option value="0.8">0.8s (Nhanh)</option>
+                                    <option value="1.0" selected>1.0s (Chuẩn)</option>
+                                    <option value="1.5">1.5s (Thong thả)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="echoProgressContainer" class="hidden flex flex-col gap-1.5 bg-amber-500/10 border border-amber-500/30 p-3 rounded-lg">
+                        <div class="flex justify-between items-center text-xs font-mono">
+                            <span id="echoStatusText" class="text-accent-amber font-bold">🗣️ Đến lượt bạn nói...</span>
+                            <span class="text-gray-400">Micro đang ghi âm</span>
+                        </div>
+                        <div class="w-full h-1.5 rounded-full bg-studio-950 overflow-hidden">
+                            <div id="echoWaitBar" class="h-full bg-accent-amber transition-all duration-75" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Oxford Prosody Teleprompter -->
+                <div class="bg-studio-900 border border-studio-border rounded-xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+                    <div class="flex items-center justify-between pb-3 mb-4 border-b border-studio-border/60">
+                        <span class="text-[10px] font-mono uppercase tracking-widest text-gray-400 font-bold flex items-center gap-1.5">
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-accent-amber"></i> HƯỚNG DẪN TRỌNG ÂM & NGỮ ĐIỆU
+                        </span>
+                        <div class="flex items-center gap-2">
+                            <button id="btnToggleProsody" class="tactile-btn text-xs text-accent-amber border-amber-500/30">
+                                <span>Ký hiệu ngữ âm</span>
+                            </button>
+                            <button id="btnToggleBlind" class="tactile-btn text-xs text-gray-400">
+                                <span>Ẩn chữ (B)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="relative min-h-[90px] flex items-center">
+                        <div id="shadowingTeleprompter" class="font-editorial text-2xl sm:text-3xl lg:text-4xl leading-loose text-white select-text w-full py-1">
+                            <span class="text-gray-500 italic text-base">Vui lòng tải audio và phụ đề để bắt đầu...</span>
+                        </div>
+
+                        <!-- Blind Overlay -->
+                        <div id="blindOverlay" class="hidden absolute inset-0 bg-studio-950/80 backdrop-blur-md rounded-lg flex flex-col items-center justify-center cursor-pointer border border-studio-border transition">
+                            <i data-lucide="eye-off" class="w-6 h-6 text-accent-amber mb-1.5"></i>
+                            <span class="text-xs font-bold text-gray-200">Đang ẩn chữ để luyện tai nghe</span>
+                            <span class="text-[11px] text-gray-400 font-mono">Bấm phím B hoặc nhấp vào đây để xem chữ</span>
+                        </div>
+                    </div>
+
+                    <p id="shadowingPromptText" class="hidden"></p>
+                </div>
+
+                <!-- Twin Acoustic Ribbons Waveform Box -->
+                <div class="bg-studio-900 border border-studio-border rounded-xl p-5 shadow-2xl space-y-3">
+                    <div class="flex items-center justify-between pb-2 border-b border-studio-border/60 text-xs font-mono">
+                        <span class="font-bold text-gray-300 flex items-center gap-2">
+                            <i data-lucide="activity" class="w-3.5 h-3.5 text-accent-amber"></i>
+                            SO SÁNH SÓNG ÂM & CAO ĐỘ (PITCH)
+                        </span>
+                        <div class="flex items-center gap-3">
+                            <button id="btnTogglePitch" class="tactile-btn text-xs text-accent-amber border-amber-500/30">
+                                <span>Đường Pitch $F_0$ (P)</span>
+                            </button>
+                            <span class="text-[10px] text-gray-400 hidden sm:inline">
+                                <span class="inline-block w-2.5 h-1 bg-accent-amber rounded mr-1"></span> Mẫu
+                                <span class="inline-block w-2.5 h-1 bg-accent-sage rounded mx-1"></span> Bạn
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Track A: Native Master Ribbon -->
+                    <div>
+                        <div class="flex justify-between items-center text-[11px] font-mono mb-1 text-gray-400">
+                            <span class="text-accent-amber font-bold flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-accent-amber shadow-sm shadow-amber-500/50"></span>
+                                Mẫu bản xứ
+                            </span>
+                            <span class="text-gray-500 text-[10px]">Nhấp để tua</span>
+                        </div>
+                        <div class="waveform-box">
+                            <div id="waveformPlayheadA" class="waveform-playhead" style="left: 0%;"></div>
+                            <canvas id="nativeWaveformCanvas" class="w-full h-full cursor-pointer"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Center Acoustic Timecode Ruler -->
+                    <div id="twinRibbonsTimeRuler" class="acoustic-time-ruler">
+                        <span class="ruler-mark"><span class="ruler-tick"></span><span>0.0s</span></span>
+                        <span class="ruler-mark"><span class="ruler-tick"></span><span id="rulerMark25">0.5s</span></span>
+                        <span class="ruler-mark"><span class="ruler-tick"></span><span id="rulerMark50">1.0s</span></span>
+                        <span class="ruler-mark"><span class="ruler-tick"></span><span id="rulerMark75">1.5s</span></span>
+                        <span class="ruler-mark"><span class="ruler-tick"></span><span id="rulerMark100">2.0s</span></span>
+                    </div>
+
+                    <!-- Track B: User Shadowing Ribbon -->
+                    <div>
+                        <div class="flex justify-between items-center text-[11px] font-mono mb-1 text-gray-400">
+                            <span class="text-accent-sage font-bold flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-accent-sage shadow-sm shadow-emerald-500/50"></span>
+                                Giọng của bạn
+                            </span>
+                            <span id="recordTimer" class="text-accent-rose font-bold font-mono">0.0s</span>
+                        </div>
+                        <div class="waveform-box" id="userWaveformBox">
+                            <div id="waveformPlayheadB" class="waveform-playhead user-playhead" style="left: 0%;"></div>
+                            <canvas id="userWaveformCanvas" class="w-full h-full cursor-pointer"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Live Mic VU Meter -->
+                    <div class="pt-1">
+                        <div class="flex justify-between text-[10px] text-gray-500 font-mono mb-1">
+                            <span>Tín hiệu micro</span>
+                            <span>Mức âm lượng</span>
+                        </div>
+                        <div class="w-full h-1.5 rounded-full bg-studio-950 overflow-hidden border border-studio-border">
+                            <div id="micMeterBar" class="h-full bg-accent-sage transition-all duration-75" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Leica Shutter & Acoustic Action Bar -->
+                <div class="bg-studio-900 border border-studio-border rounded-xl p-5 shadow-2xl flex flex-col gap-4">
+                    <div class="flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <!-- Shutter Record Button -->
+                            <button id="btnToggleRecord" class="shutter-record-btn" title="Thu âm / Dừng thu (Phím R)">
+                                <span id="recLed" class="hidden"></span>
+                                <span id="recText" class="hidden">THU ÂM (R)</span>
+                            </button>
+
+                            <div class="flex flex-col">
+                                <span class="text-xs font-bold text-white font-mono">THU ÂM (R)</span>
+                                <span class="text-[10px] text-gray-400 font-mono">Nói đuổi theo người bản xứ</span>
+                            </div>
+                        </div>
+
+                        <!-- Review & Contrast Controls -->
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <button id="btnPlayUserVoice" class="tactile-btn text-accent-sage opacity-50 pointer-events-none" title="Nghe lại bản thu giọng bạn">
+                                <i data-lucide="play" class="w-3.5 h-3.5"></i>
+                                <span>Nghe giọng bạn</span>
+                            </button>
+
+                            <button id="btnSequentialAB" class="tactile-btn text-accent-amber opacity-50 pointer-events-none" title="Nghe mẫu trước rồi nghe bạn sau">
+                                <i data-lucide="repeat" class="w-3.5 h-3.5"></i>
+                                <span>Nghe Mẫu ➔ Bạn</span>
+                            </button>
+
+                            <button id="btnStereoContrast" class="tactile-btn text-accent-sage opacity-50 pointer-events-none" title="Tai trái nghe mẫu, tai phải nghe bạn (Phím S)">
+                                <i data-lucide="headphones" class="w-3.5 h-3.5"></i>
+                                <span>Kênh đôi Trái/Phải (S)</span>
+                            </button>
+
+                            <button id="btnInstantAB" class="tactile-btn text-gray-400 opacity-50 cursor-not-allowed" title="Chuyển nhanh Mẫu / Bạn khi đang phát (Phím A)">
+                                <i data-lucide="shuffle" class="w-3.5 h-3.5"></i>
+                                <span id="abStatusText">Chưa có bản thu</span>
+                            </button>
+
+                            <button id="btnDownloadRec" class="tactile-btn p-2 text-gray-400 opacity-50 pointer-events-none" title="Tải file thu âm về máy">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- AI Acoustic Diagnostics Dashboard -->
+                    <div class="pt-4 border-t border-studio-border/60 flex flex-col gap-3">
+                        <div class="flex items-center justify-between text-xs font-mono">
+                            <span class="font-bold text-gray-300 flex items-center gap-1.5">
+                                <i data-lucide="cpu" class="w-3.5 h-3.5 text-accent-amber"></i>
+                                ĐÁNH GIÁ PHÁT ÂM & NHỊP ĐIỆU
+                            </span>
+                            <span class="text-gray-500 text-[10px]">Autocorrelation & Web Speech</span>
+                        </div>
+
+                        <!-- 3 Metric Cards -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 font-mono">
+                            <div class="bg-studio-950 p-3 rounded-lg border border-studio-border">
+                                <span class="text-[10px] text-gray-500 uppercase tracking-wider block">1. Tốc Độ & Nhịp Điệu</span>
+                                <div class="flex items-baseline justify-between mt-1">
+                                    <span id="rhythmScoreBadge" class="text-lg font-bold text-gray-500">--%</span>
+                                    <span id="tempoFeedbackText" class="text-[10px] text-gray-400">Chưa thu âm</span>
+                                </div>
+                            </div>
+
+                            <div class="bg-studio-950 p-3 rounded-lg border border-studio-border">
+                                <span class="text-[10px] text-gray-500 uppercase tracking-wider block">2. Ngữ Điệu (Cao Độ)</span>
+                                <div class="flex items-baseline justify-between mt-1">
+                                    <span id="pitchScoreBadge" class="text-lg font-bold text-gray-500">--%</span>
+                                    <span class="text-[10px] text-gray-400">Độ lượn giọng</span>
+                                </div>
+                            </div>
+
+                            <div class="bg-studio-950 p-3 rounded-lg border border-studio-border">
+                                <span class="text-[10px] text-gray-500 uppercase tracking-wider block">3. Độ Rõ Từ (AI)</span>
+                                <div class="flex items-baseline justify-between mt-1">
+                                    <span id="speechScoreBadge" class="text-lg font-bold text-gray-500">--%</span>
+                                    <span class="text-[10px] text-gray-400">Độ chuẩn âm</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Speech Word Heatmap -->
+                        <div class="bg-studio-950 p-3 rounded-lg border border-studio-border flex flex-col gap-1.5">
+                            <span class="text-[10px] text-gray-500 uppercase tracking-wider font-mono font-bold">Chi tiết từng từ:</span>
+                            <div id="speechWordsDisplay" class="flex flex-wrap items-center gap-1.5 text-xs font-mono py-0.5">
+                                <span class="text-gray-600 italic">Bấm Thu âm (R) để kiểm tra các từ phát âm đúng hoặc cần sửa...</span>
+                            </div>
+                        </div>
+
+                        <div id="shadowingScoreBadge" class="text-[10px] font-mono text-gray-500">
+                            Mẹo: Nên đeo tai nghe để trải nghiệm rõ hai tai Trái/Phải và tránh tiếng vọng vào micro.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- ================= 4. THE COLLAPSIBLE AUDIO RACK TRAY (AT BOTTOM) ================= -->
+    <div id="audioRackTray" class="audio-rack-tray sticky bottom-0 z-30 px-4 sm:px-6 py-3 border-t border-studio-border">
+        <div class="max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto flex flex-col gap-3">
+            
+            <!-- Compact Transport Row -->
+            <div class="flex items-center justify-between gap-3">
+                <!-- Playhead Time & Duration -->
+                <div class="flex items-center gap-3 font-mono text-xs">
+                    <span id="currentTimeDisplay" class="text-accent-amber font-bold text-sm">00:00.00</span>
+                    <span class="text-gray-500">/</span>
+                    <span id="segmentDuration" class="text-gray-400">0.0s</span>
+                    <span id="segmentTimeRange" class="hidden">00:00 - 00:00</span>
+                </div>
+
+                <!-- Primary Transport Buttons -->
+                <div class="flex items-center gap-2">
+                    <!-- Rewind 2s (TAB) -->
+                    <button id="btnRewind2s" class="tactile-btn text-gray-300" title="Tua lùi 2 giây (TAB)">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-accent-amber"></i>
+                        <span>-2s</span>
+                    </button>
+
+                    <!-- Replay (F4) -->
+                    <button id="btnReplay" class="tactile-btn text-gray-300" title="Nghe lại câu từ đầu (F4)">
+                        <i data-lucide="repeat-1" class="w-3.5 h-3.5"></i>
+                        <span class="hidden sm:inline">Lại</span>
+                    </button>
+
+                    <!-- Play / Pause (ESC) -->
+                    <button id="btnPlay" class="tactile-btn px-4 bg-accent-amber text-studio-950 font-bold" title="Dừng / Phát (ESC)">
+                        <i data-lucide="play" id="playIcon" class="w-4 h-4 fill-current"></i>
+                        <span>ESC</span>
+                    </button>
+
+                    <!-- Forward 2s (Shift+TAB) -->
+                    <button id="btnForward2s" class="tactile-btn text-gray-300" title="Tua tiến 2 giây (Shift+TAB)">
+                        <i data-lucide="rotate-cw" class="w-3.5 h-3.5 text-accent-amber"></i>
+                        <span>+2s</span>
+                    </button>
+
+                    <!-- Prev / Next Sentence -->
+                    <button id="btnPrev" class="tactile-btn" title="Câu trước ([)">
+                        <i data-lucide="skip-back" class="w-3.5 h-3.5"></i>
+                    </button>
+                    <button id="btnNext" class="tactile-btn" title="Câu sau (])">
+                        <i data-lucide="skip-forward" class="w-3.5 h-3.5"></i>
+                    </button>
+
+                    <!-- Auto Loop Toggle -->
+                    <button id="btnAutoLoop" class="tactile-btn text-gray-400" title="Tự động lặp lại câu này">
+                        <i data-lucide="repeat" id="autoLoopIcon" class="w-3.5 h-3.5"></i>
+                        <span id="autoLoopText" class="hidden sm:inline">LẶP: TẮT</span>
+                    </button>
+                </div>
+
+                <!-- Toggle Rack Detail Slider Drawer -->
+                <button id="btnExpandRackDetails" class="tactile-btn text-gray-400" title="Chỉnh âm lượng và làm êm câu">
+                    <i data-lucide="chevron-up" id="rackChevronIcon" class="w-3.5 h-3.5"></i>
+                    <span class="hidden sm:inline">Chỉnh âm</span>
+                </button>
+            </div>
+
+            <!-- Timeline Seekbar -->
+            <div id="timelineTrack" class="w-full h-1.5 rounded-full bg-studio-900 border border-studio-border relative cursor-pointer overflow-hidden">
+                <div id="timelineProgress" class="h-full bg-accent-amber transition-all duration-75" style="width: 0%;"></div>
+                <div id="timelineThumb" class="hidden"></div>
+            </div>
+
+            <!-- Expandable Hardware Rack Drawer (Booster, Padding, Speed) -->
+            <div id="rackExpandedSection" class="hidden pt-3 border-t border-studio-border/60 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-mono">
+                <!-- Volume Gain Booster -->
+                <div class="space-y-1">
+                    <div class="flex justify-between items-center text-gray-400">
+                        <span>Khuếch đại âm lượng:</span>
+                        <span id="boostValueText" class="text-accent-amber font-bold">100%</span>
+                    </div>
+                    <input type="range" id="volumeBoost" min="0.5" max="4.0" step="0.1" value="1.0"
+                        class="w-full accent-amber-500 cursor-pointer bg-studio-900 h-1.5 rounded appearance-none">
+                </div>
+
+                <!-- Smart Smoothing Padding -->
+                <div class="space-y-1">
+                    <div class="flex justify-between items-center text-gray-400">
+                        <span>Làm êm hai đầu câu:</span>
+                        <span id="paddingValueText" class="text-accent-amber font-bold">± 300 ms</span>
+                    </div>
+                    <input type="range" id="smartPadding" min="0" max="1500" step="50" value="300"
+                        class="w-full accent-amber-500 cursor-pointer bg-studio-900 h-1.5 rounded appearance-none">
+                </div>
+
+                <!-- Speed & Grouping -->
+                <div class="flex items-center gap-3">
+                    <div class="flex-1">
+                        <label class="text-gray-400 block mb-1">Tốc độ:</label>
+                        <select id="speedSelect" class="w-full bg-studio-900 border border-studio-border rounded px-2 py-1 text-white outline-none">
+                            <option value="0.75">0.75x (Chậm)</option>
+                            <option value="0.85">0.85x</option>
+                            <option value="1.0" selected>1.0x (Chuẩn)</option>
+                            <option value="1.15">1.15x</option>
+                            <option value="1.25">1.25x (Nhanh)</option>
+                        </select>
+                    </div>
+                    <div class="flex-1">
+                        <label class="text-gray-400 block mb-1">Gom câu nghe:</label>
+                        <select id="groupSelect" class="w-full bg-studio-900 border border-studio-border rounded px-2 py-1 text-white outline-none">
+                            <option value="1" selected>1 câu</option>
+                            <option value="2">2 câu</option>
+                            <option value="3">3 câu</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hidden elements for backward compatibility with vinyl-jog and VU meters -->
+            <div id="vinylContainer" class="hidden"><div id="vinylDisk"></div><div id="jogHudBadge"><span id="jogHudText"></span></div></div>
+            <div id="vuMeterBars" class="hidden"></div>
+        </div>
+    </div>
+
+    <!-- ================= 5. SLIDE-OVER SENTENCE NAVIGATOR DRAWER ================= -->
+    <div id="sentenceDrawer"
+        class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm transition-opacity duration-200 opacity-0 pointer-events-none flex justify-end">
+        <div id="drawerBackdrop" class="absolute inset-0"></div>
+        <div id="drawerPanel"
+            class="relative w-full max-w-md bg-studio-900 border-l border-studio-border h-full shadow-2xl flex flex-col transform translate-x-full transition-transform duration-200">
+            <div class="p-4 border-b border-studio-border flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="list" class="w-4 h-4 text-accent-amber"></i>
+                    <h3 class="font-bold text-white text-sm">Danh Sách Câu Trong Bài</h3>
+                    <span id="drawerCountBadge" class="text-xs text-gray-500 font-mono ml-2"></span>
+                </div>
+                <button id="btnCloseDrawer" class="p-1 text-gray-400 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Quick search & Jump to current sentence bar for large files (>500 sentences) -->
+            <div class="px-3.5 py-2 border-b border-studio-border bg-studio-950/60 flex items-center gap-2">
+                <div class="relative flex-1">
+                    <i data-lucide="search" class="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-gray-500"></i>
+                    <input type="text" id="drawerSearchInput" placeholder="Tìm kiếm lời thoại..."
+                        class="w-full bg-studio-900 border border-studio-border text-xs rounded-lg pl-8 pr-3 py-1.5 text-gray-200 outline-none focus:border-accent-amber font-sans" />
+                </div>
+                <button id="btnScrollToCurrentSentence" class="tactile-btn text-[10px] px-2 py-1 text-accent-amber whitespace-nowrap" title="Cuộn tới câu đang học">
+                    Câu hiện tại
+                </button>
+            </div>
+
+            <div id="drawerSentenceList" class="flex-1 overflow-y-auto p-4 space-y-2 font-mono text-xs">
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= 6. ERGONOMIC HOTKEYS DIALOG ================= -->
+    <div id="hotkeysModal"
+        class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm transition-opacity duration-200 opacity-0 pointer-events-none flex items-center justify-center p-4">
+        <div class="w-full max-w-md bg-studio-900 border border-studio-border rounded-xl p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-studio-border">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="help-circle" class="w-5 h-5 text-accent-amber"></i>
+                    <h3 class="font-bold text-white text-base">Bảng Phím Tắt Tiện Lợi</h3>
+                </div>
+                <button id="btnCloseHotkeysModal" class="p-1 text-gray-400 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="space-y-2 text-xs font-mono">
+                <div class="flex items-center justify-between p-2.5 rounded bg-studio-950">
+                    <span class="text-gray-300">Dừng / Tiếp tục phát</span>
+                    <span class="font-bold text-accent-amber">ESC</span>
+                </div>
+                <div class="flex items-center justify-between p-2.5 rounded bg-studio-950">
+                    <span class="text-gray-300">Tua lùi 2 giây</span>
+                    <span class="font-bold text-accent-amber">TAB</span>
+                </div>
+                <div class="flex items-center justify-between p-2.5 rounded bg-studio-950">
+                    <span class="text-gray-300">Tua tiến 2 giây</span>
+                    <span class="font-bold text-accent-amber">Shift + TAB</span>
+                </div>
+                <div class="flex items-center justify-between p-2.5 rounded bg-studio-950">
+                    <span class="text-gray-300">Nghe lại câu hiện tại</span>
+                    <span class="font-bold text-accent-amber">F4</span>
+                </div>
+                <div class="flex items-center justify-between p-2.5 rounded bg-studio-950">
+                    <span class="text-gray-300">Chấm điểm bài gõ</span>
+                    <span class="font-bold text-accent-sage">Ctrl + Enter</span>
+                </div>
+                <div class="flex items-center justify-between p-2.5 rounded bg-studio-950">
+                    <span class="text-gray-300">Bật / Tắt thu âm Shadowing</span>
+                    <span class="font-bold text-accent-rose">Phím R</span>
+                </div>
+                <div class="flex items-center justify-between p-2.5 rounded bg-studio-950">
+                    <span class="text-gray-300">Nghe hai tai Trái / Phải</span>
+                    <span class="font-bold text-accent-amber">Phím S</span>
+                </div>
+                <div class="flex items-center justify-between p-2.5 rounded bg-studio-950">
+                    <span class="text-gray-300">Chuyển nhanh Mẫu / Bạn</span>
+                    <span class="font-bold text-accent-amber">Phím A</span>
+                </div>
+                <div class="flex items-center justify-between p-2.5 rounded bg-studio-950">
+                    <span class="text-gray-300">Bật / Tắt đường cao độ</span>
+                    <span class="font-bold text-accent-amber">Phím P</span>
+                </div>
+                <div class="flex items-center justify-between p-2.5 rounded bg-studio-950">
+                    <span class="text-gray-300">Ẩn / Hiện chữ luyện tai</span>
+                    <span class="font-bold text-accent-amber">Phím B</span>
+                </div>
+            </div>
+
+            <div class="pt-2 text-right">
+                <button id="btnCloseHotkeysModalBtn"
+                    class="px-4 py-2 bg-accent-amber text-studio-950 font-bold rounded-lg text-xs">
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= 7. VISUAL IN-APP SRT EDITOR MODAL ================= -->
+    <div id="srtEditorModal"
+        class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm transition-opacity duration-200 opacity-0 pointer-events-none flex items-center justify-center p-4">
+        <div class="w-full max-w-xl bg-studio-900 border border-studio-border rounded-xl p-5 sm:p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-studio-border">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="sliders" class="w-5 h-5 text-accent-amber"></i>
+                    <h3 class="font-bold text-white text-base">Chỉnh Sửa Phụ Đề (SRT)</h3>
+                </div>
+                <button id="btnCloseSrtEditor" class="p-1 text-gray-400 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="flex items-center justify-between text-xs font-mono">
+                <span id="editSentenceIndex" class="font-bold text-accent-amber bg-studio-950 px-2 py-1 rounded border border-studio-border">CÂU #1</span>
+                <span class="text-gray-400 text-[11px]">Chỉnh mốc thời gian hoặc nội dung lời thoại</span>
+            </div>
+
+            <div class="space-y-3 font-mono text-xs">
+                <div class="p-3 rounded-lg bg-studio-950 border border-studio-border flex items-center justify-between">
+                    <div>
+                        <span class="text-gray-400 text-[10px] block">MỐC BẮT ĐẦU</span>
+                        <input id="editStartTimeInput" type="text" class="bg-transparent text-white font-bold text-sm w-32 border-b border-studio-border outline-none font-mono" value="00:00:00,000" />
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <button id="btnNudgeStartMinus100" class="tactile-btn px-2 py-1 text-gray-300">-100ms</button>
+                        <button id="btnNudgeStartPlus100" class="tactile-btn px-2 py-1 text-gray-300">+100ms</button>
+                        <button id="btnSetStartToCurrent" class="tactile-btn px-2.5 py-1 text-accent-amber">Lấy mốc đang nghe</button>
+                    </div>
+                </div>
+
+                <div class="p-3 rounded-lg bg-studio-950 border border-studio-border flex items-center justify-between">
+                    <div>
+                        <span class="text-gray-400 text-[10px] block">MỐC KẾT THÚC</span>
+                        <input id="editEndTimeInput" type="text" class="bg-transparent text-white font-bold text-sm w-32 border-b border-studio-border outline-none font-mono" value="00:00:00,000" />
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <button id="btnNudgeEndMinus100" class="tactile-btn px-2 py-1 text-gray-300">-100ms</button>
+                        <button id="btnNudgeEndPlus100" class="tactile-btn px-2 py-1 text-gray-300">+100ms</button>
+                        <button id="btnSetEndToCurrent" class="tactile-btn px-2.5 py-1 text-accent-amber">Lấy mốc đang nghe</button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-gray-400 text-[11px] block mb-1">Nội dung lời thoại:</label>
+                    <textarea id="editSentenceTextarea" rows="3"
+                        class="w-full bg-studio-950 border border-studio-border focus:border-accent-amber rounded-lg p-3 text-sm text-white outline-none resize-none font-editorial"></textarea>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-2 border-t border-studio-border">
+                <button id="btnExportSrt" class="tactile-btn text-accent-amber border-amber-500/30">
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                    <span>Xuất File .SRT Mới</span>
+                </button>
+                <div class="flex items-center gap-2">
+                    <button id="btnSaveSrtEdit" class="tactile-btn px-4 py-2 bg-accent-amber text-studio-950 font-bold">
+                        <span>Lưu Thay Đổi</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= SCRIPTS ================= -->
+    <script src="js/state.js"></script>
+    <script src="js/srt-parser.js"></script>
+    <script src="js/diff-checker.js"></script>
+    <script src="js/audio-engine.js"></script>
+    <script src="js/vinyl-jog.js"></script>
+    <script src="js/dictation.js"></script>
+    <script src="js/speech-analysis.js"></script>
+    <script src="js/shadowing.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/srt-editor.js"></script>
+    <script src="js/gestures.js"></script>
+    <script src="js/hotkeys.js"></script>
+    <script src="js/app.js"></script>
+
+</body>
+
+</html>
