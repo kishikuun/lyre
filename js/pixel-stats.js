@@ -297,3 +297,4 @@
     root.App.PixelStats = PixelStats;
 
 })(typeof window !== 'undefined' ? window : global);
+

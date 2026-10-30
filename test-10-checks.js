@@ -1278,6 +1278,27 @@ assert(
     const tabSwitched = desk.switchRulebookTab('vocab');
     const tabValid = tabSwitched === 'vocab' && desk.currentTab === 'vocab';
 
+    // XSS Sanitization Check in PixelDesk
+    const mockStampTarget = { innerHTML: '' };
+    const mockCitationContainer = {
+        prepend: (el) => { mockCitationContainer.lastPrepend = el; }
+    };
+    const xssDesk = new PixelDesk({
+        stampTarget: mockStampTarget,
+        citationContainer: mockCitationContainer
+    });
+    xssDesk.stampApproved('<img src=x onerror=alert(1)>');
+    const approvedXssSafe = !mockStampTarget.innerHTML.includes('<img') && mockStampTarget.innerHTML.includes('&lt;img');
+
+    xssDesk.stampDenied('<script>alert("xss")</script>');
+    const deniedXssSafe = !mockStampTarget.innerHTML.includes('<script>') && mockStampTarget.innerHTML.includes('&lt;script&gt;');
+
+    xssDesk.issueCitation('<b onmouseover=evil()>');
+    const citationXssSafe = mockCitationContainer.lastPrepend &&
+        !mockCitationContainer.lastPrepend.innerHTML.includes('<b onmouseover') &&
+        mockCitationContainer.lastPrepend.innerHTML.includes('&lt;b');
+    const xssProtectionValid = approvedXssSafe && deniedXssSafe && citationXssSafe;
+
     // 3. CSS & Sandbox HTML Verification
     const hasPaperclipCSS = pixelCSS.includes('.pixel-paperclip');
     const hasCitationCSS = pixelCSS.includes('.pixel-citation-slip') && pixelCSS.includes('.animate-citation-print');
@@ -1288,11 +1309,11 @@ assert(
     const hasSandboxDesk = sandboxHTML.includes('src="js/pixel-desk.js"') && sandboxHTML.includes('id="citationMount"');
 
     assert(
-        colorCodeValid && hasDialogueMethods && stampResValid && citationValid && tabValid &&
+        colorCodeValid && hasDialogueMethods && stampResValid && citationValid && tabValid && xssProtectionValid &&
         hasPaperclipCSS && hasCitationCSS && hasChoiceHeartCSS && hasInkLockCSS &&
         hasSandboxDialogue && hasSandboxDesk,
         "Deltarune Dialogue Box Nâng Cao & Bàn Thanh Tra Papers, Please (Typewriter Color-Codes, Citation Slip Printer & Rulebook Tabs)",
-        `Color Codes: OK (Yellow/Red/White), Stamp Rig (Approved/Denied/Citations): OK, Rulebook Tabs: OK, Sandbox Integration: OK`
+        `Color Codes: OK (Yellow/Red/White), Stamp Rig (Approved/Denied/Citations/XSS Guard): OK, Rulebook Tabs: OK, Sandbox Integration: OK`
     );
 }
 
@@ -1565,16 +1586,29 @@ assert(
     PixelGameLoop.sfx.playTypewriterBlip = () => { clozeSfxCalled = true; };
     PixelGameLoop.onClozeEvaluated(true, 'forensic');
 
-    // 4. Source code integration hooks
+    // 4. Source code integration hooks & critical fixes
+    const audioEngineCode = fs.readFileSync('js/audio-engine.js', 'utf8');
+    const hotkeysCode = fs.readFileSync('js/hotkeys.js', 'utf8');
+    const sfxCode = fs.readFileSync('js/pixel-sfx.js', 'utf8');
+
     const hasAnalyticsHook = analyticsCode.includes('PixelGameLoop.onDailyGoalAchieved');
     const hasDictationHook = dictationCode.includes('PixelGameLoop.onClozeEvaluated');
+    const hasBidirectionalSync = gameloopCode.includes("document.getElementById('dictationTextarea')") &&
+                                 dictationCode.includes("document.getElementById('gamePermitInput')");
+    const hasTTSMute = audioEngineCode.includes('state.isTTSLesson ? 0.0001 : 1.0');
+    const hasHotkeysRouting = hotkeysCode.includes('#gameStatsModal:not(.hidden)') &&
+                              hotkeysCode.includes('#pixelGazetteModal') &&
+                              hotkeysCode.includes("activeEl.id === 'gamePermitInput'");
+    const hasBGMDisconnect = sfxCode.includes('this._bgmState.gainNode.disconnect()');
+
+    const allFixesValid = hasBidirectionalSync && hasTTSMute && hasHotkeysRouting && hasBGMDisconnect;
 
     assert(
         hasClozePunchCardCSS && hasFlashcardRPGCSS && hasDailyGoalArcadeCSS &&
         hasMethods && dialogueTriggered && gutsUpdated && starburstTriggered && clozeSfxCalled &&
-        hasAnalyticsHook && hasDictationHook,
-        "Stage 8 Retro Pixel Polish (Cloze Punch-Cards, RPG Flashcards & Daily Goal Trophy)",
-        `Cloze Punch-Card CSS: OK, RPG Flashcard CSS: OK, Daily Goal Arcade CSS: OK, Hooks & Game Loop: OK`
+        hasAnalyticsHook && hasDictationHook && allFixesValid,
+        "Stage 8 Retro Pixel Polish & Code Review Hardening (Cloze, Flashcards, Daily Goal & Zero-Defect Guards)",
+        `Punch-Cards: OK, Flashcards: OK, Daily Goal: OK, Sync: OK, TTS Mute: OK, Hotkeys: OK, SFX Hygiene: OK`
     );
 }
 

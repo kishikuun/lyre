@@ -14,7 +14,7 @@
             const Shadowing = root.App.Shadowing;
 
             // 1. Check for Active Modals
-            const modalSelectors = '#srtEditorModal:not(.pointer-events-none), #hotkeysModal:not(.pointer-events-none), #sentenceDrawer:not(.pointer-events-none), #quickPasteModal:not(.pointer-events-none), #vadTuningModal:not(.pointer-events-none), #mobileSettingsDrawer:not(.pointer-events-none), #studioMixerDrawer:not(.pointer-events-none), #analyticsModal:not(.pointer-events-none), #curatedLessonsModal:not(.pointer-events-none), #ttsGeneratorModal:not(.pointer-events-none), #flashcardModal:not(.pointer-events-none), #vocabDrawer:not(.hidden)';
+            const modalSelectors = '#srtEditorModal:not(.pointer-events-none), #hotkeysModal:not(.pointer-events-none), #sentenceDrawer:not(.pointer-events-none), #quickPasteModal:not(.pointer-events-none), #vadTuningModal:not(.pointer-events-none), #mobileSettingsDrawer:not(.pointer-events-none), #studioMixerDrawer:not(.pointer-events-none), #analyticsModal:not(.pointer-events-none), #curatedLessonsModal:not(.pointer-events-none), #ttsGeneratorModal:not(.pointer-events-none), #flashcardModal:not(.pointer-events-none), #vocabDrawer:not(.hidden), #gameStatsModal:not(.hidden), #pixelGazetteModal';
             const activeModal = document.querySelector(modalSelectors);
 
             if (e.key === 'Escape') {
@@ -30,6 +30,14 @@
                             root.App.Dictionary.closeVocabDrawer();
                         } else {
                             activeModal.classList.add('hidden');
+                        }
+                    } else if (activeModal.id === 'gameStatsModal') {
+                        activeModal.classList.add('hidden');
+                    } else if (activeModal.id === 'pixelGazetteModal') {
+                        if (root.App && root.App.PixelGameLoop && root.App.PixelGameLoop.gazette && typeof root.App.PixelGameLoop.gazette.close === 'function') {
+                            root.App.PixelGameLoop.gazette.close();
+                        } else if (activeModal.parentNode) {
+                            activeModal.parentNode.removeChild(activeModal);
                         }
                     } else {
                         activeModal.classList.add('opacity-0', 'pointer-events-none');
@@ -52,7 +60,7 @@
             // =================================================================
             if (isTypingInInput) {
                 const activeEl = document.activeElement;
-                const isDictationArea = activeEl.id === 'dictationTextarea';
+                const isDictationArea = activeEl.id === 'dictationTextarea' || activeEl.id === 'gamePermitInput';
 
                 // A. Shift + Space or Ctrl + Space: Instant Play/Pause without leaving typing cursor!
                 if ((e.shiftKey || e.ctrlKey) && (e.key === ' ' || e.code === 'Space')) {

@@ -203,6 +203,7 @@
             if (!this.isOpen) return;
             if (e.key === 'Escape') {
                 e.preventDefault();
+                e.stopImmediatePropagation();
                 this.close();
             } else if (e.key === ' ' || e.key === 'Enter') {
                 const coinBtn = this.modalEl ? this.modalEl.querySelector('#btnGazetteCoin') : null;
@@ -232,3 +233,4 @@
     root.App.PixelGazette = PixelGazette;
 
 })(typeof window !== 'undefined' ? window : global);
+

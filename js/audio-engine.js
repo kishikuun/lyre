@@ -166,9 +166,12 @@
         const now = state.audioContext.currentTime;
         const fadeDur = Math.min(0.08, remainingSec / 3);
 
+        // When studying a synthetic TTS/Curated lesson, mute the synthetic carrier wave
+        // so Web Speech API plays natural speech without 140Hz drone interference
+        const targetGain = state.isTTSLesson ? 0.0001 : 1.0;
         fadeGain.gain.setValueAtTime(0.0001, now);
-        fadeGain.gain.linearRampToValueAtTime(1.0, now + fadeDur);
-        fadeGain.gain.setValueAtTime(1.0, now + Math.max(fadeDur, remainingSec - fadeDur));
+        fadeGain.gain.linearRampToValueAtTime(targetGain, now + fadeDur);
+        fadeGain.gain.setValueAtTime(targetGain, now + Math.max(fadeDur, remainingSec - fadeDur));
         fadeGain.gain.linearRampToValueAtTime(0.0001, now + remainingSec);
 
         state.sourceNode.connect(fadeGain);

@@ -382,11 +382,11 @@
                 });
             }
 
-            // 5. Đồng bộ 2 chiều giữa permitInput trong Game Desk và standardInputText
+            // 5. Đồng bộ 2 chiều giữa permitInput trong Game Desk và dictationTextarea
             if (this.dom.permitInput) {
                 this.dom.permitInput.addEventListener('input', () => {
                     const val = this.dom.permitInput.value;
-                    const standardArea = document.getElementById('standardInputText');
+                    const standardArea = document.getElementById('dictationTextarea');
                     if (standardArea) standardArea.value = val;
                     if (root.App && root.App.state) {
                         root.App.state.standardInputText = val;
@@ -726,6 +726,200 @@
                 wordsWritten: completed * 16,
                 citationsAvoided: this.desk ? this.desk.citations.length : 0
             });
+        }
+
+        /**
+         * ====================================================================
+         * STAGE 7: SHADOWING LAB RETRO GAME COURTROOM & MGS CODEC 140.85
+         * ====================================================================
+         */
+
+        /**
+         * Hook sự kiện khi hoàn tất chấm điểm bản thu Shadowing (Take Evaluation)
+         */
+        onShadowingEvaluated(data = {}) {
+            if (!this.isEnabled) return;
+
+            const rhythmScore = data.rhythmScore || 0;
+            const pitchScore = data.pitchScore || rhythmScore;
+            const avgScore = Math.round((rhythmScore + pitchScore) / 2);
+
+            if (avgScore >= 80) {
+                // Ace Attorney: Lệnh hô [TAKE THAT!] vút cao + búa gõ
+                if (this.sfx) {
+                    this.sfx.playTakeThatSound();
+                }
+                if (this.desk) {
+                    this.desk.triggerScreenShake(this.dom.deskContainer);
+                }
+                this._renderTakeThatStarburst();
+
+                // Lời khen từ Inspector Byte
+                if (this.dialogue) {
+                    this.dialogue.say(
+                        'Inspector Byte',
+                        `\\cGTAKE THAT!\\cW Giọng nói khớp nhịp \\cY${rhythmScore}%\\cW và cao độ \\cY${pitchScore}%\\cW! Đối chiếu nhân chứng hoàn toàn chuẩn xác.`,
+                        avgScore >= 90 ? 'cool' : 'proud'
+                    );
+                }
+
+                // Cập nhật RPG Stats: Tăng MAGIC & DEF
+                if (this.stats) {
+                    const char = this.stats.getActiveCharacter();
+                    this.stats.updateStats({
+                        magic: Math.min(99, char.magic + 2),
+                        def: Math.min(99, char.def + 1),
+                        hp: Math.min(char.maxHp, char.hp + 5)
+                    });
+                }
+
+            } else if (avgScore < 70) {
+                // Ace Attorney: [OBJECTION!] búa gỗ phản đối
+                if (this.sfx) {
+                    this.sfx.playGavelKnock();
+                }
+                if (this.desk) {
+                    this.desk.triggerScreenShake(this.dom.deskContainer);
+                }
+                this._renderStarburst('OBJECTION!', '#dc2626', '#fde047');
+
+                // Lời nhắc sửa lỗi
+                if (this.dialogue) {
+                    this.dialogue.say(
+                        'Inspector Byte',
+                        `\\cROBJECTION!\\cW Sai lệch tốc độ hoặc ngữ điệu (${avgScore}%). Hãy nhấn vào các từ vựng để nghe lại nhịp nhấn!`,
+                        'sweating'
+                    );
+                }
+            }
+        }
+
+        _renderTakeThatStarburst() {
+            if (!this.dom.starburstSlot) return;
+            this.dom.starburstSlot.innerHTML = `
+                <div class="starburst-badge starburst-take-that animate-bounce">
+                    <svg viewBox="0 0 170 50" width="170" height="50">
+                        <polygon points="5,25 15,6 35,9 60,3 90,8 120,3 145,9 165,6 175,25 165,44 145,41 120,47 90,42 60,47 35,41 15,44" />
+                        <text x="88" y="32" font-family="'Press Start 2P', monospace" font-size="12" fill="#fde047" font-weight="bold" text-anchor="middle">TAKE THAT!</text>
+                    </svg>
+                </div>
+            `;
+            setTimeout(() => {
+                if (this.dom.starburstSlot) this.dom.starburstSlot.innerHTML = '';
+            }, 1400);
+        }
+
+        /**
+         * Khởi tạo màn hình MGS Codec 140.85 Phosphor Oscilloscope
+         */
+        initCodecOscilloscope(container) {
+            if (!container) return;
+            container.innerHTML = `
+                <div class="pixel-codec-panel p-3 space-y-2 select-none">
+                    <div class="flex items-center justify-between text-[9px] px-font-arcade text-[var(--px-codec-green)]">
+                        <span class="animate-pulse">● MEMORY 140.85</span>
+                        <span>SHADOWING LAB FREQUENCY</span>
+                        <span class="text-[8px] text-emerald-400">STEREO 44.1kHz</span>
+                    </div>
+
+                    <!-- Phosphor Oscilloscope Bars -->
+                    <div class="h-16 bg-black/80 border border-emerald-900/60 p-1.5 flex items-end justify-between gap-0.5 codec-grid-overlay overflow-hidden" id="codecBarsBox">
+                    </div>
+
+                    <div class="flex items-center justify-between text-[9px] font-mono text-[var(--px-codec-green)]">
+                        <button type="button" id="btnToggleGameBGM" class="pixel-btn !py-1 !px-2 text-[8px] !bg-black border border-emerald-500 text-emerald-300">
+                            🎵 BGM: TẮT
+                        </button>
+                        <span>MGS CODEC ACOUSTIC INTERCOM</span>
+                    </div>
+                </div>
+            `;
+
+            const barsBox = container.querySelector('#codecBarsBox');
+            if (barsBox && typeof document !== 'undefined' && typeof document.createElement === 'function') {
+                const numBars = 36;
+                for (let i = 0; i < numBars; i++) {
+                    const bar = document.createElement('div');
+                    bar.className = 'w-1 codec-waveform-line rounded-none';
+                    bar.style.height = '6%';
+                    barsBox.appendChild(bar);
+                }
+
+                // Chạy hoạt ảnh dao động khi âm thanh hoạt động
+                setInterval(() => {
+                    const isAudioPlaying = (root.App && root.App.state && root.App.state.isPlaying) || false;
+                    const isRecording = (root.App && root.App.state && root.App.state.isRecording) || false;
+                    const bars = barsBox.children;
+
+                    for (let i = 0; i < bars.length; i++) {
+                        if (isAudioPlaying || isRecording) {
+                            bars[i].style.height = (Math.random() * 85 + 12) + '%';
+                        } else {
+                            // Nhịp đập đường rải resting pulse
+                            const wave = Math.sin(Date.now() / 300 + i * 0.3) * 6 + 10;
+                            bars[i].style.height = Math.max(5, wave) + '%';
+                        }
+                    }
+                }, 80);
+            }
+
+            // Gắn nút BGM
+            const btnBGM = container.querySelector('#btnToggleGameBGM');
+            if (btnBGM && typeof btnBGM.addEventListener === 'function' && this.sfx) {
+                btnBGM.addEventListener('click', () => {
+                    const isPlaying = this.sfx.toggleBGM();
+                    btnBGM.textContent = isPlaying ? '🎵 BGM: BẬT' : '🎵 BGM: TẮT';
+                    btnBGM.className = isPlaying
+                        ? 'pixel-btn !py-1 !px-2 text-[8px] !bg-emerald-900 border border-emerald-400 text-emerald-200'
+                        : 'pixel-btn !py-1 !px-2 text-[8px] !bg-black border border-emerald-500 text-emerald-300';
+                });
+            }
+        }
+
+        /**
+         * ====================================================================
+         * STAGE 8: DAILY GOAL TROPHY & CLOZE PUNCH-CARD HOOKS
+         * ====================================================================
+         */
+
+        /**
+         * Hook sự kiện khi hoàn thành Mục Tiêu Ngày (Daily Goal Reached)
+         */
+        onDailyGoalAchieved(target = 15, streak = 1) {
+            if (!this.isEnabled) return;
+
+            if (this.sfx) {
+                this.sfx.playCoinOpChime();
+            }
+
+            if (this.dialogue) {
+                this.dialogue.say(
+                    'Inspector Byte',
+                    `\\cGCHIẾN TÍCH XUẤT SẮC!\\cW Hoàn thành mục tiêu ngày: \\cY${target}/${target} câu\\cW. Chuỗi ngày Streak: \\cY${streak} ngày\\cW! Arstotzka trao tặng Huân Chương Danh Dự.`,
+                    'cool'
+                );
+            }
+
+            // Cập nhật RPG Stats: Tăng GUTS và hồi phục HP
+            if (this.stats) {
+                const char = this.stats.getActiveCharacter();
+                this.stats.updateStats({
+                    guts: Math.min(5, char.guts + 1),
+                    hp: char.maxHp
+                });
+            }
+
+            this._renderStarburst('GOAL CLEARED!', '#10b981', '#fde047');
+        }
+
+        /**
+         * Hook sự kiện khi điền đúng một ô khuyết Cloze
+         */
+        onClozeEvaluated(isCorrect, word = '') {
+            if (!this.isEnabled) return;
+            if (isCorrect && this.sfx) {
+                this.sfx.playTypewriterBlip();
+            }
         }
 
         /**

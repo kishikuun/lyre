@@ -912,3 +912,207 @@
     border-color: #451a03 !important;
     background: #fef3c7 !important;
 }
+
+/* ==========================================================================
+   STAGE 5: SPRING-LOADED STAMP, RPG STATS SHEET & PAPERBOY GAZETTE
+   ========================================================================== */
+
+/* 1. Con dấu lò xo nén cơ học (Spring-Loaded Mechanical Stamp) */
+.stamp-spring-tension {
+    transform: scale(0.92) translateY(6px) !important;
+    box-shadow: 0px 0px 0px 0px #000000 !important;
+    filter: brightness(1.25);
+    transition: transform 0.08s ease-in, box-shadow 0.08s ease-in !important;
+}
+
+.stamp-handle-wood {
+    background: linear-gradient(180deg, #78350f 0%, #451a03 100%);
+    border: 2px solid #000000;
+    box-shadow: inset 1px 1px 0px #b45309, 2px 2px 0px #000000;
+}
+
+/* 2. Thẻ chỉ số RPG Character Stats Sheet (Deltarune Aesthetic) */
+.pixel-stats-sheet {
+    box-shadow: 6px 6px 0px 0px #000000;
+    image-rendering: pixelated;
+}
+
+[data-skin="pixel-paper"] .pixel-stats-sheet {
+    background-color: #1e1b18 !important;
+    border-color: #fef3c7 !important;
+}
+
+.party-select-btn {
+    box-shadow: 2px 2px 0px 0px #000000;
+}
+
+.party-select-btn:active {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0px 0px #000000;
+}
+
+/* 3. Tờ báo vinh danh The Daily Lyre Extra! (1984 Atari Paperboy Gazette) */
+.pixel-newspaper-sheet {
+    background-color: #f4ecd8;
+    color: #1c1917;
+    background-image: radial-gradient(#d6c7a1 0.75px, transparent 0.75px);
+    background-size: 8px 8px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.animate-newspaper-spin {
+    animation: newspaperSpin 0.65s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes newspaperSpin {
+    0% {
+        transform: scale(0.05) rotate(-720deg);
+        opacity: 0;
+    }
+    70% {
+        transform: scale(1.05) rotate(10deg);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-newspaper-spin {
+        animation: none !important;
+        transform: scale(1) rotate(0deg) !important;
+        opacity: 1 !important;
+    }
+}
+
+/* ==========================================================================
+   STAGE 7: MGS CODEC SHADOWING LAB, COURTROOM DUEL & ARCADE DOCK
+   ========================================================================== */
+
+/* 1. MGS Codec 140.85 Shadowing Lab CRT Monitor */
+.pixel-codec-panel {
+    background-color: #02140a !important;
+    border: 3px solid var(--px-codec-green) !important;
+    box-shadow: inset 0 0 16px rgba(16, 185, 129, 0.25), 4px 4px 0px 0px #000000;
+    color: var(--px-codec-green);
+    position: relative;
+    overflow: hidden;
+}
+
+.codec-grid-overlay {
+    background-image: linear-gradient(rgba(16, 185, 129, 0.12) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(16, 185, 129, 0.12) 1px, transparent 1px);
+    background-size: 16px 16px;
+}
+
+.codec-waveform-line {
+    background-color: var(--px-codec-green);
+    box-shadow: 0 0 6px rgba(52, 211, 153, 0.8);
+    transition: height 0.08s ease-out;
+}
+
+/* 2. Ace Attorney [TAKE THAT!] Starburst Badge */
+.starburst-take-that polygon {
+    fill: #059669;
+    stroke: #fde047;
+    stroke-width: 3px;
+    filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.6));
+}
+
+/* 3. Chunky Retro 3D Arcade Styling for Smart Action Dock */
+[data-skin="pixel-dark"] #smartActionDock,
+[data-skin="pixel-paper"] #smartActionDock {
+    background: #000000 !important;
+    border: 3px solid #ffffff !important;
+    border-radius: 0px !important;
+    box-shadow: 6px 6px 0px 0px #000000 !important;
+}
+
+[data-skin="pixel-paper"] #smartActionDock {
+    background: #2b2520 !important;
+    border-color: #e6dfcc !important;
+}
+
+[data-skin="pixel-dark"] #smartActionDock button,
+[data-skin="pixel-paper"] #smartActionDock button {
+    border-radius: 0px !important;
+    box-shadow: 2px 2px 0px 0px #000000 !important;
+    font-family: 'Press Start 2P', monospace !important;
+    font-size: 10px !important;
+    letter-spacing: 0.5px !important;
+}
+
+[data-skin="pixel-dark"] #smartActionDock button:active,
+[data-skin="pixel-paper"] #smartActionDock button:active {
+    transform: translate(2px, 2px) !important;
+    box-shadow: 0px 0px 0px 0px #000000 !important;
+}
+
+/* ==========================================================================
+   STAGE 8: CLOZE PUNCH-CARDS, 8-BIT RPG FLASHCARDS & DAILY GOAL TROPHY
+   ========================================================================== */
+
+/* 1. Điền khuyết dạng thẻ đục lỗ cơ học (Cloze Mechanical Punch-Cards) */
+[data-skin="pixel-dark"] .cloze-blank-input,
+[data-skin="pixel-paper"] .cloze-blank-input {
+    border: 2px solid #ffffff !important;
+    border-radius: 0px !important;
+    background: #000000 !important;
+    color: #fde047 !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    box-shadow: inset 2px 2px 0px #000000 !important;
+    font-weight: 700 !important;
+    padding: 2px 6px !important;
+}
+
+[data-skin="pixel-paper"] .cloze-blank-input {
+    border-color: #451a03 !important;
+    background: #fef3c7 !important;
+    color: #1c1917 !important;
+}
+
+[data-skin="pixel-dark"] .cloze-blank-input.is-correct,
+[data-skin="pixel-paper"] .cloze-blank-input.is-correct {
+    border-color: #22c55e !important;
+    color: #22c55e !important;
+    background: #052e16 !important;
+}
+
+/* 2. Sổ tay Flashcard lật 3D phong cách Thẻ Trang Bị RPG (Earthbound / Undertale) */
+[data-skin="pixel-dark"] #flashcardModal .flashcard-face,
+[data-skin="pixel-paper"] #flashcardModal .flashcard-face {
+    border: 4px solid #ffffff !important;
+    border-radius: 0px !important;
+    background: #000000 !important;
+    box-shadow: 8px 8px 0px 0px #000000 !important;
+}
+
+[data-skin="pixel-paper"] #flashcardModal .flashcard-face {
+    border-color: #451a03 !important;
+    background: #f4ecd8 !important;
+    color: #1c1917 !important;
+}
+
+[data-skin="pixel-dark"] #flashcardModal button,
+[data-skin="pixel-paper"] #flashcardModal button {
+    border-radius: 0px !important;
+    font-family: 'Press Start 2P', monospace !important;
+    font-size: 9px !important;
+    box-shadow: 2px 2px 0px 0px #000000 !important;
+}
+
+/* 3. Vòng mục tiêu ngày Arcade Trophy & Streak Badge */
+[data-skin="pixel-dark"] #dailyGoalWidget,
+[data-skin="pixel-paper"] #dailyGoalWidget {
+    border: 2px solid #ffffff !important;
+    border-radius: 0px !important;
+    background: #000000 !important;
+    box-shadow: 2px 2px 0px 0px #000000 !important;
+}
+
+[data-skin="pixel-paper"] #dailyGoalWidget {
+    border-color: #451a03 !important;
+    background: #fef3c7 !important;
+}

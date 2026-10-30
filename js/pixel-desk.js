@@ -16,6 +16,19 @@
 (function (root) {
     'use strict';
 
+    function escapeHTML(str) {
+        if (!str) return '';
+        if (root.App && root.App.SRTParser && typeof root.App.SRTParser.escapeHTML === 'function') {
+            return root.App.SRTParser.escapeHTML(str);
+        }
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
     class PixelDesk {
         constructor(options = {}) {
             this.deskContainer = options.deskContainer || null;
@@ -74,10 +87,11 @@
 
             if (this.stampTarget) {
                 const randomRot = -(4 + Math.random() * 3).toFixed(1); // -4deg đến -7deg
+                const safeDetails = escapeHTML(details);
                 this.stampTarget.innerHTML = `
                     <div class="stamp-seal stamp-approved stamp-slam-animation" style="transform: rotate(${randomRot}deg)">
                         <span class="stamp-title">APPROVED</span>
-                        <span class="stamp-sub">${details}</span>
+                        <span class="stamp-sub">${safeDetails}</span>
                     </div>
                 `;
             }
@@ -100,10 +114,11 @@
 
             if (this.stampTarget) {
                 const randomRot = (3 + Math.random() * 3).toFixed(1); // +3deg đến +6deg
+                const safeReason = escapeHTML(reason);
                 this.stampTarget.innerHTML = `
                     <div class="stamp-seal stamp-denied stamp-slam-animation" style="transform: rotate(${randomRot}deg)">
                         <span class="stamp-title">DENIED</span>
-                        <span class="stamp-sub">${reason}</span>
+                        <span class="stamp-sub">${safeReason}</span>
                     </div>
                 `;
             }
@@ -127,23 +142,32 @@
             this.citations.push(citation);
 
             if (this.citationContainer) {
-                const slip = document.createElement('div');
-                slip.className = 'pixel-citation-slip animate-citation-print';
-                slip.innerHTML = `
-                    <div class="citation-header">
-                        <span>MINISTRY OF ADMISSION</span>
-                        <span>M.O.A. PROTOCOL #83</span>
-                    </div>
-                    <div class="citation-body">
-                        <b>CITATION #${citationId.toString().padStart(2, '0')}:</b>
-                        <p>${reason}</p>
-                    </div>
-                    <div class="citation-footer">
-                        <span>PENALTY: RECORDED IN DOSSIER</span>
-                        <span>${citation.timestamp}</span>
-                    </div>
-                `;
-                this.citationContainer.prepend(slip);
+                const safeReason = escapeHTML(reason);
+                if (typeof document !== 'undefined' && typeof document.createElement === 'function') {
+                    const slip = document.createElement('div');
+                    slip.className = 'pixel-citation-slip animate-citation-print';
+                    slip.innerHTML = `
+                        <div class="citation-header">
+                            <span>MINISTRY OF ADMISSION</span>
+                            <span>M.O.A. PROTOCOL #83</span>
+                        </div>
+                        <div class="citation-body">
+                            <b>CITATION #${citationId.toString().padStart(2, '0')}:</b>
+                            <p>${safeReason}</p>
+                        </div>
+                        <div class="citation-footer">
+                            <span>PENALTY: RECORDED IN DOSSIER</span>
+                            <span>${escapeHTML(citation.timestamp)}</span>
+                        </div>
+                    `;
+                    if (typeof this.citationContainer.prepend === 'function') {
+                        this.citationContainer.prepend(slip);
+                    }
+                } else if (typeof this.citationContainer.prepend === 'function') {
+                    this.citationContainer.prepend({
+                        innerHTML: `<p>${safeReason}</p>`
+                    });
+                }
             }
         }
 
@@ -205,6 +229,8 @@
          */
         bindSpringStamp(buttonEl, type = 'approved', reason = '') {
             if (!buttonEl) return;
+            if (buttonEl._isSpringBound) return;
+            buttonEl._isSpringBound = true;
 
             let isPressed = false;
             const pressDown = (e) => {

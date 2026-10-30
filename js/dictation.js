@@ -43,6 +43,15 @@
                 state.standardInputText = dictationTextarea.value;
                 updateWordStats();
 
+                // Synchronize with Retro Game Permit Input if present
+                const permitInput = document.getElementById('gamePermitInput');
+                if (permitInput && permitInput !== document.activeElement) {
+                    permitInput.value = dictationTextarea.value;
+                    if (root.App && root.App.PixelGameLoop && typeof root.App.PixelGameLoop._updateInputCounts === 'function') {
+                        root.App.PixelGameLoop._updateInputCounts();
+                    }
+                }
+
                 // Phase 1 (Lyre Studio): Update Smart Action Dock state
                 if (root.App && typeof root.App.updateSmartActionDock === 'function') {
                     const text = dictationTextarea.value.trim();

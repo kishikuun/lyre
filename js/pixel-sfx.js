@@ -393,6 +393,10 @@
                 [196.00, 246.94, 293.66, 392.00]  // G
             ];
 
+            if (this._bgmState.isPlaying) {
+                this.stopLofiChiptuneBGM();
+            }
+
             this._bgmState.isPlaying = true;
             this._bgmState.step = 0;
 
@@ -436,6 +440,10 @@
             if (this._bgmState.timer) {
                 clearInterval(this._bgmState.timer);
                 this._bgmState.timer = null;
+            }
+            if (this._bgmState.gainNode) {
+                try { this._bgmState.gainNode.disconnect(); } catch (e) {}
+                this._bgmState.gainNode = null;
             }
             this._bgmState.isPlaying = false;
         },
