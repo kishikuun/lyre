@@ -1,6 +1,6 @@
 {
-  "name": "DictaShadow Studio - Chép Chính Tả & Shadowing",
-  "short_name": "DictaShadow",
+  "name": "Lyre Studio - Chép Chính Tả & Shadowing",
+  "short_name": "Lyre",
   "description": "Studio luyện nghe chép chính tả và Shadowing 100% Client-Side Web Audio",
   "start_url": "./index.html",
   "display": "standalone",
@@ -22,4 +22,3 @@
     }
   ]
 }
-

@@ -13,89 +13,214 @@
             const Dictation = root.App.Dictation;
             const Shadowing = root.App.Shadowing;
 
-            // 1. ESC: SIÊU TIỆN DỤNG - 1 chạm phím Esc để Dừng / Phát tiếp (Không cần giữ Ctrl!)
+            // 1. Check for Active Modals
+            const modalSelectors = '#srtEditorModal:not(.pointer-events-none), #hotkeysModal:not(.pointer-events-none), #sentenceDrawer:not(.pointer-events-none), #quickPasteModal:not(.pointer-events-none), #vadTuningModal:not(.pointer-events-none), #mobileSettingsDrawer:not(.pointer-events-none), #studioMixerDrawer:not(.pointer-events-none), #analyticsModal:not(.pointer-events-none), #curatedLessonsModal:not(.pointer-events-none), #ttsGeneratorModal:not(.pointer-events-none), #flashcardModal:not(.pointer-events-none), #vocabDrawer:not(.hidden)';
+            const activeModal = document.querySelector(modalSelectors);
+
             if (e.key === 'Escape') {
-                const srtEditorModal = document.getElementById('srtEditorModal');
-                const hotkeysModal = document.getElementById('hotkeysModal');
-                const sentenceDrawer = document.getElementById('sentenceDrawer');
-                if (srtEditorModal && !srtEditorModal.classList.contains('pointer-events-none')) {
-                    srtEditorModal.classList.add('opacity-0', 'pointer-events-none');
+                if (activeModal) {
+                    if (activeModal.id === 'flashcardModal') {
+                        if (root.App && root.App.Dictionary && typeof root.App.Dictionary.closeFlashcardModal === 'function') {
+                            root.App.Dictionary.closeFlashcardModal();
+                        } else {
+                            activeModal.classList.add('opacity-0', 'pointer-events-none');
+                        }
+                    } else if (activeModal.id === 'vocabDrawer') {
+                        if (root.App && root.App.Dictionary && typeof root.App.Dictionary.closeVocabDrawer === 'function') {
+                            root.App.Dictionary.closeVocabDrawer();
+                        } else {
+                            activeModal.classList.add('hidden');
+                        }
+                    } else {
+                        activeModal.classList.add('opacity-0', 'pointer-events-none');
+                    }
+                    e.stopImmediatePropagation();
                     return;
                 }
-                if (hotkeysModal && !hotkeysModal.classList.contains('pointer-events-none')) {
-                    hotkeysModal.classList.add('opacity-0', 'pointer-events-none');
-                    return;
-                }
-                if (sentenceDrawer && !sentenceDrawer.classList.contains('pointer-events-none')) {
-                    sentenceDrawer.classList.add('opacity-0', 'pointer-events-none');
-                    return;
-                }
-
                 e.preventDefault();
                 AudioEngine.togglePlay();
                 return;
             }
 
-            // Cho phép phím Tab hoạt động bình thường khi Modal đang mở (Accessibility A11y)
-            const isModalActive = document.querySelector('#srtEditorModal:not(.pointer-events-none), #hotkeysModal:not(.pointer-events-none), #sentenceDrawer:not(.pointer-events-none)');
+            // If a modal is open, let inputs inside modal function normally
+            if (activeModal) return;
 
-            // 2. TAB: SIÊU TỐC ĐỘ - 1 chạm phím Tab bằng ngón út để TUA LÙI 2S (Nghe lại từ vừa qua)
-            if (e.key === 'Tab' && !e.shiftKey) {
-                if (isModalActive) return;
-                e.preventDefault();
-                AudioEngine.rewind(2.0);
-                return;
-            }
-
-            // 3. SHIFT + TAB: TUA TIẾN 2S
-            if (e.key === 'Tab' && e.shiftKey) {
-                if (isModalActive) return;
-                e.preventDefault();
-                AudioEngine.forward(2.0);
-                return;
-            }
-
-            // 4. F1 - F5: Dãy phím chức năng 1 nút bấm trực tiếp
-            if (e.key === 'F1') {
-                e.preventDefault();
-                AudioEngine.togglePlay();
-                return;
-            }
-
-            if (e.key === 'F2') {
-                e.preventDefault();
-                AudioEngine.rewind(2.0);
-                return;
-            }
-
-            if (e.key === 'F3') {
-                e.preventDefault();
-                AudioEngine.forward(2.0);
-                return;
-            }
-
-            if (e.key === 'F4') {
-                e.preventDefault();
-                AudioEngine.replay();
-                return;
-            }
-
-            if (e.key === 'F5') {
-                e.preventDefault();
-                Dictation.toggleSubReveal();
-                return;
-            }
-
-            // 5. CTRL + ENTER: Chấm điểm bài gõ chính tả
-            if (e.ctrlKey && e.key === 'Enter') {
-                e.preventDefault();
-                Dictation.checkStandardDictation();
-                return;
-            }
-
-            // 6. PHÍM TẮT TRONG SHADOWING LAB (Khi không gõ trong ô văn bản)
             const isTypingInInput = ['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName);
-            if (!isTypingInInput && state.activeTab === 'shadowing') {
+
+            // =================================================================
+            // 2. SMART SPACE & ARROWS WHEN TYPING IN TEXTAREA / INPUT
+            // =================================================================
+            if (isTypingInInput) {
+                const activeEl = document.activeElement;
+                const isDictationArea = activeEl.id === 'dictationTextarea';
+
+                // A. Shift + Space or Ctrl + Space: Instant Play/Pause without leaving typing cursor!
+                if ((e.shiftKey || e.ctrlKey) && (e.key === ' ' || e.code === 'Space')) {
+                    e.preventDefault();
+                    AudioEngine.togglePlay();
+                    return;
+                }
+
+                // B. Smart Empty Space: If textarea is currently empty, Space toggles play/pause instead of adding whitespace
+                if (isDictationArea && !e.shiftKey && !e.ctrlKey && !e.altKey && (e.key === ' ' || e.code === 'Space')) {
+                    if (activeEl.value.trim().length === 0) {
+                        e.preventDefault();
+                        AudioEngine.togglePlay();
+                        return;
+                    }
+                }
+
+                // C. Alt + ArrowLeft / ArrowRight / ArrowUp for audio navigation without moving text cursor
+                if (e.altKey && e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    AudioEngine.rewind(2.0);
+                    return;
+                }
+                if (e.altKey && e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    AudioEngine.forward(2.0);
+                    return;
+                }
+                if (e.altKey && e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    AudioEngine.replay();
+                    return;
+                }
+
+                // D. Enter / Ctrl + Enter: Check dictation OR Advance to next sentence if already graded
+                if (e.key === 'Enter') {
+                    if (e.ctrlKey) {
+                        e.preventDefault();
+                        if (state.dictationMode === 'cloze' && Dictation && typeof Dictation.checkClozeDictation === 'function') {
+                            Dictation.checkClozeDictation();
+                        } else if (Dictation && typeof Dictation.checkStandardDictation === 'function') {
+                            Dictation.checkStandardDictation();
+                        }
+                        return;
+                    }
+                    if (!e.shiftKey && !e.altKey) {
+                        e.preventDefault();
+                        if (state.dictationMode === 'cloze') {
+                            const clozeScore = document.getElementById('clozeScoreBadge');
+                            const isGraded = clozeScore && !clozeScore.classList.contains('hidden');
+                            if (isGraded) {
+                                const btnNext = document.getElementById('btnNext');
+                                if (btnNext) btnNext.click();
+                            } else if (Dictation && typeof Dictation.checkClozeDictation === 'function') {
+                                Dictation.checkClozeDictation();
+                            }
+                        } else {
+                            const diffCard = document.getElementById('diffResultsCard');
+                            const isGraded = diffCard && !diffCard.classList.contains('hidden');
+                            if (isGraded) {
+                                const btnNext = document.getElementById('btnNext');
+                                if (btnNext) btnNext.click();
+                            } else if (Dictation && typeof Dictation.checkStandardDictation === 'function') {
+                                Dictation.checkStandardDictation();
+                            }
+                        }
+                        return;
+                    }
+                }
+
+                // E. Tab for progressive hint, Shift+Tab for rewind (except inside cloze blanks which navigate inputs)
+                if (e.key === 'Tab') {
+                    if (activeEl.classList.contains('cloze-blank-input')) {
+                        // Let cloze-blank-input keydown listener navigate between blanks
+                        return;
+                    }
+                    e.preventDefault();
+                    if (e.shiftKey) {
+                        AudioEngine.forward(2.0);
+                    } else {
+                        if (state.dictationMode === 'cloze' && Dictation && typeof Dictation.provideClozeHint === 'function') {
+                            Dictation.provideClozeHint();
+                        } else if (Dictation && typeof Dictation.provideHint === 'function') {
+                            Dictation.provideHint();
+                        } else {
+                            AudioEngine.rewind(2.0);
+                        }
+                    }
+                    return;
+                }
+
+                // F. F1 - F5 function keys
+                if (e.key === 'F1') { e.preventDefault(); AudioEngine.togglePlay(); return; }
+                if (e.key === 'F2') { e.preventDefault(); AudioEngine.rewind(2.0); return; }
+                if (e.key === 'F3') { e.preventDefault(); AudioEngine.forward(2.0); return; }
+                if (e.key === 'F4') { e.preventDefault(); AudioEngine.replay(); return; }
+                if (e.key === 'F5') { e.preventDefault(); Dictation.toggleSubReveal(); return; }
+
+                return; // Allow normal character typing to continue without interruption
+            }
+
+            // =================================================================
+            // 3. NATURAL GLOBAL SHORTCUTS WHEN NOT TYPING (Player & Shadowing Mode)
+            // =================================================================
+            // Space: Global Play / Pause (100% standard like YouTube/Spotify)
+            if (e.key === ' ' || e.code === 'Space') {
+                e.preventDefault();
+                AudioEngine.togglePlay();
+                return;
+            }
+
+            // Left / Right Arrow: Rewind / Forward 2s
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                AudioEngine.rewind(2.0);
+                return;
+            }
+            if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                AudioEngine.forward(2.0);
+                return;
+            }
+
+            // Up / Down Arrow or [ / ]: Previous / Next sentence
+            if (e.key === 'ArrowUp' || e.key === '[') {
+                e.preventDefault();
+                const btnPrev = document.getElementById('btnPrev');
+                if (btnPrev) btnPrev.click();
+                return;
+            }
+            if (e.key === 'ArrowDown' || e.key === ']') {
+                e.preventDefault();
+                const btnNext = document.getElementById('btnNext');
+                if (btnNext) btnNext.click();
+                return;
+            }
+
+            // T: Toggle Interactive Karaoke Transcript Drawer (Phase 4)
+            if (e.key === 't' || e.key === 'T') {
+                e.preventDefault();
+                const btnOpenDrawer = document.getElementById('btnOpenDrawer');
+                if (btnOpenDrawer) btnOpenDrawer.click();
+                return;
+            }
+
+            // Tab / Shift + Tab as alternative rewind / forward
+            if (e.key === 'Tab' && !e.shiftKey) {
+                e.preventDefault();
+                AudioEngine.rewind(2.0);
+                return;
+            }
+            if (e.key === 'Tab' && e.shiftKey) {
+                e.preventDefault();
+                AudioEngine.forward(2.0);
+                return;
+            }
+
+            // Shadowing Specific Single-Key Hotkeys
+            if (state.activeTab === 'shadowing') {
+                // Enter in Dual Mastery loop proceeds to next sentence in Dictation
+                if (state.isDualMasteryActive && e.key === 'Enter') {
+                    e.preventDefault();
+                    if (root.App && typeof root.App.continueDualMasteryNextSentence === 'function') {
+                        root.App.continueDualMasteryNextSentence();
+                    }
+                    return;
+                }
+
                 if (e.key.toLowerCase() === 'r') {
                     e.preventDefault();
                     Shadowing.toggleRecording();
@@ -125,33 +250,24 @@
                 }
                 if (['1', '2', '3', '4'].includes(e.key)) {
                     e.preventDefault();
-                    Shadowing.setShadowingStep(parseInt(e.key));
+                    Shadowing.setShadowingStep(parseInt(e.key, 10));
                     return;
                 }
-                if (e.key === '[') {
+            } else if (state.activeTab === 'dictation') {
+                // Replay in dictation mode when not typing
+                if (e.key.toLowerCase() === 'r') {
                     e.preventDefault();
-                    const btnPrev = document.getElementById('btnPrev');
-                    if (btnPrev) btnPrev.click();
-                    return;
-                }
-                if (e.key === ']') {
-                    e.preventDefault();
-                    const btnNext = document.getElementById('btnNext');
-                    if (btnNext) btnNext.click();
-                    return;
-                }
-                if (e.code === 'Space') {
-                    e.preventDefault();
-                    AudioEngine.togglePlay();
+                    AudioEngine.replay();
                     return;
                 }
             }
 
-            // Fallback phụ: Ctrl + Space vẫn hoạt động nếu ai quen tay
-            if ((e.ctrlKey || e.altKey) && e.code === 'Space') {
-                e.preventDefault();
-                AudioEngine.togglePlay();
-            }
+            // F1 - F5 global fallback
+            if (e.key === 'F1') { e.preventDefault(); AudioEngine.togglePlay(); return; }
+            if (e.key === 'F2') { e.preventDefault(); AudioEngine.rewind(2.0); return; }
+            if (e.key === 'F3') { e.preventDefault(); AudioEngine.forward(2.0); return; }
+            if (e.key === 'F4') { e.preventDefault(); AudioEngine.replay(); return; }
+            if (e.key === 'F5') { e.preventDefault(); Dictation.toggleSubReveal(); return; }
         });
     }
 

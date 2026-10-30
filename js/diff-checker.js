@@ -6,6 +6,26 @@
 
     const cleanWord = (w) => root.App.SRTParser.cleanWord(w);
 
+    const NUM_MAP = {
+        '0': 'zero', '1': 'one', '2': 'two', '3': 'three', '4': 'four',
+        '5': 'five', '6': 'six', '7': 'seven', '8': 'eight', '9': 'nine',
+        '10': 'ten'
+    };
+
+    function isWordMatch(w1, w2, strict = false) {
+        if (!w1 || !w2) return false;
+        if (strict) {
+            // Strict Mode: exact match including case and punctuation
+            return w1.trim() === w2.trim();
+        }
+        // Lenient Mode: clean punctuation, lowercase
+        const c1 = cleanWord(w1);
+        const c2 = cleanWord(w2);
+        if (c1 === c2) return true;
+        if (NUM_MAP[c1] === c2 || NUM_MAP[c2] === c1) return true;
+        return false;
+    }
+
     function escapeHTML(str) {
         if (root.App && root.App.SRTParser && root.App.SRTParser.escapeHTML) {
             return root.App.SRTParser.escapeHTML(str);
@@ -19,8 +39,12 @@
     /**
      * Compare user typed text against official subtitle sentence
      * Uses Longest Common Subsequence (LCS) for accurate word-level alignment
+     * @param {string} userText
+     * @param {string} officialText
+     * @param {Object} options - { strict: boolean }
      */
-    function computeDiff(userText, officialText) {
+    function computeDiff(userText, officialText, options = {}) {
+        const strict = options && options.strict === true;
         const userWords = (userText || '').trim().split(/\s+/).filter(w => w.length > 0);
         const officialWords = (officialText || '').trim().split(/\s+/).filter(w => w.length > 0);
 
@@ -32,7 +56,7 @@
 
         for (let i = 1; i <= m; i++) {
             for (let j = 1; j <= n; j++) {
-                if (cleanWord(userWords[i - 1]) === cleanWord(officialWords[j - 1])) {
+                if (isWordMatch(userWords[i - 1], officialWords[j - 1], strict)) {
                     dp[i][j] = dp[i - 1][j - 1] + 1;
                 } else {
                     dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
@@ -46,7 +70,7 @@
         let matchCount = 0;
 
         while (i > 0 || j > 0) {
-            if (i > 0 && j > 0 && cleanWord(userWords[i - 1]) === cleanWord(officialWords[j - 1])) {
+            if (i > 0 && j > 0 && isWordMatch(userWords[i - 1], officialWords[j - 1], strict)) {
                 diffTokens.unshift({
                     type: 'match',
                     userWord: userWords[i - 1],
@@ -116,17 +140,18 @@
         if (!diffResult || !diffResult.tokens) return '';
 
         return diffResult.tokens.map(token => {
+            const lookupWord = escapeHTML(token.officialWord || token.userWord || '');
             if (token.type === 'match') {
-                return `<span class="diff-word-match inline-flex items-center gap-1">${escapeHTML(token.officialWord)}</span>`;
+                return `<span class="diff-word-match inline-flex items-center gap-1 cursor-pointer transition hover:brightness-125" data-lookup-word="${lookupWord}" title="Nhấp để tra từ điển">${escapeHTML(token.officialWord)}</span>`;
             } else if (token.type === 'error') {
-                return `<span class="diff-word-error inline-flex flex-col items-center">
+                return `<span class="diff-word-error inline-flex flex-col items-center cursor-pointer transition hover:brightness-125" data-lookup-word="${lookupWord}" title="Nhấp để tra từ điển">
                     <span>${escapeHTML(token.userWord)}</span>
                     <span class="text-[11px] font-mono text-amber-400 font-semibold no-underline mt-0.5 tracking-tight">↓ ${escapeHTML(token.officialWord)}</span>
                 </span>`;
             } else if (token.type === 'missing') {
-                return `<span class="diff-word-missing" title="Từ bị bỏ sót">${escapeHTML(token.officialWord)}</span>`;
+                return `<span class="diff-word-missing cursor-pointer transition hover:brightness-125" data-lookup-word="${lookupWord}" title="Từ bị bỏ sót - Nhấp để tra từ">${escapeHTML(token.officialWord)}</span>`;
             } else if (token.type === 'extra') {
-                return `<span class="diff-word-extra" title="Từ gõ thừa">${escapeHTML(token.userWord)}</span>`;
+                return `<span class="diff-word-extra cursor-pointer transition hover:brightness-125" data-lookup-word="${lookupWord}" title="Từ gõ thừa - Nhấp để tra từ">${escapeHTML(token.userWord)}</span>`;
             }
             return '';
         }).join(' ');

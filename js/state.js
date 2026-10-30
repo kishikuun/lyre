@@ -36,9 +36,15 @@
         soundFXEnabled: true,
 
         // Dictation Engine State
-        dictationMode: 'standard', // 'standard' | 'stream'
+        dictationMode: 'standard', // 'standard' | 'stream' | 'cloze'
         standardInputText: '',
         lastDiffResult: null,
+        gradingStrictness: 'lenient', // 'lenient' | 'strict'
+        autoPauseOnType: false,       // Auto-pause audio while typing
+        hintStage: 0,                 // Progressive hint level (0 to 4)
+
+        // Cloze Dictation Mode State (Phase 3 - Lyre Studio)
+        clozeBlanks: [],              // Array of { blankIdx, wordIdx, cleanWord, originalWord, leadingPunct, trailingPunct, hintLevel, isRevealed, isCorrect, userInput }
 
         // Masked Stream State
         streamTargetWords: [],
@@ -48,8 +54,19 @@
         totalCharCount: 0,
         sessionStartTime: null,
 
-        // Progress Tracking
+        // Progress Tracking & Mistake Bank (Phase 4)
         completedSentences: new Set(),
+        mistakeSentences: new Map(), // Map of { sentenceIdx: { accuracy, text, userText, diagnosed, timestamp } }
+        studyFilter: 'all',          // 'all' | 'mistakes'
+        studyStreak: 1,              // Consecutive days streak
+        sessionSeconds: 0,           // Active study seconds in current session
+        phoneticErrors: { ed: 0, s: 0, articles: 0, prepositions: 0, contractions: 0 },
+
+        // Phase 4: Dual Mastery Loop & Smart Mistake Drill Queue
+        isDualMasteryActive: false,
+        isDrillActive: false,
+        drillQueue: [],
+        drillIndex: 0,
 
         // Phase 2: Shadowing Lab State
         isRecording: false,
@@ -59,6 +76,14 @@
         activeABTrack: 'native', // 'native' | 'user'
         userSourceNode: null,
         isUserPlaying: false,
+
+        // Phase 5: Mini-Waveform A-B Micro-Loop, Multi-Take & Studio Customization
+        microLoopA: null,
+        microLoopB: null,
+        soundProfile: 'typewriter', // 'typewriter' | 'cherry' | 'soft' | 'mute'
+        fontSize: 24,
+        userTakes: {},              // Map of { [idx]: [ take1, take2, take3 ] }
+        activeTakeNum: 1,
 
         // Vinyl Rotary Jog State
         isJogging: false,

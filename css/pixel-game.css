@@ -1,0 +1,914 @@
+/**
+ * ============================================================================
+ * LYRE STUDIO — RETRO PIXEL GAME DESIGN SYSTEM & MATERIALS (CSS)
+ * Version 4.0 (Acoustic Forensic Workbench)
+ * 
+ * Directly referenced from canonical titles:
+ * - Deltarune / Undertale (Toby Fox): Double pixel frame, 8-bit text box, Soul Heart
+ * - Papers, Please (Lucas Pope): Border checkpoint desk, entry permits, rubber stamps
+ * - Ace Attorney (Capcom): Starburst badges [HOLD IT!], [OBJECTION!], dramatic gavel
+ * - Metal Gear Solid (Konami): Codec 140.85 green phosphor oscilloscope & scanlines
+ * - Return of the Obra Dinn (Lucas Pope): 1-bit dithered ledger & ink lock-in
+ * - Paperboy (Atari 1984): The Daily Sun broadsheet gazette & Coin-Op arcade HUD
+ * ============================================================================
+ */
+
+/* ============================================================================
+   1. COLOR TOKENS & DUAL-SKIN PALETTES
+   ============================================================================ */
+
+/* Skin 1: Dark World & Amber CRT (Default / Night Mode) */
+:root,
+:root[data-skin="pixel-dark"] {
+    /* Viewport & Desk */
+    --px-bg-deep: #0c0f17;
+    --px-desk-surface: #161b26;
+    --px-panel-bg: #111622;
+    --px-panel-header: #1a2233;
+
+    /* Pixel Borders & Grid */
+    --px-border-outer: #ffffff;
+    --px-border-inner: #2a3346;
+    --px-border-highlight: #63718f;
+    --px-border-shadow: #000000;
+
+    /* Documents & Textarea (Papers Please Permit) */
+    --px-paper-bg: #151c28;
+    --px-paper-text: #f1f5f9;
+    --px-paper-ruled: rgba(255, 255, 255, 0.07);
+    --px-paper-edge: #2e3b52;
+    --px-cursor-color: #f59e0b;
+
+    /* Stamps */
+    --px-stamp-approved: #22c55e;
+    --px-stamp-approved-bg: rgba(34, 197, 94, 0.12);
+    --px-stamp-denied: #ef4444;
+    --px-stamp-denied-bg: rgba(239, 68, 68, 0.12);
+
+    /* Ace Attorney Accents */
+    --px-holdit-bg: #f97316;
+    --px-holdit-border: #ea580c;
+    --px-objection-bg: #dc2626;
+    --px-objection-border: #991b1b;
+    --px-gavel-gold: #eab308;
+
+    /* MGS Codec Green Phosphor */
+    --px-codec-green: #00ff66;
+    --px-codec-dim: #008833;
+    --px-codec-bg: #040d07;
+    --px-codec-glow: rgba(0, 255, 102, 0.35);
+
+    /* Arcade HUD & Gamification */
+    --px-arcade-yellow: #fde047;
+    --px-arcade-amber: #f59e0b;
+    --px-soul-red: #ff0000;
+    --px-soul-shadow: #880000;
+    --px-exp-cyan: #38bdf8;
+
+    /* Scanlines & Bezel */
+    --px-scanline-color: rgba(0, 0, 0, 0.4);
+    --px-bezel-border: #232a3b;
+}
+
+/* Skin 2: Grestin Checkpoint & Manila Desk (Day Mode / Vintage Paper) */
+:root[data-skin="pixel-paper"] {
+    /* Viewport & Desk */
+    --px-bg-deep: #231c18;
+    --px-desk-surface: #3b2f27;
+    --px-panel-bg: #4a3c32;
+    --px-panel-header: #57463b;
+
+    /* Pixel Borders & Grid */
+    --px-border-outer: #1c1917;
+    --px-border-inner: #786555;
+    --px-border-highlight: #a38f7c;
+    --px-border-shadow: #110d0a;
+
+    /* Documents & Textarea (Aged Manila Paper) */
+    --px-paper-bg: #ede4d0;
+    --px-paper-text: #1c1917;
+    --px-paper-ruled: rgba(60, 40, 20, 0.12);
+    --px-paper-edge: #c7b99c;
+    --px-cursor-color: #b45309;
+
+    /* Stamps */
+    --px-stamp-approved: #15803d;
+    --px-stamp-approved-bg: rgba(21, 128, 61, 0.15);
+    --px-stamp-denied: #b91c1c;
+    --px-stamp-denied-bg: rgba(185, 28, 28, 0.15);
+
+    /* Ace Attorney Accents */
+    --px-holdit-bg: #ea580c;
+    --px-holdit-border: #c2410c;
+    --px-objection-bg: #b91c1c;
+    --px-objection-border: #991b1b;
+    --px-gavel-gold: #ca8a04;
+
+    /* MGS Codec in Vintage Paper Mode (Obra Dinn Ink Style) */
+    --px-codec-green: #2d5a27;
+    --px-codec-dim: #1e3a1a;
+    --px-codec-bg: #d8ceb9;
+    --px-codec-glow: rgba(45, 90, 39, 0.2);
+
+    /* Arcade HUD */
+    --px-arcade-yellow: #ca8a04;
+    --px-arcade-amber: #b45309;
+    --px-soul-red: #dc2626;
+    --px-soul-shadow: #7f1d1d;
+    --px-exp-cyan: #0284c7;
+
+    /* Scanlines */
+    --px-scanline-color: rgba(40, 30, 20, 0.25);
+    --px-bezel-border: #524237;
+}
+
+/* ============================================================================
+   2. TYPOGRAPHY HIERARCHY (3-TIER ENGINE)
+   ============================================================================ */
+
+/* Tầng 1: Arcade HUD, Badges & Con dấu */
+.px-font-arcade {
+    font-family: 'Press Start 2P', monospace, sans-serif;
+    letter-spacing: 0.5px;
+    image-rendering: pixelated;
+    font-smooth: never;
+    -webkit-font-smoothing: none;
+}
+
+/* Tầng 2: Hộp thoại đối thoại & Báo cáo */
+.px-font-dialogue {
+    font-family: 'VT323', monospace, 'Courier New', monospace;
+    font-size: 1.25rem;
+    line-height: 1.4;
+    letter-spacing: 0.5px;
+    image-rendering: pixelated;
+    font-smooth: never;
+    -webkit-font-smoothing: none;
+}
+
+/* Tầng 3: Chép chính tả & Ký hiệu IPA Ngữ âm học (Đảm bảo 100% dễ đọc) */
+.px-font-study {
+    font-family: 'JetBrains Mono', 'Courier Prime', monospace;
+    font-size: 1.15rem;
+    line-height: 1.8;
+    letter-spacing: 0.2px;
+    font-feature-settings: "liga" 0;
+}
+
+/* ============================================================================
+   3. PURE CSS 9-SLICE PIXEL BORDERS & CONTAINERS
+   ============================================================================ */
+
+/* A. Deltarune Iconic Dialogue Box */
+.pixel-dialogue-box {
+    position: relative;
+    background-color: #000000;
+    color: #ffffff;
+    padding: 16px 20px;
+    margin: 8px;
+    image-rendering: pixelated;
+    box-shadow:
+        0 -4px 0 0 var(--px-border-outer),
+        0 4px 0 0 var(--px-border-outer),
+        -4px 0 0 0 var(--px-border-outer),
+        4px 0 0 0 var(--px-border-outer),
+        0 -8px 0 0 var(--px-border-shadow),
+        0 8px 0 0 var(--px-border-shadow),
+        -8px 0 0 0 var(--px-border-shadow),
+        8px 0 0 0 var(--px-border-shadow);
+}
+
+.pixel-dialogue-box::before {
+    content: '';
+    position: absolute;
+    top: -4px; left: -4px; right: -4px; bottom: -4px;
+    pointer-events: none;
+    box-shadow:
+        inset 0 0 0 2px #000000,
+        inset 4px 4px 0 0 var(--px-border-outer),
+        inset -4px 4px 0 0 var(--px-border-outer),
+        inset 4px -4px 0 0 var(--px-border-outer),
+        inset -4px -4px 0 0 var(--px-border-outer);
+}
+
+/* B. Papers, Please Entry Permit / Inspection Document */
+.pixel-permit-card {
+    position: relative;
+    background-color: var(--px-paper-bg);
+    color: var(--px-paper-text);
+    border: 3px solid var(--px-border-shadow);
+    padding: 18px 22px;
+    box-shadow:
+        4px 4px 0 0 var(--px-border-shadow),
+        8px 8px 0 0 rgba(0, 0, 0, 0.4);
+    background-image: 
+        repeating-linear-gradient(to bottom, transparent, transparent 31px, var(--px-paper-ruled) 32px);
+    background-size: 100% 32px;
+}
+
+/* Răng cưa mép giấy visa đục lỗ */
+.pixel-perforated-top {
+    position: relative;
+}
+.pixel-perforated-top::after {
+    content: '';
+    position: absolute;
+    top: -6px; left: 0; right: 0;
+    height: 6px;
+    background-image: radial-gradient(circle, transparent 3px, var(--px-paper-bg) 3.5px);
+    background-size: 12px 6px;
+    background-position: top center;
+}
+
+/* C. Retro Terminal & Console Container */
+.pixel-terminal-box {
+    background-color: var(--px-panel-bg);
+    border: 3px solid var(--px-border-shadow);
+    box-shadow:
+        inset -3px -3px 0 0 var(--px-border-inner),
+        inset 3px 3px 0 0 var(--px-border-highlight),
+        0 4px 0 0 var(--px-border-shadow);
+    padding: 14px;
+}
+
+/* ============================================================================
+   4. CHUNKY TACTILE 3D ARCADE BUTTONS
+   ============================================================================ */
+
+.pixel-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    padding: 10px 18px;
+    min-height: 44px; /* Chuẩn tiếp xúc mobile WCAG 2.1 */
+    color: #ffffff;
+    background-color: #3b82f6;
+    border: none;
+    cursor: pointer;
+    user-select: none;
+    outline: none;
+    box-shadow:
+        inset -3px -3px 0 0 #1d4ed8,
+        inset 3px 3px 0 0 #93c5fd,
+        0 4px 0 0 var(--px-border-shadow);
+    transform: translateY(0);
+    transition: transform 0.05s ease, box-shadow 0.05s ease;
+}
+
+.pixel-btn:hover {
+    filter: brightness(1.1);
+}
+
+.pixel-btn:active {
+    transform: translateY(3px);
+    box-shadow:
+        inset -2px -2px 0 0 #1d4ed8,
+        inset 2px 2px 0 0 #93c5fd,
+        0 1px 0 0 var(--px-border-shadow);
+}
+
+.pixel-btn:focus-visible {
+    outline: 2px dashed var(--px-arcade-yellow);
+    outline-offset: 3px;
+}
+
+/* Biến thể màu nút Arcade */
+.pixel-btn-amber {
+    background-color: var(--px-arcade-amber);
+    box-shadow:
+        inset -3px -3px 0 0 #b45309,
+        inset 3px 3px 0 0 #fde68a,
+        0 4px 0 0 var(--px-border-shadow);
+}
+.pixel-btn-amber:active {
+    box-shadow:
+        inset -2px -2px 0 0 #b45309,
+        inset 2px 2px 0 0 #fde68a,
+        0 1px 0 0 var(--px-border-shadow);
+}
+
+.pixel-btn-green {
+    background-color: #16a34a;
+    box-shadow:
+        inset -3px -3px 0 0 #15803d,
+        inset 3px 3px 0 0 #86efac,
+        0 4px 0 0 var(--px-border-shadow);
+}
+.pixel-btn-green:active {
+    box-shadow:
+        inset -2px -2px 0 0 #15803d,
+        inset 2px 2px 0 0 #86efac,
+        0 1px 0 0 var(--px-border-shadow);
+}
+
+.pixel-btn-red {
+    background-color: #dc2626;
+    box-shadow:
+        inset -3px -3px 0 0 #991b1b,
+        inset 3px 3px 0 0 #fca5a5,
+        0 4px 0 0 var(--px-border-shadow);
+}
+.pixel-btn-red:active {
+    box-shadow:
+        inset -2px -2px 0 0 #991b1b,
+        inset 2px 2px 0 0 #fca5a5,
+        0 1px 0 0 var(--px-border-shadow);
+}
+
+/* ============================================================================
+   5. CON DẤU PAPERS, PLEASE (APPROVED & DENIED)
+   ============================================================================ */
+
+.stamp-seal {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 18px;
+    font-family: 'Press Start 2P', monospace;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border: 4px dashed currentColor;
+    border-radius: 4px;
+    user-select: none;
+    pointer-events: none;
+    transform: rotate(-5deg) scale(1);
+    opacity: 0.95;
+    filter: drop-shadow(2px 2px 0px rgba(0, 0, 0, 0.6));
+}
+
+.stamp-seal .stamp-title {
+    font-size: 15px;
+    margin-bottom: 3px;
+}
+
+.stamp-seal .stamp-sub {
+    font-size: 8px;
+    letter-spacing: 1px;
+    opacity: 0.85;
+}
+
+.stamp-approved {
+    color: var(--px-stamp-approved);
+    border-color: var(--px-stamp-approved);
+    background-color: var(--px-stamp-approved-bg);
+}
+
+.stamp-denied {
+    color: var(--px-stamp-denied);
+    border-color: var(--px-stamp-denied);
+    background-color: var(--px-stamp-denied-bg);
+}
+
+/* Hiệu ứng dập lún xuống mặt bàn khi chấm điểm */
+.stamp-slam-animation {
+    animation: stampSlam 0.22s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+}
+
+@keyframes stampSlam {
+    0% {
+        transform: scale(2.2) rotate(15deg);
+        opacity: 0;
+    }
+    60% {
+        transform: scale(0.92) rotate(-8deg);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1) rotate(-5deg);
+        opacity: 0.95;
+    }
+}
+
+/* ============================================================================
+   6. NGÔI SAO ACE ATTORNEY ([HOLD IT!] & [OBJECTION!])
+   ============================================================================ */
+
+.starburst-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    filter: drop-shadow(3px 3px 0px #000000);
+    user-select: none;
+    transform-origin: center;
+    animation: starburstPop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes starburstPop {
+    0% { transform: scale(0.4) rotate(-15deg); opacity: 0; }
+    80% { transform: scale(1.15) rotate(5deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* ============================================================================
+   7. MÀN HÌNH MGS CODEC & CRT SCANLINES SHADER
+   ============================================================================ */
+
+.pixel-crt-monitor {
+    position: relative;
+    background-color: var(--px-codec-bg);
+    border: 4px solid var(--px-bezel-border);
+    box-shadow:
+        inset 0 0 20px rgba(0, 0, 0, 0.8),
+        0 4px 0 0 var(--px-border-shadow);
+    overflow: hidden;
+}
+
+/* Lớp sọc quét CRT ngang */
+.pixel-scanlines::before {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(
+        var(--px-scanline-color) 50%,
+        transparent 50%
+    );
+    background-size: 100% 4px;
+    z-index: 10;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+/* Dao động ký xanh phosphor */
+.codec-waveform-line {
+    background-color: var(--px-codec-green);
+    box-shadow: 0 0 6px var(--px-codec-glow);
+}
+
+/* ============================================================================
+   8. SỔ TAY ĐIỀU TRA GÁY XOẮN (OBRA DINN SPIRAL LEDGER)
+   ============================================================================ */
+
+.pixel-spiral-notebook {
+    position: relative;
+    background-color: var(--px-paper-bg);
+    border: 3px solid var(--px-border-shadow);
+    padding-left: 28px;
+    box-shadow: 4px 4px 0 0 var(--px-border-shadow);
+}
+
+/* Gáy lò xo cuộn tròn */
+.pixel-spiral-coil {
+    position: absolute;
+    left: 8px;
+    top: 12px;
+    bottom: 12px;
+    width: 12px;
+    background-image: repeating-linear-gradient(
+        to bottom,
+        #475569 0px,
+        #475569 4px,
+        transparent 4px,
+        transparent 14px
+    );
+    background-size: 12px 14px;
+    border-radius: 4px;
+}
+
+/* Tab phân trang sổ tay bên mép phải */
+.pixel-notebook-tabs {
+    display: flex;
+    gap: 4px;
+}
+
+.pixel-tab-btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    padding: 8px 12px;
+    background-color: #334155;
+    color: #94a3b8;
+    border: 2px solid var(--px-border-shadow);
+    border-bottom: none;
+    cursor: pointer;
+    user-select: none;
+}
+
+.pixel-tab-btn.is-active {
+    background-color: var(--px-paper-bg);
+    color: var(--px-paper-text);
+    transform: translateY(2px);
+}
+
+/* ============================================================================
+   9. ARCADE HUD BAR & DELTARUNE SOUL HEARTS
+   ============================================================================ */
+
+.arcade-hud-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 14px;
+    background-color: #000000;
+    border-bottom: 3px solid var(--px-border-shadow);
+    color: var(--px-arcade-yellow);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    user-select: none;
+}
+
+/* Trái tim đỏ Deltarune */
+.pixel-heart {
+    display: inline-block;
+    width: 14px;
+    height: 12px;
+    background-color: var(--px-soul-red);
+    clip-path: polygon(
+        50% 100%, 0 45%, 0 20%, 25% 0, 50% 25%, 75% 0, 100% 20%, 100% 45%
+    );
+    filter: drop-shadow(0 0 2px rgba(255, 0, 0, 0.8));
+    animation: heartPulse 1.2s infinite ease-in-out;
+}
+
+@keyframes heartPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+}
+
+/* Rung màn hình khi đập bàn (Screen Shake) */
+.screen-shake-anim {
+    animation: screenShake 0.18s ease-in-out;
+}
+
+@keyframes screenShake {
+    0% { transform: translate(0, 0); }
+    20% { transform: translate(-3px, 2px); }
+    40% { transform: translate(3px, -2px); }
+    60% { transform: translate(-2px, -1px); }
+    80% { transform: translate(2px, 1px); }
+    100% { transform: translate(0, 0); }
+}
+
+/* ============================================================================
+   10. MOBILE RESPONSIVE OPTIMIZATION & SAFE-AREAS
+   ============================================================================ */
+
+@media (max-width: 768px) {
+    .pixel-dialogue-box {
+        padding: 12px 14px;
+        margin: 4px 0;
+    }
+
+    .pixel-permit-card {
+        padding: 14px 16px;
+    }
+
+    .arcade-hud-bar {
+        font-size: 8px;
+        padding: 6px 8px;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .pixel-btn {
+        font-size: 9px;
+        padding: 8px 14px;
+        min-height: 48px; /* Tối ưu ngón cái trên mobile */
+    }
+
+    .stamp-seal {
+        padding: 6px 12px;
+    }
+    .stamp-seal .stamp-title {
+        font-size: 12px;
+    }
+    .stamp-seal .stamp-sub {
+        font-size: 7px;
+    }
+
+    /* Đáy màn hình an toàn cho iOS Home Indicator */
+    .pixel-mobile-dock {
+        padding-bottom: max(12px, env(safe-area-inset-bottom));
+    }
+}
+
+/* Tôn trọng người dùng bật Prefers Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .stamp-slam-animation,
+    .starburst-badge,
+    .screen-shake-anim,
+    .pixel-heart,
+    .animate-citation-print {
+        animation: none !important;
+        transform: none !important;
+    }
+}
+
+/* ============================================================================
+   11. STAGE 4 ADVANCED DESK & CITATION PRINTER STYLES
+   ============================================================================ */
+
+/* Kẹp giấy kim loại cổ điển trên mép tài liệu */
+.pixel-paperclip {
+    position: absolute;
+    top: -10px;
+    left: 24px;
+    width: 14px;
+    height: 32px;
+    border: 3px solid #94a3b8;
+    border-radius: 8px 8px 4px 4px;
+    background: transparent;
+    box-shadow: 1px 1px 0 0 #0f172a;
+    z-index: 20;
+    pointer-events: none;
+}
+
+/* Phiếu phạt in từ máy in cơ học Papers, Please (Citation Slip) */
+.pixel-citation-slip {
+    background-color: #ffffff;
+    color: #000000;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    line-height: 1.5;
+    padding: 8px 12px;
+    border: 2px solid #000000;
+    border-top: none;
+    box-shadow: 2px 4px 0 0 rgba(0, 0, 0, 0.4);
+    margin-bottom: 8px;
+    transform-origin: top center;
+    position: relative;
+}
+
+.pixel-citation-slip .citation-header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 2px dashed #000000;
+    padding-bottom: 4px;
+    margin-bottom: 6px;
+    font-size: 7px;
+    color: #dc2626;
+}
+
+.pixel-citation-slip .citation-body {
+    margin-bottom: 6px;
+}
+
+.pixel-citation-slip .citation-body b {
+    color: #dc2626;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.pixel-citation-slip .citation-footer {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid #cccccc;
+    padding-top: 4px;
+    font-size: 6px;
+    color: #555555;
+}
+
+/* Hoạt ảnh máy in đùn giấy phạt từ trên trần xuống */
+.animate-citation-print {
+    animation: citationPrint 0.35s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+}
+
+@keyframes citationPrint {
+    0% {
+        transform: translateY(-80%) scaleY(0.2);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0) scaleY(1);
+        opacity: 1;
+    }
+}
+
+/* Văn bản đã được Khóa mực vĩnh viễn (Return of the Obra Dinn) */
+.is-ink-locked {
+    color: var(--px-paper-text) !important;
+    font-weight: 700;
+    position: relative;
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
+}
+
+.is-ink-locked::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 2px;
+    background-color: var(--px-stamp-approved);
+}
+
+/* Con trỏ lựa chọn tim đỏ nhấp nháy */
+.choice-cursor {
+    display: inline-block;
+    color: var(--px-soul-red);
+    animation: choiceHeartWiggle 0.8s infinite ease-in-out;
+}
+
+@keyframes choiceHeartWiggle {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(2px); }
+}
+
+/* ==========================================================================
+   STAGE 5: SPRING-LOADED STAMP, RPG STATS SHEET & PAPERBOY GAZETTE
+   ========================================================================== */
+
+/* 1. Con dấu lò xo nén cơ học (Spring-Loaded Mechanical Stamp) */
+.stamp-spring-tension {
+    transform: scale(0.92) translateY(6px) !important;
+    box-shadow: 0px 0px 0px 0px #000000 !important;
+    filter: brightness(1.25);
+    transition: transform 0.08s ease-in, box-shadow 0.08s ease-in !important;
+}
+
+.stamp-handle-wood {
+    background: linear-gradient(180deg, #78350f 0%, #451a03 100%);
+    border: 2px solid #000000;
+    box-shadow: inset 1px 1px 0px #b45309, 2px 2px 0px #000000;
+}
+
+/* 2. Thẻ chỉ số RPG Character Stats Sheet (Deltarune Aesthetic) */
+.pixel-stats-sheet {
+    box-shadow: 6px 6px 0px 0px #000000;
+    image-rendering: pixelated;
+}
+
+[data-skin="pixel-paper"] .pixel-stats-sheet {
+    background-color: #1e1b18 !important;
+    border-color: #fef3c7 !important;
+}
+
+.party-select-btn {
+    box-shadow: 2px 2px 0px 0px #000000;
+}
+
+.party-select-btn:active {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0px 0px #000000;
+}
+
+/* 3. Tờ báo vinh danh The Daily Lyre Extra! (1984 Atari Paperboy Gazette) */
+.pixel-newspaper-sheet {
+    background-color: #f4ecd8;
+    color: #1c1917;
+    background-image: radial-gradient(#d6c7a1 0.75px, transparent 0.75px);
+    background-size: 8px 8px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.animate-newspaper-spin {
+    animation: newspaperSpin 0.65s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes newspaperSpin {
+    0% {
+        transform: scale(0.05) rotate(-720deg);
+        opacity: 0;
+    }
+    70% {
+        transform: scale(1.05) rotate(10deg);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-newspaper-spin {
+        animation: none !important;
+        transform: scale(1) rotate(0deg) !important;
+        opacity: 1 !important;
+    }
+}
+
+/* ==========================================================================
+   STAGE 7: MGS CODEC SHADOWING LAB, COURTROOM DUEL & ARCADE DOCK
+   ========================================================================== */
+
+/* 1. MGS Codec 140.85 Shadowing Lab CRT Monitor */
+.pixel-codec-panel {
+    background-color: #02140a !important;
+    border: 3px solid var(--px-codec-green) !important;
+    box-shadow: inset 0 0 16px rgba(16, 185, 129, 0.25), 4px 4px 0px 0px #000000;
+    color: var(--px-codec-green);
+    position: relative;
+    overflow: hidden;
+}
+
+.codec-grid-overlay {
+    background-image: linear-gradient(rgba(16, 185, 129, 0.12) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(16, 185, 129, 0.12) 1px, transparent 1px);
+    background-size: 16px 16px;
+}
+
+.codec-waveform-line {
+    background-color: var(--px-codec-green);
+    box-shadow: 0 0 6px rgba(52, 211, 153, 0.8);
+    transition: height 0.08s ease-out;
+}
+
+/* 2. Ace Attorney [TAKE THAT!] Starburst Badge */
+.starburst-take-that polygon {
+    fill: #059669;
+    stroke: #fde047;
+    stroke-width: 3px;
+    filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.6));
+}
+
+/* 3. Chunky Retro 3D Arcade Styling for Smart Action Dock */
+[data-skin="pixel-dark"] #smartActionDock,
+[data-skin="pixel-paper"] #smartActionDock {
+    background: #000000 !important;
+    border: 3px solid #ffffff !important;
+    border-radius: 0px !important;
+    box-shadow: 6px 6px 0px 0px #000000 !important;
+}
+
+[data-skin="pixel-paper"] #smartActionDock {
+    background: #2b2520 !important;
+    border-color: #e6dfcc !important;
+}
+
+[data-skin="pixel-dark"] #smartActionDock button,
+[data-skin="pixel-paper"] #smartActionDock button {
+    border-radius: 0px !important;
+    box-shadow: 2px 2px 0px 0px #000000 !important;
+    font-family: 'Press Start 2P', monospace !important;
+    font-size: 10px !important;
+    letter-spacing: 0.5px !important;
+}
+
+[data-skin="pixel-dark"] #smartActionDock button:active,
+[data-skin="pixel-paper"] #smartActionDock button:active {
+    transform: translate(2px, 2px) !important;
+    box-shadow: 0px 0px 0px 0px #000000 !important;
+}
+
+/* ==========================================================================
+   STAGE 8: CLOZE PUNCH-CARDS, 8-BIT RPG FLASHCARDS & DAILY GOAL TROPHY
+   ========================================================================== */
+
+/* 1. Điền khuyết dạng thẻ đục lỗ cơ học (Cloze Mechanical Punch-Cards) */
+[data-skin="pixel-dark"] .cloze-blank-input,
+[data-skin="pixel-paper"] .cloze-blank-input {
+    border: 2px solid #ffffff !important;
+    border-radius: 0px !important;
+    background: #000000 !important;
+    color: #fde047 !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    box-shadow: inset 2px 2px 0px #000000 !important;
+    font-weight: 700 !important;
+    padding: 2px 6px !important;
+}
+
+[data-skin="pixel-paper"] .cloze-blank-input {
+    border-color: #451a03 !important;
+    background: #fef3c7 !important;
+    color: #1c1917 !important;
+}
+
+[data-skin="pixel-dark"] .cloze-blank-input.is-correct,
+[data-skin="pixel-paper"] .cloze-blank-input.is-correct {
+    border-color: #22c55e !important;
+    color: #22c55e !important;
+    background: #052e16 !important;
+}
+
+/* 2. Sổ tay Flashcard lật 3D phong cách Thẻ Trang Bị RPG (Earthbound / Undertale) */
+[data-skin="pixel-dark"] #flashcardModal .flashcard-face,
+[data-skin="pixel-paper"] #flashcardModal .flashcard-face {
+    border: 4px solid #ffffff !important;
+    border-radius: 0px !important;
+    background: #000000 !important;
+    box-shadow: 8px 8px 0px 0px #000000 !important;
+}
+
+[data-skin="pixel-paper"] #flashcardModal .flashcard-face {
+    border-color: #451a03 !important;
+    background: #f4ecd8 !important;
+    color: #1c1917 !important;
+}
+
+[data-skin="pixel-dark"] #flashcardModal button,
+[data-skin="pixel-paper"] #flashcardModal button {
+    border-radius: 0px !important;
+    font-family: 'Press Start 2P', monospace !important;
+    font-size: 9px !important;
+    box-shadow: 2px 2px 0px 0px #000000 !important;
+}
+
+/* 3. Vòng mục tiêu ngày Arcade Trophy & Streak Badge */
+[data-skin="pixel-dark"] #dailyGoalWidget,
+[data-skin="pixel-paper"] #dailyGoalWidget {
+    border: 2px solid #ffffff !important;
+    border-radius: 0px !important;
+    background: #000000 !important;
+    box-shadow: 2px 2px 0px 0px #000000 !important;
+}
+
+[data-skin="pixel-paper"] #dailyGoalWidget {
+    border-color: #451a03 !important;
+    background: #fef3c7 !important;
+}

@@ -425,11 +425,27 @@
                 const arrayBuffer = await blob.arrayBuffer();
                 try {
                     const audioBuffer = await state.audioContext.decodeAudioData(arrayBuffer);
-                    state.userRecordings[state.currentIdx] = {
+                    const newTake = {
+                        id: Date.now(),
                         blob,
                         buffer: audioBuffer,
-                        duration: audioBuffer.duration
+                        duration: audioBuffer.duration,
+                        rhythmScore: null,
+                        pitchScore: null,
+                        timestamp: new Date()
                     };
+
+                    // Phase 5: Multi-Take Management (Hold up to 3 takes per sentence)
+                    if (!Array.isArray(state.userTakes[state.currentIdx])) {
+                        state.userTakes[state.currentIdx] = [];
+                    }
+                    const takes = state.userTakes[state.currentIdx];
+                    if (takes.length >= 3) {
+                        takes.shift(); // FIFO rotation
+                    }
+                    takes.push(newTake);
+                    state.activeTakeNum = takes.length;
+                    state.userRecordings[state.currentIdx] = newTake;
 
                     // Invalidate user pitch cache
                     cachedUserPitch = null;
@@ -437,6 +453,7 @@
                     drawUserWaveform();
                     updateABButtonUI();
                     evaluateMatchScore();
+                    renderTakeChips();
 
                     // Save recording to IndexedDB
                     if (root.App.Storage) {
@@ -569,9 +586,63 @@
     // DUAL-WAVEFORM & PITCH CONTOUR CANVAS RENDERING
     // ==========================================================================
     function redrawWaveforms() {
+        // Multi-Take synchronization
+        const takes = state.userTakes[state.currentIdx];
+        if (takes && takes.length > 0) {
+            if (!state.activeTakeNum || state.activeTakeNum > takes.length) {
+                state.activeTakeNum = takes.length;
+            }
+            state.userRecordings[state.currentIdx] = takes[state.activeTakeNum - 1];
+        }
+
         drawNativeWaveform();
         drawUserWaveform();
         renderProsodyTeleprompter();
+        renderTakeChips();
+    }
+
+    function selectTake(takeNum) {
+        const takes = state.userTakes[state.currentIdx];
+        if (!takes || !takes[takeNum - 1]) return;
+        state.activeTakeNum = takeNum;
+        state.userRecordings[state.currentIdx] = takes[takeNum - 1];
+        cachedUserPitch = null;
+        drawUserWaveform();
+        updateABButtonUI();
+        evaluateMatchScore();
+        renderTakeChips();
+        if (AudioEngine && AudioEngine.playSynthesizedSound) {
+            AudioEngine.playSynthesizedSound('click');
+        }
+    }
+
+    function renderTakeChips() {
+        const container = document.getElementById('shadowingTakeChipsContainer');
+        if (!container) return;
+
+        const takes = state.userTakes[state.currentIdx];
+        if (!takes || takes.length === 0) {
+            container.innerHTML = '';
+            return;
+        }
+
+        container.innerHTML = takes.map((take, idx) => {
+            const num = idx + 1;
+            const isActive = (num === state.activeTakeNum);
+            const scoreStr = take.rhythmScore ? ` ${take.rhythmScore}%` : '';
+            const activeClass = isActive
+                ? "bg-accent-sage text-studio-950 font-bold border-accent-sage shadow-sm shadow-emerald-500/20"
+                : "bg-studio-850 hover:bg-studio-800 text-gray-400 hover:text-white border-studio-border";
+            return `<button type="button" data-take-num="${num}" class="take-chip-btn px-2 py-0.5 rounded text-[10px] font-mono border transition ${activeClass}">T${num}${scoreStr}</button>`;
+        }).join('');
+
+        container.querySelectorAll('.take-chip-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const num = parseInt(btn.getAttribute('data-take-num'), 10);
+                selectTake(num);
+            });
+        });
     }
 
     function renderWaveformCanvas(canvasId, buffer, startSec, durationSec, colorStops, pitchColor, getPitchFn, emptyMessage) {
@@ -932,6 +1003,7 @@
         const durDiff = (rec.duration - seg.duration).toFixed(1);
         const durRatio = Math.min(seg.duration, rec.duration) / Math.max(seg.duration, rec.duration);
         const rhythmScore = Math.min(99, Math.max(60, Math.round(durRatio * 100)));
+        rec.rhythmScore = rhythmScore;
 
         if (rhythmScoreBadge) {
             rhythmScoreBadge.textContent = `${rhythmScore}%`;
@@ -959,10 +1031,15 @@
             }
 
             const pitchSimilarity = SpeechAnalysis.calculatePitchSimilarity(cachedNativePitch, cachedUserPitch);
+            rec.pitchScore = pitchSimilarity;
+
             if (pitchScoreBadge) {
                 pitchScoreBadge.textContent = `${pitchSimilarity}%`;
                 pitchScoreBadge.className = pitchSimilarity >= 75 ? "text-accent-sage font-bold" : "text-accent-amber font-bold";
             }
+
+            // Refresh take chip badges with updated scores
+            renderTakeChips();
 
             // Harmonic Resonance Glow when Rhythm & Pitch Lock together
             const userWaveformBox = document.getElementById('userWaveformBox');
@@ -973,6 +1050,15 @@
                 } else {
                     userWaveformBox.classList.remove('harmonic-resonance-active');
                 }
+            }
+
+            // Version 4.0: Retro Pixel Game Loop Shadowing Hook
+            if (root.App && root.App.PixelGameLoop && typeof root.App.PixelGameLoop.onShadowingEvaluated === 'function') {
+                root.App.PixelGameLoop.onShadowingEvaluated({
+                    rhythmScore,
+                    pitchScore: rec.pitchScore || rhythmScore,
+                    takeNum: state.activeTakeNum || 1
+                });
             }
         }
     }
@@ -992,7 +1078,9 @@
         cancelSequentialAB,
         setShadowingMode,
         setShadowingStep,
-        toggleBlindMode
+        toggleBlindMode,
+        selectTake,
+        renderTakeChips
     };
 
 })(typeof window !== 'undefined' ? window : this);

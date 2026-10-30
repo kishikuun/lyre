@@ -1,18 +1,29 @@
 /**
- * DictaShadow Studio - PWA Offline Service Worker (sw.js)
+ * Lyre Studio - PWA Offline Service Worker (sw.js)
  * Caches app shell & external UI assets for 100% offline study
  */
-const CACHE_NAME = 'dictashadow-studio-v3';
+const CACHE_NAME = 'lyre-studio-v4.1';
 
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
+  './sandbox-pixel.html',
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './css/studio.css',
+  './css/pixel-game.css',
+  './js/pixel-sfx.js',
+  './js/pixel-dialogue.js',
+  './js/pixel-desk.js',
+  './js/pixel-stats.js',
+  './js/pixel-gazette.js',
+  './js/pixel-gameloop.js',
   './js/state.js',
+  './js/curated-lessons.js',
+  './js/tts-generator.js',
   './js/srt-parser.js',
+  './js/vad-slicer.js',
   './js/diff-checker.js',
   './js/audio-engine.js',
   './js/vinyl-jog.js',
@@ -21,6 +32,8 @@ const ASSETS_TO_CACHE = [
   './js/shadowing.js',
   './js/hotkeys.js',
   './js/storage.js',
+  './js/dictionary.js',
+  './js/analytics.js',
   './js/srt-editor.js',
   './js/gestures.js',
   './js/app.js'

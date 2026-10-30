@@ -180,6 +180,14 @@
         state.isPlaying = true;
         state.activeABTrack = 'native';
 
+        // Phase 2 (Lyre Studio): Speak with natural voice if studying a Curated/TTS lesson
+        if (state.isTTSLesson && root.App && root.App.TTSGenerator) {
+            root.App.TTSGenerator.speakSentence(seg.text, {
+                rate: state.playbackRate,
+                lang: state.ttsVoiceLang || 'en-US'
+            });
+        }
+
         // Tận dụng onended phần cứng Web Audio để bắt đúng lúc kết thúc (không bị trôi nhịp khi đổi speed hoặc ẩn tab)
         const currentSource = state.sourceNode;
         currentSource.onended = () => {
@@ -304,6 +312,9 @@
 
         stopSourceOnly();
         stopUserAudioOnly();
+        if (state.isTTSLesson && root.App && root.App.TTSGenerator) {
+            root.App.TTSGenerator.cancelSpeech();
+        }
         state.isPlaying = false;
         state.isUserPlaying = false;
         clearTimeout(playbackTimeout);
@@ -389,6 +400,10 @@
             try { node.stop(); } catch (e) { }
             node.disconnect();
         }
+        if (nativePanNode) {
+            try { nativePanNode.disconnect(); } catch (e) { }
+            nativePanNode = null;
+        }
     }
 
     function stopUserAudioOnly() {
@@ -399,11 +414,18 @@
             try { node.stop(); } catch (e) { }
             node.disconnect();
         }
+        if (userPanNode) {
+            try { userPanNode.disconnect(); } catch (e) { }
+            userPanNode = null;
+        }
     }
 
     function handleSegmentEnd() {
         stopSourceOnly();
         stopUserAudioOnly();
+        if (state.isTTSLesson && root.App && root.App.TTSGenerator) {
+            root.App.TTSGenerator.cancelSpeech();
+        }
         state.isPlaying = false;
         state.isUserPlaying = false;
         clearInterval(tickerInterval);
@@ -440,6 +462,19 @@
                 // Update Waveform Playhead in Shadowing Lab
                 if (root.App.Shadowing) {
                     root.App.Shadowing.updateWaveformPlayhead(currentPosInSeg, seg.duration);
+                }
+
+                // Update Mini-Waveform Playhead in Dictation Mode (Phase 5)
+                if (root.App.Dictation && typeof root.App.Dictation.updateMiniWaveformPlayhead === 'function') {
+                    root.App.Dictation.updateMiniWaveformPlayhead(currentPosInSeg, seg.duration);
+                }
+
+                // Phase 5: Check A-B Micro-Looping in Dictation Mode
+                if (state.microLoopA !== null && state.microLoopB !== null && state.microLoopB > state.microLoopA) {
+                    if (currentPosInSeg >= state.microLoopB) {
+                        seek(state.microLoopA);
+                        return;
+                    }
                 }
             }
         }, 35);
@@ -486,6 +521,20 @@
                 playIcon.setAttribute('data-lucide', 'play');
             }
             if (window.lucide) lucide.createIcons();
+        }
+
+        const mobilePlayIcon = document.getElementById('mobilePlayIcon');
+        if (mobilePlayIcon) {
+            mobilePlayIcon.setAttribute('data-lucide', playing ? 'pause' : 'play');
+            if (window.lucide) lucide.createIcons();
+        }
+
+        // Phase 1 (Lyre Studio): Synchronize Smart Action Dock playback state
+        if (root.App && typeof root.App.updateSmartActionDock === 'function') {
+            const dockState = root.App.getDockState ? root.App.getDockState() : null;
+            if (dockState !== 'typing' && dockState !== 'graded') {
+                root.App.updateSmartActionDock(playing ? 'playing' : 'idle');
+            }
         }
 
         const vinylDisk = document.getElementById('vinylDisk');
@@ -535,7 +584,21 @@
             const now = state.audioContext.currentTime;
 
             if (type === 'click' || type === 'switch') {
-                // 1. Transient click
+                const profile = state.soundProfile || 'typewriter';
+                if (profile === 'mute') return;
+
+                if (profile === 'cherry') {
+                    // Crisp high click (Cherry Blue style)
+                    playOneShotTone('sine', 3200, 700, 0.2, 0.015);
+                    return;
+                }
+                if (profile === 'soft') {
+                    // Muffled membrane thud (Soft style)
+                    playOneShotTone('sine', 380, 80, 0.14, 0.035);
+                    return;
+                }
+
+                // Default Optical Typewriter click
                 playOneShotTone('triangle', 950, 100, 0.2, 0.025);
 
                 // 2. Chassis thock (reusing pre-cached noise buffer to avoid GC allocations)
@@ -693,6 +756,7 @@
         initAudioContext,
         getCurrentSegment,
         extractWaveformPeaks,
+        extractPeaks: extractWaveformPeaks, // Alias bảo vệ tương thích ngược
         play,
         playUserRecording,
         playStereoContrast,

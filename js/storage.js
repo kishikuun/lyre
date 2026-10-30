@@ -6,7 +6,7 @@
     'use strict';
 
     const DB_NAME = 'DictaShadowStudioDB';
-    const DB_VERSION = 1;
+    const DB_VERSION = 2;
     let dbInstance = null;
 
     function openDB() {
@@ -28,6 +28,12 @@
                 }
                 if (!db.objectStoreNames.contains('recordings')) {
                     db.createObjectStore('recordings', { keyPath: 'sentenceIdx' });
+                }
+                if (!db.objectStoreNames.contains('vocabulary')) {
+                    db.createObjectStore('vocabulary', { keyPath: 'word' });
+                }
+                if (!db.objectStoreNames.contains('dict_cache')) {
+                    db.createObjectStore('dict_cache', { keyPath: 'word' });
                 }
             };
 
@@ -130,6 +136,37 @@
         });
     }
 
+    // Phase 4: Study Analytics & Streak Persistence
+    async function saveAnalytics(stats) {
+        const db = await openDB();
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction('progress', 'readwrite');
+            const store = tx.objectStore('progress');
+            const item = {
+                key: 'study_analytics',
+                streak: stats.streak || 1,
+                lastDate: stats.lastDate || new Date().toISOString().slice(0, 10),
+                totalSeconds: stats.totalSeconds || 0,
+                phoneticErrors: stats.phoneticErrors || {},
+                updatedAt: Date.now()
+            };
+            const req = store.put(item);
+            req.onsuccess = () => resolve(item);
+            req.onerror = () => reject(req.error);
+        });
+    }
+
+    async function getAnalytics() {
+        const db = await openDB();
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction('progress', 'readonly');
+            const store = tx.objectStore('progress');
+            const req = store.get('study_analytics');
+            req.onsuccess = () => resolve(req.result || null);
+            req.onerror = () => reject(req.error);
+        });
+    }
+
     // Shadowing User Voice Recordings
     async function saveUserRecording(sentenceIdx, blob) {
         const db = await openDB();
@@ -158,10 +195,119 @@
         });
     }
 
+    // Vocabulary Notebook Operations
+    async function saveVocabWord(item) {
+        if (!item || !item.word) return false;
+        const db = await openDB();
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction('vocabulary', 'readwrite');
+            const store = tx.objectStore('vocabulary');
+            const record = {
+                word: item.word.trim().toLowerCase(),
+                displayWord: item.word.trim(),
+                phonetic: item.phonetic || '',
+                pos: item.pos || '',
+                definition: item.definition || '',
+                example: item.example || '',
+                contextSentence: item.contextSentence || '',
+                audioUrl: item.audioUrl || '',
+                addedAt: item.addedAt || Date.now(),
+                tags: item.tags || ['DictaShadow'],
+                repetitions: typeof item.repetitions === 'number' ? item.repetitions : 0,
+                interval: typeof item.interval === 'number' ? item.interval : 0,
+                easeFactor: typeof item.easeFactor === 'number' ? item.easeFactor : 2.5,
+                nextReviewDate: typeof item.nextReviewDate === 'number' ? item.nextReviewDate : 0,
+                lastReviewedAt: typeof item.lastReviewedAt === 'number' ? item.lastReviewedAt : 0
+            };
+            const req = store.put(record);
+            req.onsuccess = () => resolve(record);
+            req.onerror = () => reject(req.error);
+        });
+    }
+
+    async function getVocabWord(word) {
+        if (!word) return null;
+        const db = await openDB();
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction('vocabulary', 'readonly');
+            const store = tx.objectStore('vocabulary');
+            const req = store.get(word.trim().toLowerCase());
+            req.onsuccess = () => resolve(req.result || null);
+            req.onerror = () => reject(req.error);
+        });
+    }
+
+    async function getAllVocab() {
+        const db = await openDB();
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction('vocabulary', 'readonly');
+            const store = tx.objectStore('vocabulary');
+            const req = store.getAll();
+            req.onsuccess = () => {
+                const list = req.result || [];
+                list.sort((a, b) => (b.addedAt || 0) - (a.addedAt || 0));
+                resolve(list);
+            };
+            req.onerror = () => reject(req.error);
+        });
+    }
+
+    async function deleteVocabWord(word) {
+        if (!word) return false;
+        const db = await openDB();
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction('vocabulary', 'readwrite');
+            const store = tx.objectStore('vocabulary');
+            const req = store.delete(word.trim().toLowerCase());
+            req.onsuccess = () => resolve(true);
+            req.onerror = () => reject(req.error);
+        });
+    }
+
+    async function clearVocab() {
+        const db = await openDB();
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction('vocabulary', 'readwrite');
+            const store = tx.objectStore('vocabulary');
+            const req = store.clear();
+            req.onsuccess = () => resolve(true);
+            req.onerror = () => reject(req.error);
+        });
+    }
+
+    // Dictionary Offline API Cache
+    async function saveDictCache(word, data) {
+        if (!word || !data) return false;
+        const db = await openDB();
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction('dict_cache', 'readwrite');
+            const store = tx.objectStore('dict_cache');
+            const req = store.put({
+                word: word.trim().toLowerCase(),
+                data: data,
+                cachedAt: Date.now()
+            });
+            req.onsuccess = () => resolve(true);
+            req.onerror = () => reject(req.error);
+        });
+    }
+
+    async function getDictCache(word) {
+        if (!word) return null;
+        const db = await openDB();
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction('dict_cache', 'readonly');
+            const store = tx.objectStore('dict_cache');
+            const req = store.get(word.trim().toLowerCase());
+            req.onsuccess = () => resolve(req.result ? req.result.data : null);
+            req.onerror = () => reject(req.error);
+        });
+    }
+
     // Clear all offline study data
     async function clearAll() {
         const db = await openDB();
-        const stores = ['media', 'subtitles', 'progress', 'recordings'];
+        const stores = ['media', 'subtitles', 'progress', 'recordings', 'dict_cache'];
         const tx = db.transaction(stores, 'readwrite');
         stores.forEach(s => tx.objectStore(s).clear());
         return new Promise((resolve) => {
@@ -177,8 +323,17 @@
         getSRT,
         saveProgress,
         getProgress,
+        saveAnalytics,
+        getAnalytics,
         saveUserRecording,
         getAllUserRecordings,
+        saveVocabWord,
+        getVocabWord,
+        getAllVocab,
+        deleteVocabWord,
+        clearVocab,
+        saveDictCache,
+        getDictCache,
         clearAll
     };
 

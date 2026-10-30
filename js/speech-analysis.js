@@ -85,9 +85,37 @@
     }
 
     /**
-     * Extract Pitch Contour Series across an AudioBuffer segment
+     * 3-Point Gaussian-Weighted Moving Average Smoothing Filter for Pitch Contours
+     * Eliminates erratic pitch spikes caused by microphone jitter or whisper harmonics
      */
-    function extractPitchContour(audioBuffer, startSec, durationSec, numPoints = 80) {
+    function smoothPitchContour(rawPitches) {
+        if (!rawPitches || rawPitches.length === 0) return new Float32Array(0);
+        const len = rawPitches.length;
+        const smoothed = new Float32Array(len);
+        for (let i = 0; i < len; i++) {
+            if (rawPitches[i] <= 0) {
+                smoothed[i] = 0;
+                continue;
+            }
+            let sum = rawPitches[i] * 2;
+            let weight = 2;
+            if (i > 0 && rawPitches[i - 1] > 0) {
+                sum += rawPitches[i - 1];
+                weight += 1;
+            }
+            if (i < len - 1 && rawPitches[i + 1] > 0) {
+                sum += rawPitches[i + 1];
+                weight += 1;
+            }
+            smoothed[i] = Math.round((sum / weight) * 10) / 10;
+        }
+        return smoothed;
+    }
+
+    /**
+     * Extract Pitch Contour Series across an AudioBuffer segment with Pitch Gate & Smoothing
+     */
+    function extractPitchContour(audioBuffer, startSec, durationSec, numPoints = 80, options = {}) {
         if (!audioBuffer) return new Float32Array(numPoints);
 
         const sampleRate = audioBuffer.sampleRate;
@@ -98,17 +126,29 @@
         const pitches = new Float32Array(numPoints);
         const windowSize = 1024;
         const step = Math.floor((totalSamples - windowSize) / numPoints);
+        const pitchGateRMS = options.pitchGateRMS !== undefined ? options.pitchGateRMS : 0.015;
 
         for (let i = 0; i < numPoints; i++) {
             const offset = startSample + (i * Math.max(1, step));
             if (offset + windowSize <= channelData.length) {
                 const slice = channelData.subarray(offset, offset + windowSize);
-                const pitch = autoCorrelatePitch(slice, sampleRate);
-                pitches[i] = pitch > 0 ? pitch : 0;
+
+                // Pitch Gate: Energy check to avoid tracking ambient noise or breath
+                let sumSq = 0;
+                for (let k = 0; k < slice.length; k++) sumSq += slice[k] * slice[k];
+                const rms = Math.sqrt(sumSq / slice.length);
+
+                if (rms < pitchGateRMS) {
+                    pitches[i] = 0;
+                } else {
+                    const pitch = autoCorrelatePitch(slice, sampleRate);
+                    pitches[i] = pitch > 0 ? pitch : 0;
+                }
             }
         }
 
-        return pitches;
+        // Apply contour smoothing filter
+        return smoothPitchContour(pitches);
     }
 
     /**
@@ -332,6 +372,7 @@
     root.App.SpeechAnalysis = {
         autoCorrelatePitch,
         extractPitchContour,
+        smoothPitchContour,
         calculatePitchSimilarity,
         countSyllables,
         generateProsodyTokens,
