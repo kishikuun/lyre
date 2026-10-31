@@ -485,7 +485,10 @@
 
     function updateTimeDisplay(absTime, seg) {
         const curEl = document.getElementById('currentTimeDisplay');
-        if (curEl) curEl.textContent = root.App.SRTParser.formatTime(absTime);
+        const formatted = root.App.SRTParser.formatTime(absTime);
+        if (curEl) curEl.textContent = formatted;
+        const tapeCounter = document.getElementById('tapeCounterDisplay');
+        if (tapeCounter) tapeCounter.textContent = formatted;
 
         const timelineProgress = document.getElementById('timelineProgress');
         const timelineThumb = document.getElementById('timelineThumb');
@@ -530,6 +533,11 @@
         if (mobilePlayIcon) {
             mobilePlayIcon.setAttribute('data-lucide', playing ? 'pause' : 'play');
             if (window.lucide) lucide.createIcons();
+        }
+
+        // Stage 10 (Lyre Studio V5.0): Synchronize Retro Game Booth Traveler Talking mouth flap
+        if (root.App && root.App.PixelGameLoop && root.App.PixelGameLoop.booth) {
+            root.App.PixelGameLoop.booth.setTalking(playing);
         }
 
         // Phase 1 (Lyre Studio): Synchronize Smart Action Dock playback state

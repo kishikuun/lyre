@@ -43,13 +43,9 @@
                 state.standardInputText = dictationTextarea.value;
                 updateWordStats();
 
-                // Synchronize with Retro Game Permit Input if present
-                const permitInput = document.getElementById('gamePermitInput');
-                if (permitInput && permitInput !== document.activeElement) {
-                    permitInput.value = dictationTextarea.value;
-                    if (root.App && root.App.PixelGameLoop && typeof root.App.PixelGameLoop._updateInputCounts === 'function') {
-                        root.App.PixelGameLoop._updateInputCounts();
-                    }
+                // Synchronize Single-DOM Retro Game Permit counters
+                if (root.App && root.App.PixelGameLoop && typeof root.App.PixelGameLoop._updateInputCounts === 'function') {
+                    root.App.PixelGameLoop._updateInputCounts();
                 }
 
                 // Phase 1 (Lyre Studio): Update Smart Action Dock state
@@ -109,7 +105,7 @@
                     state.standardInputText = '';
                     updateWordStats();
                     if (diffResultsCard) diffResultsCard.classList.add('hidden');
-                    dictationTextarea.focus();
+                    dictationTextarea.focus({ preventScroll: true });
                     AudioEngine.playSynthesizedSound('click');
                 }
             });
@@ -197,7 +193,7 @@
             if (streamModeArea) streamModeArea.classList.toggle('hidden', mode !== 'stream');
 
             if (mode === 'standard') {
-                if (dictationTextarea) dictationTextarea.focus();
+                if (dictationTextarea) dictationTextarea.focus({ preventScroll: true });
             } else if (mode === 'cloze') {
                 renderClozeForCurrentSegment();
             } else if (mode === 'stream') {
@@ -261,7 +257,7 @@
         if (dictationTextarea) {
             dictationTextarea.value = '';
             state.standardInputText = '';
-            dictationTextarea.focus();
+            dictationTextarea.focus({ preventScroll: true });
         }
         if (diffResultsCard) {
             diffResultsCard.classList.add('hidden');
@@ -477,7 +473,7 @@
             // Level 4: Reveal word directly
             dictationTextarea.value = (dictationTextarea.value.trim() + ' ' + targetWord).trim() + ' ';
             state.standardInputText = dictationTextarea.value;
-            dictationTextarea.focus();
+            dictationTextarea.focus({ preventScroll: true });
             updateWordStats();
             if (hintDisplay) {
                 hintDisplay.innerHTML = `<span class="text-accent-sage font-bold">✨ GỢI Ý CẤP 4:</span> Đã điền từ: <b class="text-white font-mono underline">${targetWord}</b>`;
@@ -516,7 +512,7 @@
         const streamTypeInput = document.getElementById('streamTypeInput');
         if (streamTypeInput) {
             streamTypeInput.value = '';
-            streamTypeInput.focus();
+            streamTypeInput.focus({ preventScroll: true });
         }
 
         renderMaskedStream();
@@ -1170,6 +1166,10 @@
                 clozeScoreBadge.textContent = `CẦN CẢI THIỆN · ${accuracy}% (${correctCount}/${total} Ô ĐÚNG)`;
                 clozeScoreBadge.className = 'text-xs font-bold font-mono px-3 py-1 rounded-lg bg-rose-500/20 text-accent-rose border border-rose-500/40';
             }
+        }
+
+        if (root.App && root.App.PixelGameLoop && typeof root.App.PixelGameLoop.onClozeGraded === 'function') {
+            root.App.PixelGameLoop.onClozeGraded(accuracy);
         }
 
         AudioEngine.playSynthesizedSound('stamp');

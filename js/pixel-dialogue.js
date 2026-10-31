@@ -133,7 +133,7 @@
                                 <div class="px-font-arcade text-[10px] text-amber-400 dialogue-speaker">
                                     * INSPECTOR BYTE:
                                 </div>
-                                <div class="flex items-center gap-1.5 text-[8px] px-font-arcade text-gray-500">
+                                <div class="flex items-center gap-1.5 text-[9px] px-font-arcade text-slate-300 font-bold">
                                     <span>[SPACE/CLICK: BỎ QUA]</span>
                                 </div>
                             </div>
@@ -271,8 +271,8 @@
                     span.style.color = token.color;
                     this.dom.textStream.appendChild(span);
 
-                    // Phát tiếng bíp nếu không phải dấu cách/xuống dòng
-                    if (sfx && token.char.trim() !== '') {
+                    // Phát tiếng bíp nhịp nhàng mỗi 3 ký tự (cadence phong cách Deltarune, không bắn liên hồi gây chói tai)
+                    if (sfx && token.char.trim() !== '' && this.tokenIndex % 3 === 0) {
                         sfx.playTypewriterBlip();
                     }
 

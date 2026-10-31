@@ -23,7 +23,7 @@
     let masterGain = null;
     let isMuted = false;
     let typewriterEnabled = true;
-    let volumeLevel = 0.8;
+    let volumeLevel = 0.35;
 
     /**
      * Khởi tạo hoặc lấy Web Audio Context hiện hành
@@ -179,21 +179,26 @@
             if (!ctx) return;
             const now = ctx.currentTime;
 
-            // Biến thiên tần số ngẫu nhiên nhẹ (465Hz - 495Hz) cho âm thanh tự nhiên như game thật
-            const baseFreq = 480 + (Math.random() * 30 - 15);
+            // Biến thiên tần số ngẫu nhiên nhẹ (380Hz - 420Hz) trầm ấm hơn, dễ chịu cho tai
+            const baseFreq = 400 + (Math.random() * 30 - 15);
 
             const osc = ctx.createOscillator();
-            const gain = createSubGain(ctx, 0.05);
+            const filter = ctx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(800, now);
 
-            osc.type = 'square';
+            const gain = createSubGain(ctx, 0.02);
+
+            osc.type = 'triangle'; // triangle thay cho square gắt, tạo tiếng gõ máy chữ cơ học êm tai
             osc.frequency.setValueAtTime(baseFreq, now);
 
-            gain.gain.setValueAtTime(0.05 * volumeLevel, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.026);
+            gain.gain.setValueAtTime(0.02 * volumeLevel, now);
+            gain.gain.exponentialRampToValueAtTime(0.0005, now + 0.02);
 
-            osc.connect(gain);
+            osc.connect(filter);
+            filter.connect(gain);
             osc.start(now);
-            osc.stop(now + 0.028);
+            osc.stop(now + 0.022);
         },
 
         // ====================================================================

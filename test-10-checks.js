@@ -1123,12 +1123,13 @@ assert(
 }
 
 // ----------------------------------------------------------------------
-// TEST 25: Hệ Thống Vật Liệu Retro Pixel Game (css/pixel-game.css, js/pixel-sfx.js & sandbox-pixel.html)
+// TEST 25: Hệ Thống Vật Liệu Retro Pixel Game (css/pixel-game.css, js/pixel-sfx.js & Unified index.html)
 // ----------------------------------------------------------------------
 {
     const pixelCSS = fs.readFileSync('css/pixel-game.css', 'utf8');
     const pixelSFXCode = fs.readFileSync('js/pixel-sfx.js', 'utf8');
-    const sandboxHTML = fs.readFileSync('sandbox-pixel.html', 'utf8');
+    const indexHTML = fs.readFileSync('index.html', 'utf8');
+    const gameloopCode = fs.readFileSync('js/pixel-gameloop.js', 'utf8');
 
     // 1. CSS Design Tokens & 9-Slice Box-Shadows
     const hasDarkSkin = pixelCSS.includes('data-skin="pixel-dark"') && pixelCSS.includes('--px-bg-deep: #0c0f17');
@@ -1218,21 +1219,85 @@ assert(
         audioExecutedCleanly = false;
     }
 
-    // 3. Sandbox HTML Verification
-    const hasSandboxCSS = sandboxHTML.includes('href="css/pixel-game.css"');
-    const hasSandboxJS = sandboxHTML.includes('src="js/pixel-sfx.js"');
-    const hasSandboxDeltarune = sandboxHTML.includes('pixel-dialogue-box') && sandboxHTML.includes('id="inspectorAvatar"');
-    const hasSandboxPermit = sandboxHTML.includes('pixel-permit-card') && sandboxHTML.includes('id="btnStampApproved"');
-    const hasSandboxStarburst = sandboxHTML.includes('btnTriggerHoldIt') && sandboxHTML.includes('btnTriggerObjection');
-    const hasSandboxCodec = sandboxHTML.includes('pixel-crt-monitor') && sandboxHTML.includes('MEMORY 140.85');
+    // 3. Unified index.html, Stage 3 Booth & Single-DOM Workbench Verification
+    const boothCode = fs.readFileSync('js/pixel-booth.js', 'utf8');
+    const swCode = fs.readFileSync('sw.js', 'utf8');
+    const audioEngineCode = fs.readFileSync('js/audio-engine.js', 'utf8');
 
-    const sandboxAllValid = hasSandboxCSS && hasSandboxJS && hasSandboxDeltarune &&
-        hasSandboxPermit && hasSandboxStarburst && hasSandboxCodec;
+    eval(`(function(root) { ${boothCode} })(fakeWindow)`);
+    const PixelTraveler = fakeWindow.App.PixelTraveler;
+    const PixelBooth = fakeWindow.App.PixelBooth;
+    const PixelCampaignHub = fakeWindow.App.PixelCampaignHub;
+
+    // A. PixelTraveler procedural generator check
+    const traveler1 = PixelTraveler.generate(1);
+    const traveler2 = PixelTraveler.generate(2);
+    const travelerValid = traveler1 && traveler1.fullName && traveler1.nationality &&
+        traveler1.passportId.startsWith('AR-') && traveler1.svg.includes('<svg') &&
+        traveler2 && traveler2.fullName !== traveler1.fullName;
+
+    // B. PixelBooth methods check
+    const boothInstance = new PixelBooth();
+    const hasBoothMethods = typeof boothInstance.init === 'function' &&
+        typeof boothInstance.presentTraveler === 'function' &&
+        typeof boothInstance.openShutter === 'function' &&
+        typeof boothInstance.closeShutter === 'function' &&
+        typeof boothInstance.setTalking === 'function' &&
+        typeof boothInstance.setVerdict === 'function';
+
+    // C. PixelCampaignHub methods check
+    const hasCampaignMethods = typeof PixelCampaignHub.render === 'function';
+
+    // D. CSS & Integration presence
+    const hasBoothCSS = pixelCSS.includes('.pixel-booth-viewport') &&
+        pixelCSS.includes('.pixel-shutter') &&
+        pixelCSS.includes('.pixel-campaign-hub');
+    const hasIndexCSS = indexHTML.includes('href="css/pixel-game.css"') && indexHTML.includes('Press+Start+2P') && indexHTML.includes('VT323');
+    const hasIndexJS = indexHTML.includes('src="js/pixel-sfx.js"') && indexHTML.includes('src="js/pixel-booth.js"');
+    const hasIndexDeltarune = gameloopCode.includes('gameDialogueSlot');
+    const hasIndexPermit = gameloopCode.includes('gamePermitTopStrip') && gameloopCode.includes('id="btnGameStampApproved"');
+    const hasIndexStarburst = gameloopCode.includes('id="gameStarburstSlot"');
+    const hasIndexCodec = gameloopCode.includes('MEMORY 140.85');
+    const hasIndexBoothMount = gameloopCode.includes('pixelBoothMount');
+    const hasSwBoothCache = swCode.includes('pixel-booth.js');
+    const hasAudioMouthSync = audioEngineCode.includes('PixelGameLoop.booth.setTalking');
+
+    // E. Regression guards (Stage 3 audit): hub shift IDs must exist, CSS must be valid, hub must not wipe the original empty-state card
+    const lessonsSrc = fs.readFileSync('js/curated-lessons.js', 'utf8');
+    const hubIds = [...boothCode.matchAll(/id: '(lesson-[^']+)'/g)].map(m => m[1]);
+    const hubIdsValid = hubIds.length === 6 && hubIds.every(id => lessonsSrc.includes("id: '" + id + "'"));
+    const cssDeclsValid = !/pointer-events-none;/.test(pixelCSS);
+    const hubNonDestructive = gameloopCode.includes('pixelCampaignMount') && !/emptyCard\.innerHTML\s*=/.test(gameloopCode);
+
+    // F. Behavioural: hub click dispatches the right shift id; mouth-flap restarts on a new sprite
+    let clickedShift = null;
+    const fakeCard = { getAttribute: () => 'lesson-b1-interview' };
+    const hubContainer = {
+        innerHTML: '',
+        querySelectorAll: (sel) => sel === '.pixel-shift-card' ? [{ addEventListener: (ev, fn) => fn({ currentTarget: fakeCard }) }] : [],
+        querySelector: () => null
+    };
+    PixelCampaignHub.render(hubContainer, (id) => { clickedShift = id; });
+    const hubClickValid = clickedShift === 'lesson-b1-interview';
+
+    const talkBooth = new PixelBooth();
+    talkBooth.travelerMount = { innerHTML: '', classList: { add() {}, remove() {} }, offsetWidth: 0, querySelector: () => null };
+    talkBooth.isTalking = true;
+    talkBooth.presentTraveler(3, 'hello');
+    const talkRestarted = talkBooth.isTalking === true && talkBooth.talkingInterval === null;
+    talkBooth.setTalking(false);
+
+    const regressionValid = hubIdsValid && cssDeclsValid && hubNonDestructive && hubClickValid && talkRestarted;
+
+    const indexAllValid = regressionValid && travelerValid && hasBoothMethods && hasCampaignMethods && hasBoothCSS &&
+        hasIndexCSS && hasIndexJS && hasIndexDeltarune &&
+        hasIndexPermit && hasIndexStarburst && hasIndexCodec &&
+        hasIndexBoothMount && hasSwBoothCache && hasAudioMouthSync;
 
     assert(
-        cssAllValid && hasMethods && audioExecutedCleanly && sandboxAllValid,
-        "Hệ Thống Vật Liệu Retro Pixel Game: Bộ CSS Pixel 8-Bit (Dual-Skin, 9-Slice Box-Shadow, Touch Target 48px), Web Audio Chiptune SFX Engine & Sandbox Linh Kiện",
-        `CSS Tokens/Borders: OK, SFX Engine (8 sounds synthesized): OK, Sandbox Components (Deltarune/PapersPlease/AceAttorney/MGS): OK`
+        cssAllValid && hasMethods && audioExecutedCleanly && indexAllValid,
+        "Hệ Thống Vật Liệu Retro Pixel Game: Bộ CSS Pixel 8-Bit (Dual-Skin, 9-Slice Box-Shadow, Touch Target 48px), Web Audio Chiptune SFX Engine, Buồng Gác Grestin & Procedural Traveler",
+        `CSS Tokens/Borders: OK, SFX Engine (8 sounds): OK, Grestin Booth & Procedural Traveler: OK, Single-DOM Integration: OK`
     );
 }
 
@@ -1243,7 +1308,8 @@ assert(
     const dialogueCode = fs.readFileSync('js/pixel-dialogue.js', 'utf8');
     const deskCode = fs.readFileSync('js/pixel-desk.js', 'utf8');
     const pixelCSS = fs.readFileSync('css/pixel-game.css', 'utf8');
-    const sandboxHTML = fs.readFileSync('sandbox-pixel.html', 'utf8');
+    const indexHTML = fs.readFileSync('index.html', 'utf8');
+    const gameloopCode = fs.readFileSync('js/pixel-gameloop.js', 'utf8');
 
     eval(`(function(root) { ${dialogueCode} })(fakeWindow)`);
     eval(`(function(root) { ${deskCode} })(fakeWindow)`);
@@ -1299,21 +1365,21 @@ assert(
         mockCitationContainer.lastPrepend.innerHTML.includes('&lt;b');
     const xssProtectionValid = approvedXssSafe && deniedXssSafe && citationXssSafe;
 
-    // 3. CSS & Sandbox HTML Verification
+    // 3. CSS & Unified HTML Verification
     const hasPaperclipCSS = pixelCSS.includes('.pixel-paperclip');
     const hasCitationCSS = pixelCSS.includes('.pixel-citation-slip') && pixelCSS.includes('.animate-citation-print');
     const hasChoiceHeartCSS = pixelCSS.includes('.choice-cursor');
     const hasInkLockCSS = pixelCSS.includes('.is-ink-locked');
 
-    const hasSandboxDialogue = sandboxHTML.includes('src="js/pixel-dialogue.js"') && sandboxHTML.includes('id="deltaruneDialogueMount"');
-    const hasSandboxDesk = sandboxHTML.includes('src="js/pixel-desk.js"') && sandboxHTML.includes('id="citationMount"');
+    const hasUnifiedDialogue = indexHTML.includes('src="js/pixel-dialogue.js"') && gameloopCode.includes('gameDialogueSlot');
+    const hasUnifiedDesk = indexHTML.includes('src="js/pixel-desk.js"') && gameloopCode.includes('id="gameCitationMount"');
 
     assert(
         colorCodeValid && hasDialogueMethods && stampResValid && citationValid && tabValid && xssProtectionValid &&
         hasPaperclipCSS && hasCitationCSS && hasChoiceHeartCSS && hasInkLockCSS &&
-        hasSandboxDialogue && hasSandboxDesk,
+        hasUnifiedDialogue && hasUnifiedDesk,
         "Deltarune Dialogue Box Nâng Cao & Bàn Thanh Tra Papers, Please (Typewriter Color-Codes, Citation Slip Printer & Rulebook Tabs)",
-        `Color Codes: OK (Yellow/Red/White), Stamp Rig (Approved/Denied/Citations/XSS Guard): OK, Rulebook Tabs: OK, Sandbox Integration: OK`
+        `Color Codes: OK (Yellow/Red/White), Stamp Rig (Approved/Denied/Citations/XSS Guard): OK, Rulebook Tabs: OK, Unified Single-DOM Integration: OK`
     );
 }
 
@@ -1325,7 +1391,8 @@ assert(
     const gazetteCode = fs.readFileSync('js/pixel-gazette.js', 'utf8');
     const deskCode = fs.readFileSync('js/pixel-desk.js', 'utf8');
     const pixelCSS = fs.readFileSync('css/pixel-game.css', 'utf8');
-    const sandboxHTML = fs.readFileSync('sandbox-pixel.html', 'utf8');
+    const indexHTML = fs.readFileSync('index.html', 'utf8');
+    const gameloopCode = fs.readFileSync('js/pixel-gameloop.js', 'utf8');
 
     eval(`(function(root) { ${statsCode} })(fakeWindow)`);
     eval(`(function(root) { ${gazetteCode} })(fakeWindow)`);
@@ -1361,21 +1428,60 @@ assert(
     const springSlamDenied = desk.triggerSpringSlam('denied', 'SPRING PENALTY');
     const springValid = hasSpringMethods && springSlamApproved.status === 'approved' && springSlamDenied.status === 'denied';
 
-    // 4. CSS & Sandbox HTML Verification
+    // 4. CSS & Unified Single-DOM HTML Verification
     const hasSpringCSS = pixelCSS.includes('.stamp-spring-tension') && pixelCSS.includes('.stamp-handle-wood');
     const hasStatsCSS = pixelCSS.includes('.pixel-stats-sheet') && pixelCSS.includes('.party-select-btn');
     const hasGazetteCSS = pixelCSS.includes('.pixel-newspaper-sheet') && pixelCSS.includes('.animate-newspaper-spin');
 
-    const hasSandboxStats = sandboxHTML.includes('id="deltaruneStatsMount"') && sandboxHTML.includes('src="js/pixel-stats.js"');
-    const hasSandboxGazette = sandboxHTML.includes('id="btnOpenPaperboyGazette"') && sandboxHTML.includes('src="js/pixel-gazette.js"');
-    const hasSandboxSpringButtons = sandboxHTML.includes('stamp-handle-wood') && sandboxHTML.includes('APPROVED (LÒ XO)');
+    const hasUnifiedStats = indexHTML.includes('src="js/pixel-stats.js"') && gameloopCode.includes('id="gameStatsSheetMount"');
+    const hasUnifiedGazette = indexHTML.includes('src="js/pixel-gazette.js"') && gameloopCode.includes('id="btnTriggerGazetteManual"');
+    const hasUnifiedSpringButtons = gameloopCode.includes('stamp-handle-wood') && gameloopCode.includes('APPROVED');
+
+    // 5. Stage 4: Deltarune Combat HUD (PixelHUD) rules, anti-farming & integration
+    const hudCode = fs.readFileSync('js/pixel-hud.js', 'utf8');
+    const boothSrc = fs.readFileSync('js/pixel-booth.js', 'utf8');
+    const dictSrc = fs.readFileSync('js/dictation.js', 'utf8');
+    const swSrc = fs.readFileSync('sw.js', 'utf8');
+    eval(`(function(root) { ${hudCode} })(fakeWindow)`);
+    eval(`(function(root) { ${boothSrc} })(fakeWindow)`);
+    const PixelHUD = fakeWindow.App.PixelHUD;
+    const Hub = fakeWindow.App.PixelCampaignHub;
+
+    const h = new PixelHUD();
+    h.credits = 0; h.bestCombo = 0;
+    const r1 = h.registerResult({ accuracy: 100, key: 'a:0' });
+    const hudPass = r1.pass && h.combo === 1 && h.credits === r1.credits && r1.credits > 0 && h.tp > 0;
+    const repeatRes = h.registerResult({ accuracy: 100, key: 'a:0' });
+    const antiFarm = repeatRes.repeat === true && h.credits === r1.credits && h.combo === 1;
+    h.registerResult({ accuracy: 90, key: 'a:1' });
+    h.registerResult({ accuracy: 90, key: 'a:2' });
+    const comboGrows = h.combo === 3 && h.bestCombo === 3;
+    const creditsBeforeFail = h.credits;
+    const failRes = h.registerResult({ accuracy: 40, key: 'a:3' });
+    const failValid = !failRes.pass && h.combo === 0 && h.credits === creditsBeforeFail - 2 && h.bestCombo === 3;
+    h.tp = 100;
+    const before = h.credits;
+    const oc = h.registerResult({ accuracy: 80, key: 'a:4' });
+    const overclockValid = oc.overclock === true && h.tp === 40 && (h.credits - before) === oc.credits;
+    const clamp = new PixelHUD(); clamp.tp = 3; clamp.credits = 1;
+    clamp.registerResult({ accuracy: 0, key: 'z' });
+    const floorValid = clamp.tp === 0 && clamp.credits === 0;
+    const garbageSafe = (() => { const g2 = new PixelHUD(); const r = g2.registerResult({ accuracy: 'abc' }); return r.pass === false && g2.tp >= 0; })();
+    const modeCycle = PixelHUD.nextMode('standard') === 'cloze' && PixelHUD.nextMode('cloze') === 'stream' && PixelHUD.nextMode('stream') === 'standard';
+    const hubBounty = Hub.getBounty('lesson-a2-hotel') === 50 && Hub.getBounty('nope') === 0;
+
+    const hudIntegration = indexHTML.includes('src="js/pixel-hud.js"') && swSrc.includes('pixel-hud.js') &&
+        gameloopCode.includes('pixelHudMount') && gameloopCode.includes('btnStampTrayToggle') &&
+        gameloopCode.includes('onClozeGraded') && dictSrc.includes('PixelGameLoop.onClozeGraded') &&
+        pixelCSS.includes('.pixel-hud') && pixelCSS.includes('.hud-popup') && pixelCSS.includes('.pixel-stamp-drawer');
+    const hudValid = hudPass && antiFarm && comboGrows && failValid && overclockValid && floorValid && garbageSafe && modeCycle && hubBounty && hudIntegration;
 
     assert(
-        statsValid && hasGazetteMethods && springValid &&
+        statsValid && hasGazetteMethods && springValid && hudValid &&
         hasSpringCSS && hasStatsCSS && hasGazetteCSS &&
-        hasSandboxStats && hasSandboxGazette && hasSandboxSpringButtons,
+        hasUnifiedStats && hasUnifiedGazette && hasUnifiedSpringButtons,
         "Thẻ Chỉ Số RPG Deltarune (PixelStats), Báo Paperboy 1984 Atari (PixelGazette) & Con Dấu Lò Xo Nén (Spring-Loaded Stamps)",
-        `PixelStats: OK (Byte/Susie/Stats/Guts), PixelGazette: OK (Publish/Spin), Spring Stamp Rig: OK (Tension/Slam), Sandbox: OK`
+        `PixelStats: OK (Byte/Susie/Stats/Guts), PixelGazette: OK (Publish/Spin), Spring Stamp Rig: OK (Tension/Slam), Unified Single-DOM: OK`
     );
 }
 
@@ -1594,7 +1700,7 @@ assert(
     const hasAnalyticsHook = analyticsCode.includes('PixelGameLoop.onDailyGoalAchieved');
     const hasDictationHook = dictationCode.includes('PixelGameLoop.onClozeEvaluated');
     const hasBidirectionalSync = gameloopCode.includes("document.getElementById('dictationTextarea')") &&
-                                 dictationCode.includes("document.getElementById('gamePermitInput')");
+                                 dictationCode.includes('PixelGameLoop._updateInputCounts');
     const hasTTSMute = audioEngineCode.includes('state.isTTSLesson ? 0.0001 : 1.0');
     const hasHotkeysRouting = hotkeysCode.includes('#gameStatsModal:not(.hidden)') &&
                               hotkeysCode.includes('#pixelGazetteModal') &&

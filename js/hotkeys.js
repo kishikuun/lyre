@@ -14,7 +14,7 @@
             const Shadowing = root.App.Shadowing;
 
             // 1. Check for Active Modals
-            const modalSelectors = '#srtEditorModal:not(.pointer-events-none), #hotkeysModal:not(.pointer-events-none), #sentenceDrawer:not(.pointer-events-none), #quickPasteModal:not(.pointer-events-none), #vadTuningModal:not(.pointer-events-none), #mobileSettingsDrawer:not(.pointer-events-none), #studioMixerDrawer:not(.pointer-events-none), #analyticsModal:not(.pointer-events-none), #curatedLessonsModal:not(.pointer-events-none), #ttsGeneratorModal:not(.pointer-events-none), #flashcardModal:not(.pointer-events-none), #vocabDrawer:not(.hidden), #gameStatsModal:not(.hidden), #pixelGazetteModal';
+            const modalSelectors = '#srtEditorModal:not(.pointer-events-none), #hotkeysModal:not(.pointer-events-none), #sentenceDrawer:not(.pointer-events-none), #quickPasteModal:not(.pointer-events-none), #vadTuningModal:not(.pointer-events-none), #mobileSettingsDrawer:not(.pointer-events-none), #studioMixerDrawer:not(.pointer-events-none), #analyticsModal:not(.pointer-events-none), #curatedLessonsModal:not(.pointer-events-none), #ttsGeneratorModal:not(.pointer-events-none), #flashcardModal:not(.pointer-events-none), #vocabDrawer:not(.hidden), #gameStatsModal:not(.hidden), #inspectorSatchelModal:not(.hidden), #pixelGazetteModal';
             const activeModal = document.querySelector(modalSelectors);
 
             if (e.key === 'Escape') {
@@ -31,6 +31,14 @@
                         } else {
                             activeModal.classList.add('hidden');
                         }
+                    } else if (activeModal.id === 'inspectorSatchelModal') {
+                        if (root.App && root.App.PixelGameLoop && typeof root.App.PixelGameLoop.closeSatchel === 'function') {
+                            root.App.PixelGameLoop.closeSatchel();
+                        } else {
+                            activeModal.classList.add('hidden');
+                        }
+                        const btnToggle = document.getElementById('btnSatchelToggle');
+                        if (btnToggle) btnToggle.focus();
                     } else if (activeModal.id === 'gameStatsModal') {
                         activeModal.classList.add('hidden');
                     } else if (activeModal.id === 'pixelGazetteModal') {
@@ -43,6 +51,12 @@
                         activeModal.classList.add('opacity-0', 'pointer-events-none');
                     }
                     e.stopImmediatePropagation();
+                    return;
+                }
+                if (state.activeTab === 'shadowing') {
+                    e.preventDefault();
+                    const tabDict = document.getElementById('tabDictationBtn') || document.getElementById('arcadeTabDictation');
+                    if (tabDict) tabDict.click();
                     return;
                 }
                 e.preventDefault();
@@ -78,24 +92,52 @@
                     }
                 }
 
-                // C. Alt + ArrowLeft / ArrowRight / ArrowUp for audio navigation without moving text cursor
-                if (e.altKey && e.key === 'ArrowLeft') {
+                // C. Alt + Navigation: Rewind / Forward / Replay / Subtitle Peek
+                if (e.altKey && (e.key === 'ArrowLeft' || e.key === 'j' || e.key === 'J')) {
                     e.preventDefault();
                     AudioEngine.rewind(2.0);
                     return;
                 }
-                if (e.altKey && e.key === 'ArrowRight') {
+                if (e.altKey && (e.key === 'ArrowRight' || e.key === 'l' || e.key === 'L')) {
                     e.preventDefault();
                     AudioEngine.forward(2.0);
                     return;
                 }
-                if (e.altKey && e.key === 'ArrowUp') {
+                if (e.altKey && (e.key === 'ArrowUp' || e.key === 'r' || e.key === 'R' || e.key === 'k' || e.key === 'K')) {
                     e.preventDefault();
                     AudioEngine.replay();
                     return;
                 }
+                if (e.altKey && e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    Dictation.toggleSubReveal();
+                    return;
+                }
+                if (e.altKey && (e.key === '[' || e.key === '{')) {
+                    e.preventDefault();
+                    const btnPrev = document.getElementById('btnPrev');
+                    if (btnPrev) btnPrev.click();
+                    return;
+                }
+                if (e.altKey && (e.key === ']' || e.key === '}')) {
+                    e.preventDefault();
+                    const btnNext = document.getElementById('btnNext');
+                    if (btnNext) btnNext.click();
+                    return;
+                }
 
-                // D. Enter / Ctrl + Enter: Check dictation OR Advance to next sentence if already graded
+                // D. Alt+H or Ctrl+H: Provide Progressive Hint Letter
+                if ((e.altKey || e.ctrlKey) && (e.key === 'h' || e.key === 'H')) {
+                    e.preventDefault();
+                    if (state.dictationMode === 'cloze' && Dictation && typeof Dictation.provideClozeHint === 'function') {
+                        Dictation.provideClozeHint();
+                    } else if (Dictation && typeof Dictation.provideHint === 'function') {
+                        Dictation.provideHint();
+                    }
+                    return;
+                }
+
+                // E. Enter / Ctrl + Enter: Check dictation OR Advance to next sentence if already graded
                 if (e.key === 'Enter') {
                     if (e.ctrlKey) {
                         e.preventDefault();
@@ -131,23 +173,17 @@
                     }
                 }
 
-                // E. Tab for progressive hint, Shift+Tab for rewind (except inside cloze blanks which navigate inputs)
+                // F. Ergonomic TAB for Instant Rewind 2s, Shift+TAB for Forward 2s (Zero hand contortion)
                 if (e.key === 'Tab') {
                     if (activeEl.classList.contains('cloze-blank-input')) {
-                        // Let cloze-blank-input keydown listener navigate between blanks
+                        // Let cloze-blank-input keydown listener navigate between blanks naturally
                         return;
                     }
                     e.preventDefault();
                     if (e.shiftKey) {
                         AudioEngine.forward(2.0);
                     } else {
-                        if (state.dictationMode === 'cloze' && Dictation && typeof Dictation.provideClozeHint === 'function') {
-                            Dictation.provideClozeHint();
-                        } else if (Dictation && typeof Dictation.provideHint === 'function') {
-                            Dictation.provideHint();
-                        } else {
-                            AudioEngine.rewind(2.0);
-                        }
+                        AudioEngine.rewind(2.0);
                     }
                     return;
                 }
@@ -159,15 +195,28 @@
                 if (e.key === 'F4') { e.preventDefault(); AudioEngine.replay(); return; }
                 if (e.key === 'F5') { e.preventDefault(); Dictation.toggleSubReveal(); return; }
 
+                // G. Ctrl+I or Alt+I: Quick toggle Inspector's Satchel even while typing
+                if ((e.ctrlKey || e.altKey) && (e.key === 'i' || e.key === 'I')) {
+                    e.preventDefault();
+                    if (root.App && root.App.PixelGameLoop && typeof root.App.PixelGameLoop.toggleSatchel === 'function') {
+                        root.App.PixelGameLoop.toggleSatchel();
+                    }
+                    return;
+                }
+
                 return; // Allow normal character typing to continue without interruption
             }
 
             // =================================================================
             // 3. NATURAL GLOBAL SHORTCUTS WHEN NOT TYPING (Player & Shadowing Mode)
             // =================================================================
-            // Space: Global Play / Pause (100% standard like YouTube/Spotify)
+            // Space: Global Play / Pause, or Shadowing Record in Shadowing tab
             if (e.key === ' ' || e.code === 'Space') {
                 e.preventDefault();
+                if (state.activeTab === 'shadowing' && Shadowing && typeof Shadowing.toggleRecording === 'function') {
+                    Shadowing.toggleRecording();
+                    return;
+                }
                 AudioEngine.togglePlay();
                 return;
             }
@@ -203,6 +252,15 @@
                 e.preventDefault();
                 const btnOpenDrawer = document.getElementById('btnOpenDrawer');
                 if (btnOpenDrawer) btnOpenDrawer.click();
+                return;
+            }
+
+            // I: Toggle Inspector's Inventory Satchel (Phase 8)
+            if (e.key === 'i' || e.key === 'I') {
+                e.preventDefault();
+                if (root.App && root.App.PixelGameLoop && typeof root.App.PixelGameLoop.toggleSatchel === 'function') {
+                    root.App.PixelGameLoop.toggleSatchel();
+                }
                 return;
             }
 
@@ -262,10 +320,29 @@
                     return;
                 }
             } else if (state.activeTab === 'dictation') {
-                // Replay in dictation mode when not typing
+                // Single-key shortcuts in dictation mode when not typing
                 if (e.key.toLowerCase() === 'r') {
                     e.preventDefault();
                     AudioEngine.replay();
+                    return;
+                }
+                if (e.key.toLowerCase() === 'h') {
+                    e.preventDefault();
+                    if (Dictation && typeof Dictation.provideHint === 'function') {
+                        Dictation.provideHint();
+                    }
+                    return;
+                }
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const diffCard = document.getElementById('diffResultsCard');
+                    const isGraded = diffCard && !diffCard.classList.contains('hidden');
+                    if (isGraded) {
+                        const btnNext = document.getElementById('btnNext');
+                        if (btnNext) btnNext.click();
+                    } else if (Dictation && typeof Dictation.checkStandardDictation === 'function') {
+                        Dictation.checkStandardDictation();
+                    }
                     return;
                 }
             }

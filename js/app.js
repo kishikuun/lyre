@@ -20,6 +20,10 @@
     const Analytics = root.App.Analytics;
 
     let deferredInstallPrompt = null;
+    let renderCuratedLessons = null;
+    let loadCuratedLesson = null;
+    let openCuratedModal = null;
+    let closeCuratedModal = null;
 
     const DEMO_SRT_TEXT = `1
 00:00:00,000 --> 00:00:09,000
@@ -365,7 +369,7 @@ If you go in through the main departures entrance, you'll see the flight informa
         const ttsVoiceSelect = document.getElementById('ttsVoiceSelect');
         const ttsCharWordCount = document.getElementById('ttsCharWordCount');
 
-        const openCuratedModal = () => {
+        openCuratedModal = () => {
             if (curatedLessonsModal) {
                 renderCuratedLessons();
                 curatedLessonsModal.classList.remove('opacity-0', 'pointer-events-none');
@@ -373,7 +377,7 @@ If you go in through the main departures entrance, you'll see the flight informa
             }
         };
 
-        const closeCuratedModal = () => {
+        closeCuratedModal = () => {
             if (curatedLessonsModal) curatedLessonsModal.classList.add('opacity-0', 'pointer-events-none');
         };
 
@@ -384,6 +388,11 @@ If you go in through the main departures entrance, you'll see the flight informa
         if (curatedLessonsModal) {
             curatedLessonsModal.addEventListener('click', (e) => {
                 if (e.target === curatedLessonsModal) closeCuratedModal();
+            });
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !curatedLessonsModal.classList.contains('pointer-events-none')) {
+                    closeCuratedModal();
+                }
             });
         }
 
@@ -418,7 +427,7 @@ If you go in through the main departures entrance, you'll see the flight informa
             });
         }
 
-        function renderCuratedLessons() {
+        renderCuratedLessons = function() {
             if (!curatedLessonsGrid || !CuratedLessons) return;
             const lessons = CuratedLessons.getAllLessons();
 
@@ -431,30 +440,39 @@ If you go in through the main departures entrance, you'll see the flight informa
                 'Pronunciation': 'text-purple-400 bg-purple-500/10 border-purple-500/30'
             };
 
-            curatedLessonsGrid.innerHTML = lessons.map(lesson => {
+            const bounties = {
+                'lesson-a2-hotel': '$50',
+                'lesson-b1-interview': '$80',
+                'lesson-b2-ai': '$120',
+                'lesson-c1-oceans': '$160',
+                'lesson-ielts-library': '$220',
+                'lesson-phonics-flapt': '$300'
+            };
+
+            curatedLessonsGrid.innerHTML = lessons.map((lesson, idx) => {
                 const badgeClass = levelBadges[lesson.level] || 'text-amber-400 bg-amber-500/10 border-amber-500/30';
-                const totalDur = lesson.sentences[lesson.sentences.length - 1]
-                    ? Math.round(lesson.sentences[lesson.sentences.length - 1].end)
-                    : 30;
+                const bounty = bounties[lesson.id] || '$100';
 
                 return `
-                    <div class="p-4 rounded-xl bg-studio-950 border border-studio-border hover:border-amber-500/40 transition flex flex-col justify-between group shadow-lg">
+                    <div class="pixel-docket-card p-3 border-2 border-gray-700 hover:border-amber-400 bg-black/60 hover:bg-black/85 transition flex flex-col justify-between group cursor-pointer" data-load-lesson-id="${lesson.id}">
                         <div>
-                            <div class="flex items-center justify-between gap-2 mb-2">
-                                <span class="text-[10px] font-bold font-mono px-2 py-0.5 rounded-full border ${badgeClass}">
-                                    ${lesson.level} · ${lesson.levelLabel}
+                            <div class="flex items-center justify-between text-[8px] font-mono mb-1.5">
+                                <span class="text-amber-400 font-bold">CA TRỰC #${(idx + 1).toString().padStart(2, '0')}</span>
+                                <span class="px-1.5 py-0.5 rounded text-[8px] font-bold border ${badgeClass}">
+                                    ${lesson.level}
                                 </span>
-                                <span class="text-[10px] text-gray-500 font-mono">${lesson.category}</span>
                             </div>
-                            <h4 class="font-bold text-white text-sm mb-1.5 group-hover:text-accent-amber transition">${lesson.title}</h4>
-                            <p class="text-xs text-gray-400 leading-relaxed font-sans mb-3 line-clamp-2">${lesson.description}</p>
+                            <h4 class="font-bold text-white text-[11px] group-hover:text-amber-300 font-mono tracking-tight leading-snug mb-1">
+                                ${lesson.title}
+                            </h4>
+                            <p class="text-[9px] text-gray-400 font-mono leading-relaxed line-clamp-2">${lesson.description}</p>
                         </div>
-                        <div class="pt-3 border-t border-studio-border/60 flex items-center justify-between">
-                            <span class="text-[11px] font-mono text-gray-500">${lesson.sentences.length} câu · ~${totalDur}s</span>
-                            <button data-load-lesson-id="${lesson.id}"
-                                class="px-3 py-1.5 rounded-lg bg-accent-amber text-studio-950 font-bold text-xs flex items-center gap-1.5 hover:brightness-110 active:scale-95 transition cursor-pointer shadow-md">
-                                <i data-lucide="play" class="w-3 h-3 fill-current"></i>
-                                <span>Học bài này</span>
+                        <div class="pt-2 mt-2 border-t border-gray-700/60 flex items-center justify-between text-[9px] font-mono">
+                            <span class="text-emerald-400 font-bold">${bounty} · ${lesson.sentences.length} câu</span>
+                            <button type="button" data-load-lesson-id="${lesson.id}"
+                                class="px-2.5 py-1 bg-amber-950/60 hover:bg-amber-900 border border-amber-500/60 text-amber-300 font-bold text-[9px] flex items-center gap-1 cursor-pointer">
+                                <span>TIẾP NHẬN CA</span>
+                                <span class="group-hover:translate-x-0.5 transition-transform">→</span>
                             </button>
                         </div>
                     </div>
@@ -466,13 +484,14 @@ If you go in through the main departures entrance, you'll see the flight informa
             // Attach click listener on lesson buttons
             curatedLessonsGrid.querySelectorAll('[data-load-lesson-id]').forEach(btn => {
                 btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
                     const id = e.currentTarget.getAttribute('data-load-lesson-id');
                     loadCuratedLesson(id);
                 });
             });
         }
 
-        function loadCuratedLesson(lessonId) {
+        loadCuratedLesson = function(lessonId) {
             if (!CuratedLessons) return;
             const lesson = CuratedLessons.getLessonById(lessonId);
             if (!lesson) return;
@@ -506,16 +525,52 @@ If you go in through the main departures entrance, you'll see the flight informa
                 srtFileName.className = "text-[11px] text-accent-amber font-bold truncate";
             }
 
+            const titleScreen = document.getElementById('gameTitleScreen');
+            if (titleScreen) titleScreen.classList.add('hidden');
             const emptyStateCard = document.getElementById('emptyStateCard');
             const vadPromptBanner = document.getElementById('vadPromptBanner');
+            const workspaceArea = document.getElementById('workspaceArea');
             if (emptyStateCard) emptyStateCard.classList.add('hidden');
             if (vadPromptBanner) vadPromptBanner.classList.add('hidden');
+            if (workspaceArea) workspaceArea.classList.remove('hidden');
+            checkReadyState();
 
             closeCuratedModal();
             Dictation.loadCurrentSegment();
             renderDrawerList();
             updateSmartActionDock('idle');
             AudioEngine.playSynthesizedSound('stamp');
+            if (root.App && root.App.PixelGameLoop && root.App.PixelGameLoop.dialogue) {
+                root.App.PixelGameLoop.dialogue.say('Inspector Byte', `Ca trực: ${lesson.title}. Bấm Space để nghe lời khai.`, 'neutral');
+            }
+        }
+
+        // Wire media ingestion triggers inside curatedLessonsModal
+        const btnModalAudio = document.getElementById('btnModalTriggerAudio');
+        const btnModalSrt = document.getElementById('btnModalTriggerSrt');
+        const btnModalTTS = document.getElementById('btnModalTriggerTTS');
+
+        if (btnModalAudio) {
+            btnModalAudio.addEventListener('click', () => {
+                closeCuratedModal();
+                const titleScreen = document.getElementById('gameTitleScreen');
+                if (titleScreen) titleScreen.classList.add('hidden');
+                const audioInput = document.getElementById('audioInput');
+                if (audioInput) audioInput.click();
+            });
+        }
+        if (btnModalSrt) {
+            btnModalSrt.addEventListener('click', () => {
+                closeCuratedModal();
+                const srtInput = document.getElementById('srtInput');
+                if (srtInput) srtInput.click();
+            });
+        }
+        if (btnModalTTS) {
+            btnModalTTS.addEventListener('click', () => {
+                closeCuratedModal();
+                openTTSModal();
+            });
         }
 
         // Generate custom lesson from pasted text via Web Speech TTS
@@ -570,6 +625,7 @@ If you go in through the main departures entrance, you'll see the flight informa
                 const vadPromptBanner = document.getElementById('vadPromptBanner');
                 if (emptyStateCard) emptyStateCard.classList.add('hidden');
                 if (vadPromptBanner) vadPromptBanner.classList.add('hidden');
+                checkReadyState();
 
                 closeTTSModal();
                 Dictation.loadCurrentSegment();
@@ -999,10 +1055,18 @@ If you go in through the main departures entrance, you'll see the flight informa
     }
 
     function checkReadyState() {
+        const titleScreen = document.getElementById('gameTitleScreen');
         const emptyStateCard = document.getElementById('emptyStateCard');
         const workspaceArea = document.getElementById('workspaceArea');
         const vadPromptBanner = document.getElementById('vadPromptBanner');
         const btnTriggerVADSlicer = document.getElementById('btnTriggerVADSlicer');
+
+        // If Title Screen is actively visible, preserve it and keep workspace hidden
+        if (titleScreen && !titleScreen.classList.contains('hidden')) {
+            if (workspaceArea) workspaceArea.classList.add('hidden');
+            if (emptyStateCard) emptyStateCard.classList.add('hidden');
+            return;
+        }
 
         if (state.subs.length > 0 && state.audioBuffer) {
             if (emptyStateCard) emptyStateCard.classList.add('hidden');
@@ -1559,7 +1623,8 @@ If you go in through the main departures entrance, you'll see the flight informa
         }
 
         const activeCard = list.querySelector(`[data-sentence-idx="${state.currentIdx}"]`);
-        if (activeCard) {
+        const sentenceDrawer = document.getElementById('sentenceDrawer');
+        if (activeCard && sentenceDrawer && !sentenceDrawer.classList.contains('pointer-events-none')) {
             activeCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     }
@@ -1813,8 +1878,10 @@ If you go in through the main departures entrance, you'll see the flight informa
 
     root.App = root.App || {};
     root.App.renderDrawerList = renderDrawerList;
-    root.App.renderCuratedLessons = renderCuratedLessons;
-    root.App.loadCuratedLesson = loadCuratedLesson;
+    root.App.renderCuratedLessons = (...args) => renderCuratedLessons && renderCuratedLessons(...args);
+    root.App.loadCuratedLesson = (lessonId) => loadCuratedLesson && loadCuratedLesson(lessonId);
+    root.App.openCuratedModal = () => openCuratedModal && openCuratedModal();
+    root.App.closeCuratedModal = () => closeCuratedModal && closeCuratedModal();
     root.App.updateSmartActionDock = updateSmartActionDock;
     root.App.getDockState = () => currentDockState;
     root.App.activateDualMasteryTransition = activateDualMasteryTransition;

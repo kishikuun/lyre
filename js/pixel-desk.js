@@ -58,9 +58,12 @@
             const target = container || this.deskContainer || document.body;
             if (!target) return;
 
-            // Kiểm tra prefers-reduced-motion
-            if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                return; // Tôn trọng cài đặt trợ năng
+            // Kiểm tra prefers-reduced-motion và cài đặt lyre_screen_shake
+            if (typeof window !== 'undefined') {
+                if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+                try {
+                    if (localStorage.getItem('lyre_screen_shake') === 'false') return;
+                } catch (e) {}
             }
 
             target.classList.remove('screen-shake-anim');
@@ -155,11 +158,18 @@
                             <b>CITATION #${citationId.toString().padStart(2, '0')}:</b>
                             <p>${safeReason}</p>
                         </div>
-                        <div class="citation-footer">
+                        <div class="citation-footer flex items-center justify-between">
                             <span>PENALTY: RECORDED IN DOSSIER</span>
-                            <span>${escapeHTML(citation.timestamp)}</span>
+                            <button type="button" class="btn-tear-citation text-[8px] px-1.5 py-0.5 bg-gray-200 hover:bg-red-600 hover:text-white border border-gray-400 font-bold uppercase cursor-pointer" title="Xé phiếu phạt khỏi bàn">✕ XÉ</button>
                         </div>
                     `;
+                    slip.querySelector('.btn-tear-citation')?.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        slip.classList.add('citation-torn-away');
+                        const sfx = (root.App && root.App.PixelSFX) || null;
+                        if (sfx) sfx.playTypewriterBlip();
+                        setTimeout(() => slip.remove(), 250);
+                    });
                     if (typeof this.citationContainer.prepend === 'function') {
                         this.citationContainer.prepend(slip);
                     }
@@ -280,6 +290,18 @@
                 `;
             }
             this.activeStamp = null;
+        }
+
+        /**
+         * Dọn sạch toàn bộ phiếu phạt trên khay máy in M.O.A.
+         */
+        clearCitations() {
+            this.citations = [];
+            if (this.citationContainer) {
+                this.citationContainer.innerHTML = `
+                    <span class="text-[10px] font-mono text-slate-300 italic block">Chưa có vi phạm nào.</span>
+                `;
+            }
         }
     }
 

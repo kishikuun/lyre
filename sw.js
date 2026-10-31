@@ -7,7 +7,6 @@ const CACHE_NAME = 'lyre-studio-v4.1';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
-  './sandbox-pixel.html',
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png',
@@ -18,6 +17,8 @@ const ASSETS_TO_CACHE = [
   './js/pixel-desk.js',
   './js/pixel-stats.js',
   './js/pixel-gazette.js',
+  './js/pixel-booth.js',
+  './js/pixel-hud.js',
   './js/pixel-gameloop.js',
   './js/state.js',
   './js/curated-lessons.js',
