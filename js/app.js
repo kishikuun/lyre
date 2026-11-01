@@ -179,6 +179,7 @@ If you go in through the main departures entrance, you'll see the flight informa
             tabDictationBtn.addEventListener('click', () => {
                 AudioEngine.playSynthesizedSound('click');
                 state.activeTab = 'dictation';
+                document.body.classList.remove('shadowing-active');
                 tabDictationBtn.className = "rocker-pill active";
                 tabShadowingBtn.className = "rocker-pill";
                 if (dictationSection) dictationSection.classList.remove('hidden');
@@ -188,6 +189,7 @@ If you go in through the main departures entrance, you'll see the flight informa
             tabShadowingBtn.addEventListener('click', () => {
                 AudioEngine.playSynthesizedSound('click');
                 state.activeTab = 'shadowing';
+                document.body.classList.add('shadowing-active');
                 tabShadowingBtn.className = "rocker-pill active";
                 tabDictationBtn.className = "rocker-pill";
                 if (shadowingSection) shadowingSection.classList.remove('hidden');

@@ -241,15 +241,15 @@
                     <!-- 3. Khu vực đứng của Khách Nhập Cảnh (Traveler Sprite) -->
                     <div class="relative z-10 h-full flex items-end justify-between px-3 sm:px-6 pb-1">
                         <!-- Left: Tên & Hồ sơ của khách -->
-                        <div class="traveler-dossier-pill flex flex-col gap-0.5 bg-black/75 border border-gray-700/80 p-1.5 rounded text-[9px] font-mono shadow-md max-w-[130px] sm:max-w-[180px]">
-                            <div class="flex items-center gap-1.5 text-amber-400 font-bold truncate">
-                                <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                        <div class="traveler-dossier-pill flex flex-col gap-0.5 bg-black/85 border border-gray-600 p-1.5 rounded text-[11px] font-mono shadow-md max-w-[140px] sm:max-w-[200px]">
+                            <div class="flex items-center gap-1.5 text-amber-300 font-bold truncate">
+                                <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
                                 <span id="boothTravelerName">KHÁCH CHỜ DUYỆT</span>
                             </div>
-                            <div class="flex items-center gap-1 text-gray-300 text-[8px] truncate">
-                                <span id="boothTravelerNation" class="text-emerald-400 uppercase">ARSTOTZKA</span>
+                            <div class="flex items-center gap-1 text-gray-200 text-[10px] font-semibold truncate">
+                                <span id="boothTravelerNation" class="text-emerald-400 uppercase font-bold">ARSTOTZKA</span>
                                 <span>·</span>
-                                <span id="boothTravelerPassport" class="text-gray-400">AR-8402</span>
+                                <span id="boothTravelerPassport" class="text-gray-300">AR-8402</span>
                             </div>
                         </div>
 
@@ -260,11 +260,11 @@
 
                         <!-- Right: Loa Phóng Thanh [📢 CALL NEXT] & Cửa Cuốn -->
                         <div class="flex flex-col items-end gap-1.5">
-                            <button type="button" id="btnBoothCallNext" class="pixel-btn pixel-btn-amber !py-1 !px-2 text-[9px] flex items-center gap-1.5 shadow-lg group cursor-pointer" title="Gọi khách kế tiếp (Phát câu nghe)">
-                                <span class="text-xs group-hover:scale-125 transition-transform">📢</span>
+                            <button type="button" id="btnBoothCallNext" class="pixel-btn pixel-btn-amber !py-1.5 !px-3 text-xs flex items-center gap-1.5 shadow-lg group cursor-pointer" title="Gọi khách kế tiếp (Phát câu nghe)">
+                                <span class="text-sm group-hover:scale-125 transition-transform">📢</span>
                                 <span class="font-bold">CALL NEXT!</span>
                             </button>
-                            <button type="button" id="btnBoothToggleShutter" class="text-[8px] font-mono text-gray-400 hover:text-white underline cursor-pointer">
+                            <button type="button" id="btnBoothToggleShutter" class="text-[10px] font-mono text-gray-300 hover:text-white underline cursor-pointer font-semibold">
                                 <span id="boothShutterStatusText">Cửa cuốn: Mở</span>
                             </button>
                         </div>
@@ -272,19 +272,19 @@
 
                     <!-- 4. CỬA CUỐN SẮT CƠ HỌC (Mechanical Iron Shutter) -->
                     <div class="pixel-shutter absolute inset-0 z-20 flex flex-col justify-between p-3 select-none transition-transform duration-500 ease-in-out" id="boothIronShutter">
-                        <div class="flex items-center justify-between text-[9px] font-mono text-amber-500/80 uppercase tracking-widest border-b border-white/10 pb-1">
+                        <div class="flex items-center justify-between text-xs font-mono text-amber-400 font-bold uppercase tracking-wider border-b border-white/20 pb-1.5">
                             <span>M.O.A. GRESTIN CHECKPOINT</span>
-                            <span class="animate-pulse text-red-400">● SHUTTER CLOSED</span>
+                            <span class="animate-pulse text-red-400 font-bold">● SHUTTER CLOSED</span>
                         </div>
                         <div class="text-center my-auto">
-                            <div class="px-font-arcade text-xs sm:text-sm text-gray-300 tracking-wider">
+                            <div class="px-font-arcade text-xs sm:text-sm text-gray-200 font-bold tracking-wider">
                                 [ CA TRỰC ĐANG TẠM DỪNG ]
                             </div>
-                            <p class="text-[10px] font-mono text-gray-500 mt-1">Bấm "CALL NEXT!" hoặc nút Cửa cuốn để mở cửa đón khách</p>
+                            <p class="text-xs font-mono text-gray-300 mt-1.5 font-medium">Bấm "CALL NEXT!" hoặc nút Cửa cuốn để mở cửa đón khách</p>
                         </div>
-                        <div class="flex items-center justify-between text-[8px] font-mono text-gray-600 border-t border-white/10 pt-1">
+                        <div class="flex items-center justify-between text-[11px] font-mono text-gray-300 font-semibold border-t border-white/20 pt-1.5">
                             <span>CABIN INSPECTOR #402</span>
-                            <span>ARSTOTZKA 1984</span>
+                            <span class="text-amber-300 font-bold">ARSTOTZKA 1984</span>
                         </div>
                     </div>
 

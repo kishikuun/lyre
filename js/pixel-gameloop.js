@@ -707,24 +707,24 @@
                 sideRig.innerHTML = `
                     <!-- Citation Printer Slot -->
                     <div class="bg-black/40 border-2 border-gray-800 p-2.5 rounded space-y-1">
-                        <div class="flex items-center justify-between text-[9px] px-font-arcade text-red-400">
-                            <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span> MÁY IN PHIẾU PHẠT</span>
-                            <span class="text-slate-300 font-bold font-mono">M.O.A. PRINTER</span>
+                        <div class="flex items-center justify-between text-xs px-font-arcade text-red-400 font-bold">
+                            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span> MÁY IN PHIẾU PHẠT</span>
+                            <span class="text-slate-200 font-bold font-mono text-xs">M.O.A. PRINTER</span>
                         </div>
                         <div id="gameCitationMount" class="max-h-36 overflow-y-auto space-y-2 pt-1">
-                            <span class="text-[10px] font-mono text-slate-300 italic block">Chưa có vi phạm nào.</span>
+                            <span class="text-xs font-mono text-slate-200 italic block">Chưa có vi phạm nào.</span>
                         </div>
                     </div>
 
                     <!-- 4-Tab Investigation Rulebook Ledger -->
                     <div class="pixel-spiral-notebook p-3 space-y-2.5" id="gameRulebookSlot">
                         <div class="pixel-spiral-coil"></div>
-                        <div class="flex items-center justify-between border-b border-gray-600/30 pb-1.5 pl-3">
-                            <span class="px-font-arcade text-[9px] text-amber-400">SỔ TAY THANH TRA</span>
-                            <span class="text-[9px] font-mono text-amber-300 font-bold">OBRA DINN V.5</span>
+                        <div class="flex items-center justify-between border-b border-gray-600/40 pb-1.5 pl-3">
+                            <span class="font-mono font-bold text-xs text-amber-300 tracking-wider">SỔ TAY THANH TRA</span>
+                            <span class="text-xs font-mono text-amber-400 font-bold">OBRA DINN V.5</span>
                         </div>
 
-                        <div class="pixel-notebook-tabs pl-3">
+                        <div class="pixel-notebook-tabs pl-3 flex gap-1">
                             <button type="button" class="pixel-tab-btn is-active" data-tab="rules">QUY TẮC</button>
                             <button type="button" class="pixel-tab-btn" data-tab="phonetics">BẪY ÂM</button>
                             <button type="button" class="pixel-tab-btn" data-tab="vocab">TỪ VỰNG</button>
@@ -732,35 +732,35 @@
                         </div>
 
                         <div class="rulebook-pane space-y-1.5 text-xs font-mono pt-1 pl-3" data-pane="rules">
-                            <ul class="list-disc pl-3 space-y-1 text-gray-300 text-[11px]">
+                            <ul class="list-disc pl-4 space-y-1.5 text-slate-100 text-xs leading-relaxed font-medium">
                                 <li>Nghe kỹ từng cụm phụ âm đuôi và âm nối.</li>
-                                <li>Bấm <b>Space</b> (khi ô trống) hoặc <b>Shift+Space</b> để phát/dừng.</li>
-                                <li>Đạt <b>&gt;= 80%</b> để được cấp dấu <b>APPROVED</b>.</li>
+                                <li>Bấm <b class="text-amber-300">Space</b> (khi ô trống) hoặc <b class="text-amber-300">Shift+Space</b> để phát/dừng.</li>
+                                <li>Đạt <b class="text-emerald-300">&gt;= 80%</b> để được cấp dấu <b class="text-emerald-300">APPROVED</b>.</li>
                             </ul>
                         </div>
 
                         <div class="rulebook-pane hidden space-y-1.5 text-xs font-mono pt-1 pl-3" data-pane="phonetics">
-                            <div class="p-1.5 bg-black/10 border border-gray-700/50 space-y-1 text-[11px]">
-                                <b class="text-amber-400">Bẫy đuôi -ed & Nối âm:</b>
-                                <p class="text-gray-300">Âm vô thanh (/p/, /k/, /f/, /s/, /ʃ/, /tʃ/) + -ed phát âm là /t/.</p>
+                            <div class="p-2 bg-black/20 border border-gray-700/60 space-y-1 text-xs">
+                                <b class="text-amber-300 font-bold">Bẫy đuôi -ed & Nối âm:</b>
+                                <p class="text-slate-200 leading-relaxed">Âm vô thanh (/p/, /k/, /f/, /s/, /ʃ/, /tʃ/) + -ed phát âm là /t/.</p>
                             </div>
                         </div>
 
                         <div class="rulebook-pane hidden space-y-1.5 text-xs font-mono pt-1 pl-3" data-pane="vocab">
-                            <p class="text-[11px] text-gray-400 italic">Nhấp vào bất kỳ từ nào ở bảng Kết quả đối chiếu để tra nghĩa và khóa mực vĩnh viễn.</p>
+                            <p class="text-xs text-slate-200 italic leading-relaxed">Nhấp vào bất kỳ từ nào ở bảng Kết quả đối chiếu để tra nghĩa và khóa mực vĩnh viễn.</p>
                         </div>
 
                         <div class="rulebook-pane hidden space-y-1.5 text-xs font-mono pt-1 pl-3" data-pane="config">
-                            <div class="p-1.5 bg-black/10 border border-gray-700/50 space-y-1.5 text-[10px]">
-                                <label class="flex items-center gap-1.5 cursor-pointer text-gray-300">
-                                    <input type="checkbox" id="chkGameShake" checked class="accent-amber-500">
+                            <div class="p-2 bg-black/20 border border-gray-700/60 space-y-2 text-xs">
+                                <label class="flex items-center gap-2 cursor-pointer text-slate-200 font-medium">
+                                    <input type="checkbox" id="chkGameShake" checked class="accent-amber-500 w-3.5 h-3.5">
                                     <span>Rung bàn khi đập dấu</span>
                                 </label>
-                                <label class="flex items-center gap-1.5 cursor-pointer text-gray-300">
-                                    <input type="checkbox" id="chkGameBlips" checked class="accent-amber-500">
+                                <label class="flex items-center gap-2 cursor-pointer text-slate-200 font-medium">
+                                    <input type="checkbox" id="chkGameBlips" checked class="accent-amber-500 w-3.5 h-3.5">
                                     <span>Âm bíp gõ thoại</span>
                                 </label>
-                                <button type="button" id="btnSwitchPixelSkin" class="pixel-btn pixel-btn-amber !py-1 !px-2 text-[8px] w-full mt-1">
+                                <button type="button" id="btnSwitchPixelSkin" class="pixel-btn pixel-btn-amber !py-1.5 !px-3 text-xs w-full mt-1 font-bold">
                                     🎨 ĐỔI BÀN GIẤY (CRT / MANILA)
                                 </button>
                             </div>
@@ -1614,12 +1614,12 @@
             if (!container) return;
             container.innerHTML = `
                 <div class="pixel-codec-panel p-2.5 sm:p-3 space-y-2 select-none" id="pixelCodecMainPanel">
-                    <div class="flex items-center justify-between text-[9px] px-font-arcade text-[var(--px-codec-green)]">
+                    <div class="flex items-center justify-between text-xs font-mono font-bold text-[var(--px-codec-green)]">
                         <div class="flex items-center gap-2">
-                            <span class="animate-pulse">● MEMORY 140.85</span>
-                            <span class="hidden sm:inline text-[8px] text-emerald-400/90">| PHÒNG GIÁM SÁT SHADOWING</span>
+                            <span class="animate-pulse text-emerald-300">● MEMORY 140.85</span>
+                            <span class="hidden sm:inline text-xs text-emerald-400 font-semibold">| PHÒNG GIÁM SÁT SHADOWING</span>
                         </div>
-                        <button type="button" id="btnCodecReturnToDesk" class="pixel-btn !py-1 !px-2 text-[8px] !bg-emerald-950/80 border border-emerald-500 text-emerald-200 hover:!bg-emerald-800 transition">
+                        <button type="button" id="btnCodecReturnToDesk" class="pixel-btn !py-1.5 !px-2.5 text-xs font-bold !bg-emerald-950/90 border border-emerald-400 text-emerald-200 hover:!bg-emerald-800 transition">
                             ↩ BÀN THẨM TRA [ESC]
                         </button>
                     </div>
@@ -1628,11 +1628,11 @@
                         <div id="codecVerdictStarburst" class="absolute inset-0 flex items-center justify-center pointer-events-none z-10"></div>
                     </div>
 
-                    <div class="flex items-center justify-between text-[9px] font-mono text-[var(--px-codec-green)]">
-                        <button type="button" id="btnToggleGameBGM" class="pixel-btn !py-1 !px-2 text-[8px] !bg-black border border-emerald-500 text-emerald-300">
+                    <div class="flex items-center justify-between text-xs font-mono text-[var(--px-codec-green)]">
+                        <button type="button" id="btnToggleGameBGM" class="pixel-btn !py-1.5 !px-2.5 text-xs font-semibold !bg-black border border-emerald-500 text-emerald-300">
                             🎵 BGM: TẮT
                         </button>
-                        <span class="text-[8px] sm:text-[9px]">MGS CODEC ACOUSTIC INTERCOM · STEREO 44.1kHz</span>
+                        <span class="text-[11px] font-mono text-emerald-400 font-medium">MGS CODEC ACOUSTIC INTERCOM · STEREO 44.1kHz</span>
                     </div>
                 </div>
             `;

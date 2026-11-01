@@ -133,7 +133,6 @@
     font-weight: 700;
 }
 
-.px-font-pixel-title {   }
 
 /* Tầng 2: Hộp thoại đối thoại & Báo cáo */
 .px-font-dialogue {
@@ -221,10 +220,8 @@
     z-index: 1;
 }
 
-[data-skin="pixel-paper"] .pixel-permit-card::before {  }
 
 /* Răng cưa mép giấy visa đục lỗ */
-.pixel-perforated-top {  }
 .pixel-perforated-top::after {
     content: '';
     position: absolute;
@@ -275,7 +272,6 @@
     transition: transform 0.05s ease, box-shadow 0.05s ease;
 }
 
-.pixel-btn:hover {  }
 
 .pixel-btn:active {
     transform: translateY(3px);
@@ -285,7 +281,6 @@
         0 1px 0 0 var(--px-border-shadow);
 }
 
-.pixel-btn:focus-visible {   }
 
 /* Biến thể màu nút Arcade */
 .pixel-btn-amber {
@@ -353,7 +348,6 @@
     filter: drop-shadow(2px 2px 0px rgba(0, 0, 0, 0.6));
 }
 
-.stamp-seal .stamp-title {   }
 
 .stamp-seal .stamp-sub {
     font-size: 8px;
@@ -374,12 +368,8 @@
 }
 
 /* Hiệu ứng dập lún xuống mặt bàn khi chấm điểm */
-.stamp-slam-animation {  }
 
 @keyframes stampSlam {
-    0% {   }
-    60% {   }
-    100% {   }
 }
 
 /* ============================================================================
@@ -433,7 +423,6 @@
 }
 
 /* Dao động ký xanh phosphor */
-.codec-waveform-line {   }
 
 /* ============================================================================
    8. SỔ TAY ĐIỀU TRA GÁY XOẮN (OBRA DINN SPIRAL LEDGER)
@@ -466,7 +455,6 @@
 }
 
 /* Tab phân trang sổ tay bên mép phải */
-.pixel-notebook-tabs {   }
 
 .pixel-tab-btn {
     font-family: 'JetBrains Mono', monospace;
@@ -523,7 +511,6 @@
 }
 
 /* Rung màn hình khi đập bàn (Screen Shake) */
-.screen-shake-anim {  }
 
 @keyframes screenShake {
     0% { transform: translate(0, 0); }
@@ -562,7 +549,6 @@
     .starburst-badge,
     .screen-shake-anim,
     .pixel-heart,
-    .animate-citation-print {   }
 }
 
 /* ============================================================================
@@ -611,7 +597,6 @@
     color: #dc2626;
 }
 
-.pixel-citation-slip .citation-body {  }
 
 .pixel-citation-slip .citation-body b {
     color: #dc2626;
@@ -629,11 +614,13 @@
 }
 
 /* Hoạt ảnh máy in đùn giấy phạt từ trên trần xuống */
-.animate-citation-print {  }
+.animate-citation-print {
+    animation: citationPrint 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
 
 @keyframes citationPrint {
-    0% {   }
-    100% {   }
+    0% { transform: translateY(-20px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
 }
 
 /* Văn bản đã được Khóa mực vĩnh viễn (Return of the Obra Dinn) */
@@ -685,13 +672,22 @@
 }
 
 /* 2. Thẻ chỉ số RPG Character Stats Sheet (Deltarune Aesthetic) */
-.pixel-stats-sheet {   }
-
-[data-skin="pixel-paper"] .pixel-stats-sheet {   }
-
-.party-select-btn {  }
-
-.party-select-btn:active {   }
+.pixel-stats-sheet {
+    background: #090c13;
+    border: 3px solid #f59e0b;
+    box-shadow: 4px 4px 0 #000;
+}
+[data-skin="pixel-paper"] .pixel-stats-sheet {
+    background: #fdf6e2;
+    border-color: #92400e;
+}
+.party-select-btn {
+    cursor: pointer;
+    transition: transform 0.1s ease;
+}
+.party-select-btn:active {
+    transform: scale(0.96);
+}
 
 /* 3. Tờ báo vinh danh The Daily Lyre Extra! (1984 Atari Paperboy Gazette) */
 .pixel-newspaper-sheet {
@@ -702,12 +698,14 @@
     font-family: 'Courier New', Courier, monospace;
 }
 
-.animate-newspaper-spin {  }
+.animate-newspaper-spin {
+    animation: newspaperSpin 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
 
 @keyframes newspaperSpin {
-    0% {   }
-    70% {   }
-    100% {   }
+    0% { transform: scale(0.1) rotate(-720deg); opacity: 0; }
+    70% { transform: scale(1.05) rotate(10deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -761,7 +759,6 @@
     box-shadow: 6px 6px 0px 0px #000000 !important;
 }
 
-[data-skin="pixel-paper"] #smartActionDock {   }
 
 [data-skin="pixel-dark"] #smartActionDock button,
 [data-skin="pixel-paper"] #smartActionDock button {
@@ -774,7 +771,6 @@
 }
 
 [data-skin="pixel-dark"] #smartActionDock button:active,
-[data-skin="pixel-paper"] #smartActionDock button:active {   }
 
 /* ==========================================================================
    STAGE 8: CLOZE PUNCH-CARDS, 8-BIT RPG FLASHCARDS & DAILY GOAL TROPHY
@@ -839,14 +835,12 @@
     box-shadow: 2px 2px 0px 0px #000000 !important;
 }
 
-[data-skin="pixel-paper"] #dailyGoalWidget {   }
 
 /* ==========================================================================
    STAGE 9 (V5.0): UNIFIED SINGLE-DOM GAME WORKBENCH TRANSFORMATION
    ========================================================================== */
 
 [data-skin="pixel-dark"] body,
-[data-skin="pixel-paper"] body {   }
 
 [data-skin="pixel-dark"] #standardModeArea,
 [data-skin="pixel-paper"] #standardModeArea,
@@ -878,7 +872,6 @@
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-[data-skin="pixel-dark"] #dictationTextarea:focus {   }
 
 [data-skin="pixel-paper"] #dictationTextarea {
     background-color: #f8f1e0 !important;
@@ -887,10 +880,8 @@
     caret-color: #991b1b !important;
 }
 
-[data-skin="pixel-paper"] #dictationTextarea:focus {   }
 
 /* Watermark chìm Arstotzka Star cho Tờ khai Nhập cảnh */
-[data-skin="pixel-dark"] #standardModeArea {   }
 [data-skin="pixel-dark"] #standardModeArea::before {
     content: '';
     position: absolute;
@@ -934,11 +925,8 @@
     box-shadow: 4px 4px 0 0 var(--px-border-shadow), 8px 8px 0 0 rgba(0, 0, 0, 0.5) !important;
 }
 
-.pixel-shift-card {   }
 
-.pixel-shift-card:hover {   }
 
-.pixel-shift-card:active {   }
 
 /* 2. Ô Kính Buồng Kiểm Soát Biên Giới Grestin (#pixelBoothViewport) */
 .pixel-booth-viewport {
@@ -949,11 +937,9 @@
 }
 
 @media (max-width: 640px) {
-    .pixel-booth-viewport {  }
 }
 
 /* Hậu cảnh Buồng gác & Đèn tháp canh */
-.booth-backdrop {  }
 
 .searchlight-beam {
     position: absolute;
@@ -997,10 +983,8 @@
 }
 
 /* Kính chắn gió phản quang */
-.booth-glass-overlay {   }
 
 /* Khung sắt đinh tán ngoài cùng */
-.booth-iron-frame {  }
 
 /* 3. Cửa Cuốn Sắt Cơ Học (Mechanical Iron Shutter) */
 .pixel-shutter {
@@ -1016,28 +1000,20 @@
     transform: translateY(0);
 }
 
-.pixel-shutter.shutter-opened {  }
 
 /* 4. Sprite Khách Nhập Cảnh & Hoạt Ảnh */
-.traveler-sprite-box {  }
 
 @keyframes pixelIdleBob {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-2px); }
 }
 
-.animate-traveler-enter {  }
 
-.animate-traveler-leave {  }
 
 @keyframes travelerEnter {
-    from {   }
-    to {   }
 }
 
 @keyframes travelerLeave {
-    from {   }
-    to {   }
 }
 
 
@@ -1056,7 +1032,6 @@
     display: flex !important;
     flex-direction: column !important;
 }
-[data-skin="pixel-paper"] #emptyStateCard {   }
 #emptyStateCard.hidden { display: none !important; }
 
 /* Zen focus: collapse booth while typing so the permit stays above the fold */
@@ -1257,7 +1232,6 @@ html[data-skin="pixel-paper"] {
 }
 @media (min-width: 1024px) {
     [data-skin="pixel-dark"] #gameDeskContainer,
-    [data-skin="pixel-paper"] #gameDeskContainer {  }
 }
 
 /* Internal Scroll for Permit and Equipment Rig without scrolling page */
@@ -1278,15 +1252,10 @@ html[data-skin="pixel-paper"] {
 
 /* Retro Custom Scrollbars */
 [data-skin="pixel-dark"] ::-webkit-scrollbar,
-[data-skin="pixel-paper"] ::-webkit-scrollbar {   }
 [data-skin="pixel-dark"] ::-webkit-scrollbar-track,
-[data-skin="pixel-paper"] ::-webkit-scrollbar-track {   }
 [data-skin="pixel-dark"] ::-webkit-scrollbar-thumb,
-[data-skin="pixel-paper"] ::-webkit-scrollbar-thumb {   }
 
 /* Dossier Cabinet Drawer */
-#gameDossierDrawer {  }
-#gameDossierDrawer:not(.hidden) {  }
 
 /* ==========================================================================
    STAGE 13 (V5.0): RETRO TITLE SCREEN 1984 (PAPERS, PLEASE STYLE)
@@ -1305,9 +1274,7 @@ html[data-skin="pixel-paper"] {
 }
 #gameTitleScreen.hidden { display: none !important; }
 
-[data-skin="pixel-paper"] #gameTitleScreen {   }
 
-.pixel-glow-title {   }
 
 .title-menu-btn {
     font-family: 'JetBrains Mono', monospace;
@@ -1317,8 +1284,6 @@ html[data-skin="pixel-paper"] {
     transition: transform 0.1s ease, border-color 0.15s ease, background-color 0.15s ease;
 }
 .title-menu-btn:hover,
-.title-menu-btn:focus-visible {   }
-.title-menu-btn:active {   }
 
 @keyframes fadeInTitle {
     from { opacity: 0; transform: scale(0.99); }
@@ -1328,7 +1293,6 @@ html[data-skin="pixel-paper"] {
 /* ==========================================================================
    STAGE 14 (V5.0): RETRO DOSSIER & TAPE CARRIER MODAL
    ========================================================================== */
-#curatedLessonsModal:not(.opacity-0) {   }
 
 .pixel-docket-card {
     border: 2px solid #374151;
@@ -1344,12 +1308,10 @@ html[data-skin="pixel-paper"] {
 /* ==========================================================================
    STAGE 15 (V5.0): POCKET RULEBOOK MODAL (PAPERS, PLEASE 1984)
    ========================================================================== */
-#pocketRulebookModal:not(.opacity-0) {   }
 
 /* ==========================================================================
    STAGE 15c (V5.0): RETRO SETTINGS & AUDIO TUNING MODAL (PAPERS, PLEASE 1984)
    ========================================================================== */
-#retroSettingsModal:not(.opacity-0) {   }
 
 .btn-speed-option.active-speed {
     background-color: #d97706 !important;
@@ -1406,14 +1368,10 @@ html[data-skin="pixel-paper"] {
     color: #f8fafc !important;
 }
 
-[data-skin="pixel-dark"] .title-menu-btn:hover {   }
 
-[data-skin="pixel-dark"] #gameTitleScreen {  }
 
-[data-skin="pixel-dark"] #gameTitleScreen .text-gray-500 {  }
 
 [data-skin="pixel-dark"] #pixelArcadeTopBar .text-gray-400,
-[data-skin="pixel-dark"] #pixelArcadeTopBar .text-gray-500 {  }
 
 /* ==========================================================================
    STAGE 5: 100VH 2-TIER DESK LAYOUT (PAPERS, PLEASE 1984 WORKBENCH)
@@ -1462,7 +1420,15 @@ html[data-skin="pixel-paper"] {
 [data-skin="pixel-dark"] .shortcuts-ribbon,
 [data-skin="pixel-paper"] .shortcuts-ribbon,
 [data-skin="pixel-dark"] #pixelHudMount,
-[data-skin="pixel-paper"] #pixelHudMount {  }
+[data-skin="pixel-paper"] #pixelHudMount {
+    display: none !important;
+}
+
+/* Hide floating action dock while in Shadowing mode to prevent overlapping controls */
+body:has(#shadowingSection:not(.hidden)) #smartActionDock,
+.shadowing-active #smartActionDock {
+    display: none !important;
+}
 
 /* Tier 1: Upper Deck (Booth on Left 38%, Dialogue on Right 62%) */
 [data-skin="pixel-dark"] #gameUpperDeck,
@@ -1471,9 +1437,9 @@ html[data-skin="pixel-paper"] {
     flex-direction: row !important;
     gap: 12px !important;
     width: 100% !important;
-    height: 32vh !important;
-    max-height: 32vh !important;
-    min-height: 175px !important;
+    height: 24vh !important;
+    max-height: 24vh !important;
+    min-height: 140px !important;
     overflow: hidden !important;
     flex-shrink: 0 !important;
 }
@@ -1507,9 +1473,10 @@ html[data-skin="pixel-paper"] {
     gap: 12px !important;
     width: 100% !important;
     flex: 1 1 auto !important;
-    height: calc(68vh - 65px) !important;
-    max-height: calc(68vh - 65px) !important;
+    height: calc(76vh - 56px) !important;
+    max-height: calc(76vh - 56px) !important;
     overflow: hidden !important;
+    padding-bottom: 74px !important;
 }
 
 [data-skin="pixel-dark"] #gamePermitMainCol,
@@ -1538,13 +1505,26 @@ html[data-skin="pixel-paper"] {
 }
 
 [data-skin="pixel-dark"] #standardModeArea,
-[data-skin="pixel-paper"] #standardModeArea {
+[data-skin="pixel-paper"] #standardModeArea,
+[data-skin="pixel-dark"] #clozeModeArea,
+[data-skin="pixel-paper"] #clozeModeArea,
+[data-skin="pixel-dark"] #streamModeArea,
+[data-skin="pixel-paper"] #streamModeArea {
     height: 100% !important;
     max-height: 100% !important;
     display: flex !important;
     flex-direction: column !important;
-    padding: 10px 14px !important;
+    padding: 12px 16px !important;
     margin: 0 !important;
+}
+
+[data-skin="pixel-dark"] #streamContainer,
+[data-skin="pixel-paper"] #streamContainer,
+[data-skin="pixel-dark"] #clozeContainer,
+[data-skin="pixel-paper"] #clozeContainer {
+    min-height: 56px !important;
+    padding: 10px 14px !important;
+    gap: 8px !important;
 }
 
 [data-skin="pixel-dark"] #dictationTextarea,
@@ -1554,25 +1534,18 @@ html[data-skin="pixel-paper"] {
     line-height: 1.5 !important;
 }
 
-/* Paper skin typography contrast */
-[data-skin="pixel-paper"] #gamePassportHeader,
-[data-skin="pixel-paper"] #gamePassportHeader.text-amber-300 {  }
-[data-skin="pixel-paper"] #gamePermitDuration,
-[data-skin="pixel-paper"] #gamePermitDuration.text-cyan-300 {  }
-[data-skin="pixel-paper"] #gameCharCountBadge,
-[data-skin="pixel-paper"] #gameCharCountBadge.text-amber-300 {  }
-[data-skin="pixel-paper"] #gameWordCountBadge,
-[data-skin="pixel-paper"] #gameWordCountBadge.text-emerald-300 {  }
-[data-skin="pixel-paper"] #gamePermitTopStrip div span {  }
-[data-skin="pixel-paper"] #gamePermitTopStrip div b {  }
-[data-skin="pixel-paper"] .pixel-permit-card {  }
-[data-skin="pixel-paper"] #dictationTextarea {  }
-[data-skin="pixel-paper"] #gameRulebookSlot,
-[data-skin="pixel-paper"] #gameRulebookSlot span,
+/* Paper skin typography contrast & readability */
+[data-skin="pixel-paper"] #gamePassportHeader { color: #451a03 !important; font-weight: 800 !important; }
+[data-skin="pixel-paper"] #gamePermitDuration { color: #065f46 !important; font-weight: 700 !important; }
+[data-skin="pixel-paper"] #gameCharCountBadge { color: #78350f !important; font-weight: 700 !important; }
+[data-skin="pixel-paper"] #gameWordCountBadge { color: #065f46 !important; font-weight: 700 !important; }
+[data-skin="pixel-paper"] #gamePermitTopStrip div span { color: #78350f !important; font-weight: 600 !important; }
+[data-skin="pixel-paper"] #gamePermitTopStrip div b { color: #1c1917 !important; font-weight: 800 !important; }
+[data-skin="pixel-paper"] #dictationTextarea { color: #1c1917 !important; }
+[data-skin="pixel-paper"] #gameRulebookSlot { color: #1c1917 !important; }
+[data-skin="pixel-paper"] #gameRulebookSlot span { color: #451a03 !important; font-weight: 700 !important; }
 [data-skin="pixel-paper"] #gameRulebookSlot p,
-[data-skin="pixel-paper"] #gameRulebookSlot li {  }
-[data-skin="pixel-paper"] #gameRulebookSlot .text-amber-400 {  }
-[data-skin="pixel-paper"] #gameRulebookSlot .text-amber-300 {  }
+[data-skin="pixel-paper"] #gameRulebookSlot li { color: #1c1917 !important; font-size: 12px !important; line-height: 1.5 !important; font-weight: 500 !important; }
 
 /* ==========================================================================
    STAGE 6: ENTRY PERMIT LCS DIFF BADGES & DICTIONARY LOOKUP
@@ -1588,7 +1561,6 @@ html[data-skin="pixel-paper"] {
     background: #090d14 !important;
 }
 
-[data-skin="pixel-paper"] #diffBadgesContainer {   }
 
 [data-skin="pixel-dark"] .diff-word-match {
     color: #4ade80 !important;
@@ -1685,10 +1657,8 @@ html[data-skin="pixel-paper"] {
 
 [data-skin="pixel-paper"] #dictPopoverContent .text-gray-200,
 [data-skin="pixel-paper"] #dictPopoverContent .text-gray-300,
-[data-skin="pixel-paper"] #dictPopoverContent .text-gray-400 {  }
 
 [data-skin="pixel-paper"] #dictPopoverContent .text-amber-300,
-[data-skin="pixel-paper"] #dictPopoverContent .text-amber-400 {  }
 
 /* Dict Popover Overlay & Positioning (Pure CSS fallback & retro skin) */
 #dictPopoverBackdrop:not(.hidden) {
@@ -1949,8 +1919,3 @@ body:has(#gameTitleScreen:not(.hidden)) #pixelSatchelMount,
     from { box-shadow: 0 0 6px rgba(239, 68, 68, 0.4), 4px 4px 0 #000; }
     to { box-shadow: 0 0 16px rgba(239, 68, 68, 0.9), 4px 4px 0 #000; }
 }
-
-
-
-
-
