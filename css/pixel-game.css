@@ -549,6 +549,10 @@
     .starburst-badge,
     .screen-shake-anim,
     .pixel-heart,
+    .animate-citation-print {
+        animation: none !important;
+        transition: none !important;
+    }
 }
 
 /* ============================================================================
@@ -771,6 +775,10 @@
 }
 
 [data-skin="pixel-dark"] #smartActionDock button:active,
+[data-skin="pixel-paper"] #smartActionDock button:active {
+    transform: translateY(2px) !important;
+    box-shadow: 1px 1px 0px 0px #000000 !important;
+}
 
 /* ==========================================================================
    STAGE 8: CLOZE PUNCH-CARDS, 8-BIT RPG FLASHCARDS & DAILY GOAL TROPHY
@@ -839,8 +847,6 @@
 /* ==========================================================================
    STAGE 9 (V5.0): UNIFIED SINGLE-DOM GAME WORKBENCH TRANSFORMATION
    ========================================================================== */
-
-[data-skin="pixel-dark"] body,
 
 [data-skin="pixel-dark"] #standardModeArea,
 [data-skin="pixel-paper"] #standardModeArea,
@@ -1230,9 +1236,6 @@ html[data-skin="pixel-paper"] {
     grid-template-columns: 1fr !important;
     gap: 8px !important;
 }
-@media (min-width: 1024px) {
-    [data-skin="pixel-dark"] #gameDeskContainer,
-}
 
 /* Internal Scroll for Permit and Equipment Rig without scrolling page */
 [data-skin="pixel-dark"] #gamePermitMainCol,
@@ -1252,8 +1255,19 @@ html[data-skin="pixel-paper"] {
 
 /* Retro Custom Scrollbars */
 [data-skin="pixel-dark"] ::-webkit-scrollbar,
+[data-skin="pixel-paper"] ::-webkit-scrollbar {
+    width: 6px !important;
+    height: 6px !important;
+}
 [data-skin="pixel-dark"] ::-webkit-scrollbar-track,
+[data-skin="pixel-paper"] ::-webkit-scrollbar-track {
+    background: #0b0f19 !important;
+}
 [data-skin="pixel-dark"] ::-webkit-scrollbar-thumb,
+[data-skin="pixel-paper"] ::-webkit-scrollbar-thumb {
+    background: #334155 !important;
+    border-radius: 0px !important;
+}
 
 /* Dossier Cabinet Drawer */
 
@@ -1284,6 +1298,10 @@ html[data-skin="pixel-paper"] {
     transition: transform 0.1s ease, border-color 0.15s ease, background-color 0.15s ease;
 }
 .title-menu-btn:hover,
+.title-menu-btn:focus-visible {
+    border-color: #f59e0b;
+    background-color: rgba(0, 0, 0, 0.85);
+}
 
 @keyframes fadeInTitle {
     from { opacity: 0; transform: scale(0.99); }
@@ -1372,6 +1390,9 @@ html[data-skin="pixel-paper"] {
 
 
 [data-skin="pixel-dark"] #pixelArcadeTopBar .text-gray-400,
+[data-skin="pixel-dark"] #pixelArcadeTopBar .text-gray-500 {
+    color: #94a3b8 !important;
+}
 
 /* ==========================================================================
    STAGE 5: 100VH 2-TIER DESK LAYOUT (PAPERS, PLEASE 1984 WORKBENCH)
@@ -1657,8 +1678,14 @@ body:has(#shadowingSection:not(.hidden)) #smartActionDock,
 
 [data-skin="pixel-paper"] #dictPopoverContent .text-gray-200,
 [data-skin="pixel-paper"] #dictPopoverContent .text-gray-300,
+[data-skin="pixel-paper"] #dictPopoverContent .text-gray-400 {
+    color: #1c1917 !important;
+}
 
 [data-skin="pixel-paper"] #dictPopoverContent .text-amber-300,
+[data-skin="pixel-paper"] #dictPopoverContent .text-amber-400 {
+    color: #78350f !important;
+}
 
 /* Dict Popover Overlay & Positioning (Pure CSS fallback & retro skin) */
 #dictPopoverBackdrop:not(.hidden) {
