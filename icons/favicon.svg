@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient: Deep Obsidian Void -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#141824" />
+      <stop offset="60%" stop-color="#0c0e14" />
+      <stop offset="100%" stop-color="#06070a" />
+    </linearGradient>
+
+    <!-- Warm Amber Gold Gradient for the Lyre Frame -->
+    <linearGradient id="lyreGold" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="50%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+
+    <!-- Luminous Voice String Highlight -->
+    <linearGradient id="stringGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+  </defs>
+
+  <!-- 1. Squircle Bounding Container (Apple / PWA Standard 108px radius) -->
+  <rect x="26" y="26" width="460" height="460" rx="108" fill="url(#bgGrad)" stroke="#222b3d" stroke-width="4" />
+
+  <!-- 2. Subtle Acoustic Radial Ambient Glow -->
+  <circle cx="256" cy="280" r="150" fill="#f59e0b" opacity="0.08" />
+
+  <!-- 3. Minimalist Lyre U-Frame (Acoustic Tuning Fork Resonator) -->
+  <path d="M 151 156
+           A 24 24 0 0 1 199 156
+           L 199 286
+           A 57 57 0 0 0 313 286
+           L 313 156
+           A 24 24 0 0 1 361 156
+           L 361 286
+           A 105 105 0 0 1 151 286
+           Z"
+        fill="url(#lyreGold)" />
+
+  <!-- 4. Center Audio Equalizer Strings (Dictation & Shadowing Waveforms) -->
+  <!-- Center Bar (Primary Voice - Tallest) -->
+  <rect x="244" y="161" width="24" height="155" rx="12" fill="url(#stringGlow)" />
+  
+  <!-- Left Bar (Harmonic Resonance) -->
+  <rect x="196" y="211" width="20" height="90" rx="10" fill="url(#lyreGold)" opacity="0.92" />
+
+  <!-- Right Bar (Shadowing Echo) -->
+  <rect x="296" y="211" width="20" height="90" rx="10" fill="url(#lyreGold)" opacity="0.92" />
+
+  <!-- 5. Bottom Base Accent (Acoustic Anchor) -->
+  <rect x="232" y="416" width="48" height="16" rx="8" fill="#d97706" />
+</svg>
+

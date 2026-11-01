@@ -13,9 +13,7 @@
  * ============================================================================
  */
 
-/* ============================================================================
-   1. COLOR TOKENS & DUAL-SKIN PALETTES
-   ============================================================================ */
+/* --- 1. COLOR TOKENS & DUAL-SKIN PALETTES --- */
 
 /* Skin 1: Dark World & Amber CRT (Default / Night Mode) */
 :root,
@@ -122,17 +120,10 @@
     --px-bezel-border: #524237;
 }
 
-/* ============================================================================
-   2. TYPOGRAPHY HIERARCHY (3-TIER ENGINE)
-   ============================================================================ */
+/* --- 2. TYPOGRAPHY HIERARCHY (3-TIER ENGINE) --- */
 
 /* Tầng 1: Arcade HUD, Badges & Con dấu (Hỗ trợ 100% tiếng Việt) */
-.px-font-arcade {
-    font-family: 'JetBrains Mono', 'Press Start 2P', monospace, sans-serif;
-    letter-spacing: 0.5px;
-    font-weight: 700;
-}
-
+.px-font-arcade { font-family: 'JetBrains Mono', 'Press Start 2P', monospace, sans-serif; letter-spacing: 0.5px; font-weight: 700; }
 
 /* Tầng 2: Hộp thoại đối thoại & Báo cáo */
 .px-font-dialogue {
@@ -154,9 +145,7 @@
     font-feature-settings: "liga" 0;
 }
 
-/* ============================================================================
-   3. PURE CSS 9-SLICE PIXEL BORDERS & CONTAINERS
-   ============================================================================ */
+/* --- 3. PURE CSS 9-SLICE PIXEL BORDERS & CONTAINERS --- */
 
 /* A. Deltarune Iconic Dialogue Box */
 .pixel-dialogue-box {
@@ -220,7 +209,6 @@
     z-index: 1;
 }
 
-
 /* Răng cưa mép giấy visa đục lỗ */
 .pixel-perforated-top::after {
     content: '';
@@ -243,9 +231,7 @@
     padding: 14px;
 }
 
-/* ============================================================================
-   4. CHUNKY TACTILE 3D ARCADE BUTTONS
-   ============================================================================ */
+/* --- 4. CHUNKY TACTILE 3D ARCADE BUTTONS --- */
 
 .pixel-btn {
     display: inline-flex;
@@ -272,7 +258,6 @@
     transition: transform 0.05s ease, box-shadow 0.05s ease;
 }
 
-
 .pixel-btn:active {
     transform: translateY(3px);
     box-shadow:
@@ -280,7 +265,6 @@
         inset 2px 2px 0 0 #93c5fd,
         0 1px 0 0 var(--px-border-shadow);
 }
-
 
 /* Biến thể màu nút Arcade */
 .pixel-btn-amber {
@@ -325,9 +309,7 @@
         0 1px 0 0 var(--px-border-shadow);
 }
 
-/* ============================================================================
-   5. CON DẤU PAPERS, PLEASE (APPROVED & DENIED)
-   ============================================================================ */
+/* --- 5. CON DẤU PAPERS, PLEASE (APPROVED & DENIED) --- */
 
 .stamp-seal {
     display: inline-flex;
@@ -348,33 +330,18 @@
     filter: drop-shadow(2px 2px 0px rgba(0, 0, 0, 0.6));
 }
 
+.stamp-seal .stamp-sub { font-size: 8px; letter-spacing: 1px; opacity: 0.85; }
 
-.stamp-seal .stamp-sub {
-    font-size: 8px;
-    letter-spacing: 1px;
-    opacity: 0.85;
-}
+.stamp-approved { color: var(--px-stamp-approved); border-color: var(--px-stamp-approved); background-color: var(--px-stamp-approved-bg); }
 
-.stamp-approved {
-    color: var(--px-stamp-approved);
-    border-color: var(--px-stamp-approved);
-    background-color: var(--px-stamp-approved-bg);
-}
-
-.stamp-denied {
-    color: var(--px-stamp-denied);
-    border-color: var(--px-stamp-denied);
-    background-color: var(--px-stamp-denied-bg);
-}
+.stamp-denied { color: var(--px-stamp-denied); border-color: var(--px-stamp-denied); background-color: var(--px-stamp-denied-bg); }
 
 /* Hiệu ứng dập lún xuống mặt bàn khi chấm điểm */
 
 @keyframes stampSlam {
 }
 
-/* ============================================================================
-   6. NGÔI SAO ACE ATTORNEY ([HOLD IT!] & [OBJECTION!])
-   ============================================================================ */
+/* --- 6. NGÔI SAO ACE ATTORNEY ([HOLD IT!] & [OBJECTION!]) --- */
 
 .starburst-badge {
     display: inline-flex;
@@ -392,9 +359,7 @@
     100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
 
-/* ============================================================================
-   7. MÀN HÌNH MGS CODEC & CRT SCANLINES SHADER
-   ============================================================================ */
+/* --- 7. MÀN HÌNH MGS CODEC & CRT SCANLINES SHADER --- */
 
 .pixel-crt-monitor {
     position: relative;
@@ -424,9 +389,7 @@
 
 /* Dao động ký xanh phosphor */
 
-/* ============================================================================
-   8. SỔ TAY ĐIỀU TRA GÁY XOẮN (OBRA DINN SPIRAL LEDGER)
-   ============================================================================ */
+/* --- 8. SỔ TAY ĐIỀU TRA GÁY XOẮN (OBRA DINN SPIRAL LEDGER) --- */
 
 .pixel-spiral-notebook {
     position: relative;
@@ -469,15 +432,9 @@
     user-select: none;
 }
 
-.pixel-tab-btn.is-active {
-    background-color: var(--px-paper-bg);
-    color: var(--px-paper-text);
-    transform: translateY(2px);
-}
+.pixel-tab-btn.is-active { background-color: var(--px-paper-bg); color: var(--px-paper-text); transform: translateY(2px); }
 
-/* ============================================================================
-   9. ARCADE HUD BAR & DELTARUNE SOUL HEARTS
-   ============================================================================ */
+/* --- 9. ARCADE HUD BAR & DELTARUNE SOUL HEARTS --- */
 
 .arcade-hud-bar {
     display: flex;
@@ -521,26 +478,17 @@
     100% { transform: translate(0, 0); }
 }
 
-/* ============================================================================
-   10. MOBILE RESPONSIVE OPTIMIZATION & SAFE-AREAS
-   ============================================================================ */
+/* --- 10. MOBILE RESPONSIVE OPTIMIZATION & SAFE-AREAS --- */
 
 @media (max-width: 768px) {
-    .arcade-hud-bar {
-        font-size: 8px; padding: 4px 6px; flex-wrap: wrap; gap: 4px;
-    }
+    .arcade-hud-bar { font-size: 8px; padding: 4px 6px; flex-wrap: wrap; gap: 4px; }
     .pixel-btn {
         font-size: 9px; padding: 8px 12px; min-height: 44px; /* WCAG 2.1 AA touch target */
     }
     /* Đáy màn hình an toàn và kích thước dock trên mobile */
     [data-skin="pixel-dark"] #smartActionDock,
-    [data-skin="pixel-paper"] #smartActionDock {
-        bottom: calc(env(safe-area-inset-bottom, 8px) + 6px) !important;
-        max-width: 96vw !important; padding: 4px 8px !important;
-    }
-    #smartActionDock button {
-        min-height: 44px !important; min-width: 44px !important;
-    }
+    [data-skin="pixel-paper"] #smartActionDock { bottom: calc(env(safe-area-inset-bottom, 8px) + 6px) !important; max-width: 96vw !important; padding: 4px 8px !important; }
+    #smartActionDock button { min-height: 44px !important; min-width: 44px !important; }
 }
 
 /* Tôn trọng người dùng bật Prefers Reduced Motion */
@@ -549,15 +497,10 @@
     .starburst-badge,
     .screen-shake-anim,
     .pixel-heart,
-    .animate-citation-print {
-        animation: none !important;
-        transition: none !important;
-    }
+    .animate-citation-print { animation: none !important; transition: none !important; }
 }
 
-/* ============================================================================
-   11. STAGE 4 ADVANCED DESK & CITATION PRINTER STYLES
-   ============================================================================ */
+/* --- 11. STAGE 4 ADVANCED DESK & CITATION PRINTER STYLES --- */
 
 /* Kẹp giấy kim loại cổ điển trên mép tài liệu */
 .pixel-paperclip {
@@ -601,12 +544,7 @@
     color: #dc2626;
 }
 
-
-.pixel-citation-slip .citation-body b {
-    color: #dc2626;
-    display: block;
-    margin-bottom: 2px;
-}
+.pixel-citation-slip .citation-body b { color: #dc2626; display: block; margin-bottom: 2px; }
 
 .pixel-citation-slip .citation-footer {
     display: flex;
@@ -618,9 +556,7 @@
 }
 
 /* Hoạt ảnh máy in đùn giấy phạt từ trên trần xuống */
-.animate-citation-print {
-    animation: citationPrint 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-}
+.animate-citation-print { animation: citationPrint 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
 
 @keyframes citationPrint {
     0% { transform: translateY(-20px); opacity: 0; }
@@ -646,20 +582,14 @@
 }
 
 /* Con trỏ lựa chọn tim đỏ nhấp nháy */
-.choice-cursor {
-    display: inline-block;
-    color: var(--px-soul-red);
-    animation: choiceHeartWiggle 0.8s infinite ease-in-out;
-}
+.choice-cursor { display: inline-block; color: var(--px-soul-red); animation: choiceHeartWiggle 0.8s infinite ease-in-out; }
 
 @keyframes choiceHeartWiggle {
     0%, 100% { transform: translateX(0); }
     50% { transform: translateX(2px); }
 }
 
-/* ==========================================================================
-   STAGE 5: SPRING-LOADED STAMP, RPG STATS SHEET & PAPERBOY GAZETTE
-   ========================================================================== */
+/* --- STAGE 5: SPRING-LOADED STAMP, RPG STATS SHEET & PAPERBOY GAZETTE --- */
 
 /* 1. Con dấu lò xo nén cơ học (Spring-Loaded Mechanical Stamp) */
 .stamp-spring-tension {
@@ -669,29 +599,13 @@
     transition: transform 0.08s ease-in, box-shadow 0.08s ease-in !important;
 }
 
-.stamp-handle-wood {
-    background: linear-gradient(180deg, #78350f 0%, #451a03 100%);
-    border: 2px solid #000000;
-    box-shadow: inset 1px 1px 0px #b45309, 2px 2px 0px #000000;
-}
+.stamp-handle-wood { background: linear-gradient(180deg, #78350f 0%, #451a03 100%); border: 2px solid #000000; box-shadow: inset 1px 1px 0px #b45309, 2px 2px 0px #000000; }
 
 /* 2. Thẻ chỉ số RPG Character Stats Sheet (Deltarune Aesthetic) */
-.pixel-stats-sheet {
-    background: #090c13;
-    border: 3px solid #f59e0b;
-    box-shadow: 4px 4px 0 #000;
-}
-[data-skin="pixel-paper"] .pixel-stats-sheet {
-    background: #fdf6e2;
-    border-color: #92400e;
-}
-.party-select-btn {
-    cursor: pointer;
-    transition: transform 0.1s ease;
-}
-.party-select-btn:active {
-    transform: scale(0.96);
-}
+.pixel-stats-sheet { background: #090c13; border: 3px solid #f59e0b; box-shadow: 4px 4px 0 #000; }
+[data-skin="pixel-paper"] .pixel-stats-sheet { background: #fdf6e2; border-color: #92400e; }
+.party-select-btn { cursor: pointer; transition: transform 0.1s ease; }
+.party-select-btn:active { transform: scale(0.96); }
 
 /* 3. Tờ báo vinh danh The Daily Lyre Extra! (1984 Atari Paperboy Gazette) */
 .pixel-newspaper-sheet {
@@ -702,9 +616,7 @@
     font-family: 'Courier New', Courier, monospace;
 }
 
-.animate-newspaper-spin {
-    animation: newspaperSpin 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-}
+.animate-newspaper-spin { animation: newspaperSpin 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
 
 @keyframes newspaperSpin {
     0% { transform: scale(0.1) rotate(-720deg); opacity: 0; }
@@ -713,16 +625,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .animate-newspaper-spin {
-        animation: none !important;
-        transform: scale(1) rotate(0deg) !important;
-        opacity: 1 !important;
-    }
+    .animate-newspaper-spin { animation: none !important; transform: scale(1) rotate(0deg) !important; opacity: 1 !important; }
 }
 
-/* ==========================================================================
-   STAGE 7: MGS CODEC SHADOWING LAB, COURTROOM DUEL & ARCADE DOCK
-   ========================================================================== */
+/* --- STAGE 7: MGS CODEC SHADOWING LAB, COURTROOM DUEL & ARCADE DOCK --- */
 
 /* 1. MGS Codec 140.85 Shadowing Lab CRT Monitor */
 .pixel-codec-panel {
@@ -740,11 +646,7 @@
     background-size: 16px 16px;
 }
 
-.codec-waveform-line {
-    background-color: var(--px-codec-green);
-    box-shadow: 0 0 6px rgba(52, 211, 153, 0.8);
-    transition: height 0.08s ease-out;
-}
+.codec-waveform-line { background-color: var(--px-codec-green); box-shadow: 0 0 6px rgba(52, 211, 153, 0.8); transition: height 0.08s ease-out; }
 
 /* 2. Ace Attorney [TAKE THAT!] Starburst Badge */
 .starburst-take-that polygon {
@@ -763,7 +665,6 @@
     box-shadow: 6px 6px 0px 0px #000000 !important;
 }
 
-
 [data-skin="pixel-dark"] #smartActionDock button,
 [data-skin="pixel-paper"] #smartActionDock button {
     border-radius: 0px !important;
@@ -775,14 +676,9 @@
 }
 
 [data-skin="pixel-dark"] #smartActionDock button:active,
-[data-skin="pixel-paper"] #smartActionDock button:active {
-    transform: translateY(2px) !important;
-    box-shadow: 1px 1px 0px 0px #000000 !important;
-}
+[data-skin="pixel-paper"] #smartActionDock button:active { transform: translateY(2px) !important; box-shadow: 1px 1px 0px 0px #000000 !important; }
 
-/* ==========================================================================
-   STAGE 8: CLOZE PUNCH-CARDS, 8-BIT RPG FLASHCARDS & DAILY GOAL TROPHY
-   ========================================================================== */
+/* --- STAGE 8: CLOZE PUNCH-CARDS, 8-BIT RPG FLASHCARDS & DAILY GOAL TROPHY --- */
 
 /* 1. Điền khuyết dạng thẻ đục lỗ cơ học (Cloze Mechanical Punch-Cards) */
 [data-skin="pixel-dark"] .cloze-blank-input,
@@ -797,18 +693,10 @@
     padding: 2px 6px !important;
 }
 
-[data-skin="pixel-paper"] .cloze-blank-input {
-    border-color: #451a03 !important;
-    background: #fef3c7 !important;
-    color: #1c1917 !important;
-}
+[data-skin="pixel-paper"] .cloze-blank-input { border-color: #451a03 !important; background: #fef3c7 !important; color: #1c1917 !important; }
 
 [data-skin="pixel-dark"] .cloze-blank-input.is-correct,
-[data-skin="pixel-paper"] .cloze-blank-input.is-correct {
-    border-color: #22c55e !important;
-    color: #22c55e !important;
-    background: #052e16 !important;
-}
+[data-skin="pixel-paper"] .cloze-blank-input.is-correct { border-color: #22c55e !important; color: #22c55e !important; background: #052e16 !important; }
 
 /* 2. Sổ tay Flashcard lật 3D phong cách Thẻ Trang Bị RPG (Earthbound / Undertale) */
 [data-skin="pixel-dark"] #flashcardModal .flashcard-face,
@@ -819,11 +707,7 @@
     box-shadow: 8px 8px 0px 0px #000000 !important;
 }
 
-[data-skin="pixel-paper"] #flashcardModal .flashcard-face {
-    border-color: #451a03 !important;
-    background: #f4ecd8 !important;
-    color: #1c1917 !important;
-}
+[data-skin="pixel-paper"] #flashcardModal .flashcard-face { border-color: #451a03 !important; background: #f4ecd8 !important; color: #1c1917 !important; }
 
 [data-skin="pixel-dark"] #flashcardModal button,
 [data-skin="pixel-paper"] #flashcardModal button {
@@ -843,10 +727,7 @@
     box-shadow: 2px 2px 0px 0px #000000 !important;
 }
 
-
-/* ==========================================================================
-   STAGE 9 (V5.0): UNIFIED SINGLE-DOM GAME WORKBENCH TRANSFORMATION
-   ========================================================================== */
+/* --- STAGE 9 (V5.0): UNIFIED SINGLE-DOM GAME WORKBENCH TRANSFORMATION --- */
 
 [data-skin="pixel-dark"] #standardModeArea,
 [data-skin="pixel-paper"] #standardModeArea,
@@ -878,14 +759,12 @@
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-
 [data-skin="pixel-paper"] #dictationTextarea {
     background-color: #f8f1e0 !important;
     color: #1c1917 !important;
     border-color: #451a03 !important;
     caret-color: #991b1b !important;
 }
-
 
 /* Watermark chìm Arstotzka Star cho Tờ khai Nhập cảnh */
 [data-skin="pixel-dark"] #standardModeArea::before {
@@ -919,20 +798,11 @@
     z-index: 0;
 }
 
-/* ==========================================================================
-   STAGE 10 (V5.0): GRESTIN BORDER BOOTH & ARCADE CAMPAIGN HUB
-   ========================================================================== */
+/* --- STAGE 10 (V5.0): GRESTIN BORDER BOOTH & ARCADE CAMPAIGN HUB --- */
 
 /* 1. Arcade Campaign Hub (Thay thế #emptyStateCard khi ở chế độ Pixel) */
 [data-skin="pixel-dark"] .pixel-campaign-hub,
-[data-skin="pixel-paper"] .pixel-campaign-hub {
-    background-color: var(--px-paper-bg) !important;
-    border: 3px solid var(--px-border-shadow) !important;
-    box-shadow: 4px 4px 0 0 var(--px-border-shadow), 8px 8px 0 0 rgba(0, 0, 0, 0.5) !important;
-}
-
-
-
+[data-skin="pixel-paper"] .pixel-campaign-hub { background-color: var(--px-paper-bg) !important; border: 3px solid var(--px-border-shadow) !important; box-shadow: 4px 4px 0 0 var(--px-border-shadow), 8px 8px 0 0 rgba(0, 0, 0, 0.5) !important; }
 
 /* 2. Ô Kính Buồng Kiểm Soát Biên Giới Grestin (#pixelBoothViewport) */
 .pixel-booth-viewport {
@@ -942,11 +812,7 @@
     box-shadow: inset 0 0 0 2px #000, 3px 3px 0 0 #000;
 }
 
-@media (max-width: 640px) {
-}
-
 /* Hậu cảnh Buồng gác & Đèn tháp canh */
-
 .searchlight-beam {
     position: absolute;
     top: -20px;
@@ -1006,7 +872,6 @@
     transform: translateY(0);
 }
 
-
 /* 4. Sprite Khách Nhập Cảnh & Hoạt Ảnh */
 
 @keyframes pixelIdleBob {
@@ -1014,15 +879,11 @@
     50% { transform: translateY(-2px); }
 }
 
-
-
 @keyframes travelerEnter {
 }
 
 @keyframes travelerLeave {
 }
-
-
 
 /* Campaign Hub / Dispatcher Terminal lives inside #emptyStateCard */
 [data-skin="pixel-dark"] #emptyStateCard,
@@ -1045,9 +906,7 @@
 body.zen-focus-active .pixel-booth-viewport { height: 64px; }
 body.zen-focus-active .traveler-dossier-pill { display: none; }
 
-/* ==========================================================================
-   STAGE 11 (V5.0): DELTARUNE COMBAT HUD + PULL-OUT STAMP TRAY
-   ========================================================================== */
+/* --- STAGE 11 (V5.0): DELTARUNE COMBAT HUD + PULL-OUT STAMP TRAY --- */
 .pixel-hud {
     padding: 8px;
     background: #0b0e16;
@@ -1107,15 +966,9 @@ body.zen-focus-active .traveler-dossier-pill { display: none; }
 [data-skin="pixel-paper"] .pixel-hud { background: #2a2018; border-color: #451a03; }
 [data-skin="pixel-paper"] .hud-cmd, [data-skin="pixel-paper"] .hud-chip { background: #1c1510; }
 
-/* ==========================================================================
-   STAGE 12 (V5.0): TRUE PLAYABLE ARCADE VIEWPORT (ZERO PAGE SCROLL 100VH)
-   ========================================================================== */
+/* --- STAGE 12 (V5.0): TRUE PLAYABLE ARCADE VIEWPORT (ZERO PAGE SCROLL 100VH) --- */
 html[data-skin="pixel-dark"],
-html[data-skin="pixel-paper"] {
-    height: 100vh !important;
-    max-height: 100vh !important;
-    overflow: hidden !important;
-}
+html[data-skin="pixel-paper"] { height: 100vh !important; max-height: 100vh !important; overflow: hidden !important; }
 
 [data-skin="pixel-dark"] body,
 [data-skin="pixel-paper"] body {
@@ -1217,11 +1070,7 @@ html[data-skin="pixel-paper"] {
 }
 @media (max-width: 768px) {
     [data-skin="pixel-dark"] #gameUpperDeck,
-    [data-skin="pixel-paper"] #gameUpperDeck {
-        grid-template-columns: 1fr !important;
-        height: auto !important;
-        max-height: none !important;
-    }
+    [data-skin="pixel-paper"] #gameUpperDeck { grid-template-columns: 1fr !important; height: auto !important; max-height: none !important; }
 }
 
 /* Game Desk Container: 2-column grid filling remaining height */
@@ -1255,25 +1104,13 @@ html[data-skin="pixel-paper"] {
 
 /* Retro Custom Scrollbars */
 [data-skin="pixel-dark"] ::-webkit-scrollbar,
-[data-skin="pixel-paper"] ::-webkit-scrollbar {
-    width: 6px !important;
-    height: 6px !important;
-}
+[data-skin="pixel-paper"] ::-webkit-scrollbar { width: 6px !important; height: 6px !important; }
 [data-skin="pixel-dark"] ::-webkit-scrollbar-track,
-[data-skin="pixel-paper"] ::-webkit-scrollbar-track {
-    background: #0b0f19 !important;
-}
+[data-skin="pixel-paper"] ::-webkit-scrollbar-track { background: #0b0f19 !important; }
 [data-skin="pixel-dark"] ::-webkit-scrollbar-thumb,
-[data-skin="pixel-paper"] ::-webkit-scrollbar-thumb {
-    background: #334155 !important;
-    border-radius: 0px !important;
-}
+[data-skin="pixel-paper"] ::-webkit-scrollbar-thumb { background: #334155 !important; border-radius: 0px !important; }
 
-/* Dossier Cabinet Drawer */
-
-/* ==========================================================================
-   STAGE 13 (V5.0): RETRO TITLE SCREEN 1984 (PAPERS, PLEASE STYLE)
-   ========================================================================== */
+/* --- STAGE 13 (V5.0): RETRO TITLE SCREEN 1984 (PAPERS, PLEASE STYLE) --- */
 #gameTitleScreen {
     flex: 1 1 0% !important;
     height: 100% !important;
@@ -1288,8 +1125,6 @@ html[data-skin="pixel-paper"] {
 }
 #gameTitleScreen.hidden { display: none !important; }
 
-
-
 .title-menu-btn {
     font-family: 'JetBrains Mono', monospace;
     font-weight: 700;
@@ -1298,67 +1133,28 @@ html[data-skin="pixel-paper"] {
     transition: transform 0.1s ease, border-color 0.15s ease, background-color 0.15s ease;
 }
 .title-menu-btn:hover,
-.title-menu-btn:focus-visible {
-    border-color: #f59e0b;
-    background-color: rgba(0, 0, 0, 0.85);
-}
+.title-menu-btn:focus-visible { border-color: #f59e0b; background-color: rgba(0, 0, 0, 0.85); }
 
 @keyframes fadeInTitle {
     from { opacity: 0; transform: scale(0.99); }
     to { opacity: 1; transform: scale(1); }
 }
 
-/* ==========================================================================
-   STAGE 14 (V5.0): RETRO DOSSIER & TAPE CARRIER MODAL
-   ========================================================================== */
+/* --- STAGE 14 (V5.0): RETRO DOSSIER & TAPE CARRIER MODAL --- */
 
-.pixel-docket-card {
-    border: 2px solid #374151;
-    background: rgba(0, 0, 0, 0.65);
-    transition: border-color 0.15s ease, background-color 0.15s ease, transform 0.1s ease;
-}
-.pixel-docket-card:hover {
-    border-color: #f59e0b;
-    background: rgba(0, 0, 0, 0.85);
-    transform: translateX(2px);
-}
+.pixel-docket-card { border: 2px solid #374151; background: rgba(0, 0, 0, 0.65); transition: border-color 0.15s ease, background-color 0.15s ease, transform 0.1s ease; }
+.pixel-docket-card:hover { border-color: #f59e0b; background: rgba(0, 0, 0, 0.85); transform: translateX(2px); }
 
-/* ==========================================================================
-   STAGE 15 (V5.0): POCKET RULEBOOK MODAL (PAPERS, PLEASE 1984)
-   ========================================================================== */
+.btn-speed-option.active-speed { background-color: #d97706 !important; border-color: #fbbf24 !important; color: #000 !important; }
 
-/* ==========================================================================
-   STAGE 15c (V5.0): RETRO SETTINGS & AUDIO TUNING MODAL (PAPERS, PLEASE 1984)
-   ========================================================================== */
-
-.btn-speed-option.active-speed {
-    background-color: #d97706 !important;
-    border-color: #fbbf24 !important;
-    color: #000 !important;
-}
-
-/* ==========================================================================
-   COLOR VIBRANCY & WCAG HIGH CONTRAST (ZERO SUNKEN/DIM TEXT)
-   ========================================================================== */
-[data-skin="pixel-dark"] #smartActionDock {
-    background: #0d121c !important;
-    border: 3px solid #f59e0b !important;
-    box-shadow: 0 0 16px rgba(245, 158, 11, 0.28), 4px 4px 0px 0px #000000 !important;
-}
+/* --- COLOR VIBRANCY & WCAG HIGH CONTRAST (ZERO SUNKEN/DIM TEXT) --- */
+[data-skin="pixel-dark"] #smartActionDock { background: #0d121c !important; border: 3px solid #f59e0b !important; box-shadow: 0 0 16px rgba(245, 158, 11, 0.28), 4px 4px 0px 0px #000000 !important; }
 
 [data-skin="pixel-dark"] #smartActionDock #dockBtnLeft,
-[data-skin="pixel-dark"] #smartActionDock #dockBtnRight {
-    background: #141b27 !important;
-    border: 2px solid #3b4861 !important;
-    color: #f1f5f9 !important;
-}
+[data-skin="pixel-dark"] #smartActionDock #dockBtnRight { background: #141b27 !important; border: 2px solid #3b4861 !important; color: #f1f5f9 !important; }
 
 [data-skin="pixel-dark"] #smartActionDock #dockBtnLeft:hover,
-[data-skin="pixel-dark"] #smartActionDock #dockBtnRight:hover {
-    background: #1e293b !important;
-    border-color: #f59e0b !important;
-    color: #fbbf24 !important;
-}
+[data-skin="pixel-dark"] #smartActionDock #dockBtnRight:hover { background: #1e293b !important; border-color: #f59e0b !important; color: #fbbf24 !important; }
 
 [data-skin="pixel-dark"] #dockBtnPrimary {
     background: #f59e0b !important;
@@ -1374,37 +1170,18 @@ html[data-skin="pixel-paper"] {
     box-shadow: 2px 2px 0 0 #000000 !important;
 }
 
-[data-skin="pixel-dark"] .tactile-btn:hover {
-    background: #1e293b !important;
-    border-color: #f59e0b !important;
-    color: #fbbf24 !important;
-}
+[data-skin="pixel-dark"] .tactile-btn:hover { background: #1e293b !important; border-color: #f59e0b !important; color: #fbbf24 !important; }
 
-[data-skin="pixel-dark"] .title-menu-btn {
-    background: #0d111a !important;
-    border: 2px solid #334155 !important;
-    color: #f8fafc !important;
-}
-
-
-
+[data-skin="pixel-dark"] .title-menu-btn { background: #0d111a !important; border: 2px solid #334155 !important; color: #f8fafc !important; }
 
 [data-skin="pixel-dark"] #pixelArcadeTopBar .text-gray-400,
-[data-skin="pixel-dark"] #pixelArcadeTopBar .text-gray-500 {
-    color: #94a3b8 !important;
-}
+[data-skin="pixel-dark"] #pixelArcadeTopBar .text-gray-500 { color: #94a3b8 !important; }
 
-/* ==========================================================================
-   STAGE 5: 100VH 2-TIER DESK LAYOUT (PAPERS, PLEASE 1984 WORKBENCH)
-   ========================================================================== */
+/* --- STAGE 5: 100VH 2-TIER DESK LAYOUT (PAPERS, PLEASE 1984 WORKBENCH) --- */
 [data-skin="pixel-dark"],
 [data-skin="pixel-paper"],
 [data-skin="pixel-dark"] body,
-[data-skin="pixel-paper"] body {
-    height: 100vh !important;
-    max-height: 100vh !important;
-    overflow: hidden !important;
-}
+[data-skin="pixel-paper"] body { height: 100vh !important; max-height: 100vh !important; overflow: hidden !important; }
 
 [data-skin="pixel-dark"] main,
 [data-skin="pixel-paper"] main {
@@ -1441,15 +1218,11 @@ html[data-skin="pixel-paper"] {
 [data-skin="pixel-dark"] .shortcuts-ribbon,
 [data-skin="pixel-paper"] .shortcuts-ribbon,
 [data-skin="pixel-dark"] #pixelHudMount,
-[data-skin="pixel-paper"] #pixelHudMount {
-    display: none !important;
-}
+[data-skin="pixel-paper"] #pixelHudMount { display: none !important; }
 
 /* Hide floating action dock while in Shadowing mode to prevent overlapping controls */
 body:has(#shadowingSection:not(.hidden)) #smartActionDock,
-.shadowing-active #smartActionDock {
-    display: none !important;
-}
+.shadowing-active #smartActionDock { display: none !important; }
 
 /* Tier 1: Upper Deck (Booth on Left 38%, Dialogue on Right 62%) */
 [data-skin="pixel-dark"] #gameUpperDeck,
@@ -1458,9 +1231,9 @@ body:has(#shadowingSection:not(.hidden)) #smartActionDock,
     flex-direction: row !important;
     gap: 12px !important;
     width: 100% !important;
-    height: 24vh !important;
-    max-height: 24vh !important;
-    min-height: 140px !important;
+    height: clamp(120px, 20vh, 185px) !important;
+    max-height: 185px !important;
+    min-height: 120px !important;
     overflow: hidden !important;
     flex-shrink: 0 !important;
 }
@@ -1494,10 +1267,10 @@ body:has(#shadowingSection:not(.hidden)) #smartActionDock,
     gap: 12px !important;
     width: 100% !important;
     flex: 1 1 auto !important;
-    height: calc(76vh - 56px) !important;
-    max-height: calc(76vh - 56px) !important;
+    height: calc(100vh - clamp(120px, 20vh, 185px) - 52px) !important;
+    max-height: calc(100vh - clamp(120px, 20vh, 185px) - 52px) !important;
     overflow: hidden !important;
-    padding-bottom: 74px !important;
+    padding-bottom: 58px !important;
 }
 
 [data-skin="pixel-dark"] #gamePermitMainCol,
@@ -1542,18 +1315,10 @@ body:has(#shadowingSection:not(.hidden)) #smartActionDock,
 [data-skin="pixel-dark"] #streamContainer,
 [data-skin="pixel-paper"] #streamContainer,
 [data-skin="pixel-dark"] #clozeContainer,
-[data-skin="pixel-paper"] #clozeContainer {
-    min-height: 56px !important;
-    padding: 10px 14px !important;
-    gap: 8px !important;
-}
+[data-skin="pixel-paper"] #clozeContainer { min-height: 56px !important; padding: 10px 14px !important; gap: 8px !important; }
 
 [data-skin="pixel-dark"] #dictationTextarea,
-[data-skin="pixel-paper"] #dictationTextarea {
-    min-height: 70px !important;
-    font-size: 1.15rem !important;
-    line-height: 1.5 !important;
-}
+[data-skin="pixel-paper"] #dictationTextarea { min-height: 70px !important; font-size: 1.15rem !important; line-height: 1.5 !important; }
 
 /* Paper skin typography contrast & readability */
 [data-skin="pixel-paper"] #gamePassportHeader { color: #451a03 !important; font-weight: 800 !important; }
@@ -1568,9 +1333,7 @@ body:has(#shadowingSection:not(.hidden)) #smartActionDock,
 [data-skin="pixel-paper"] #gameRulebookSlot p,
 [data-skin="pixel-paper"] #gameRulebookSlot li { color: #1c1917 !important; font-size: 12px !important; line-height: 1.5 !important; font-weight: 500 !important; }
 
-/* ==========================================================================
-   STAGE 6: ENTRY PERMIT LCS DIFF BADGES & DICTIONARY LOOKUP
-   ========================================================================== */
+/* --- STAGE 6: ENTRY PERMIT LCS DIFF BADGES & DICTIONARY LOOKUP --- */
 [data-skin="pixel-dark"] #diffBadgesContainer,
 [data-skin="pixel-paper"] #diffBadgesContainer {
     font-family: 'JetBrains Mono', 'Courier New', monospace !important;
@@ -1581,7 +1344,6 @@ body:has(#shadowingSection:not(.hidden)) #smartActionDock,
     border: 2px solid #3b4861 !important;
     background: #090d14 !important;
 }
-
 
 [data-skin="pixel-dark"] .diff-word-match {
     color: #4ade80 !important;
@@ -1678,14 +1440,10 @@ body:has(#shadowingSection:not(.hidden)) #smartActionDock,
 
 [data-skin="pixel-paper"] #dictPopoverContent .text-gray-200,
 [data-skin="pixel-paper"] #dictPopoverContent .text-gray-300,
-[data-skin="pixel-paper"] #dictPopoverContent .text-gray-400 {
-    color: #1c1917 !important;
-}
+[data-skin="pixel-paper"] #dictPopoverContent .text-gray-400 { color: #1c1917 !important; }
 
 [data-skin="pixel-paper"] #dictPopoverContent .text-amber-300,
-[data-skin="pixel-paper"] #dictPopoverContent .text-amber-400 {
-    color: #78350f !important;
-}
+[data-skin="pixel-paper"] #dictPopoverContent .text-amber-400 { color: #78350f !important; }
 
 /* Dict Popover Overlay & Positioning (Pure CSS fallback & retro skin) */
 #dictPopoverBackdrop:not(.hidden) {
@@ -1723,9 +1481,7 @@ body:has(#shadowingSection:not(.hidden)) #smartActionDock,
     top: auto !important;
 }
 
-/* ==========================================================================
-   STAGE 7: RETRO PHYSICAL CASSETTE DECK & SPRING STAMP RIG
-   ========================================================================== */
+/* --- STAGE 7: RETRO PHYSICAL CASSETTE DECK & SPRING STAMP RIG --- */
 .pixel-tape-spool {
     width: 22px !important;
     height: 22px !important;
@@ -1772,47 +1528,25 @@ body:has(#shadowingSection:not(.hidden)) #smartActionDock,
 }
 
 /* Xé phiếu phạt hiệu ứng rách giấy (Tear-off animation) */
-.citation-torn-away {
-    transform: translateX(120%) rotate(18deg) !important;
-    opacity: 0 !important;
-    transition: transform 0.25s ease-in, opacity 0.25s ease-in !important;
-}
+.citation-torn-away { transform: translateX(120%) rotate(18deg) !important; opacity: 0 !important; transition: transform 0.25s ease-in, opacity 0.25s ease-in !important; }
 
 /* Chế độ giấy Manila: Màu vỏ máy cassette đồng bộ */
-[data-skin="pixel-paper"] .pixel-tape-window {
-    background: #ded5be !important;
-    border-color: #8c7865 !important;
-}
+[data-skin="pixel-paper"] .pixel-tape-window { background: #ded5be !important; border-color: #8c7865 !important; }
 
-[data-skin="pixel-paper"] .pixel-tape-window span {
-    color: #451a03 !important;
-}
+[data-skin="pixel-paper"] .pixel-tape-window span { color: #451a03 !important; }
 
-[data-skin="pixel-paper"] .pixel-tape-spool {
-    background: #c8beaa !important;
-    border-color: #786b59 !important;
-}
+[data-skin="pixel-paper"] .pixel-tape-spool { background: #c8beaa !important; border-color: #786b59 !important; }
 
-[data-skin="pixel-paper"] .spool-cog {
-    background: #451a03 !important;
-}
+[data-skin="pixel-paper"] .spool-cog { background: #451a03 !important; }
 
-[data-skin="pixel-paper"] .pixel-tape-counter {
-    background: #292524 !important;
-    color: #fbbf24 !important;
-    border-color: #78716c !important;
-}
+[data-skin="pixel-paper"] .pixel-tape-counter { background: #292524 !important; color: #fbbf24 !important; border-color: #78716c !important; }
 
-/* ==========================================================================
-   STAGE 8: BALO ĐỒ NGHỀ THANH TRA (INSPECTOR'S INVENTORY SATCHEL 🎒)
-   ========================================================================== */
+/* --- STAGE 8: BALO ĐỒ NGHỀ THANH TRA (INSPECTOR'S INVENTORY SATCHEL 🎒) --- */
 
 /* Ẩn nút balo khi đang ở màn hình Title Screen hoặc có class hidden */
 #gameTitleScreen:not(.hidden) ~ #pixelSatchelMount,
 body:has(#gameTitleScreen:not(.hidden)) #pixelSatchelMount,
-#pixelSatchelMount.hidden {
-    display: none !important;
-}
+#pixelSatchelMount.hidden { display: none !important; }
 
 .pixel-satchel-mount {
     position: fixed !important;
@@ -1830,22 +1564,11 @@ body:has(#gameTitleScreen:not(.hidden)) #pixelSatchelMount,
     font-family: inherit !important;
 }
 
-.pixel-satchel-btn:hover {
-    border-color: #f59e0b !important;
-    box-shadow: 4px 4px 0 #000 !important;
-    transform: translate(-1px, -1px) !important;
-}
+.pixel-satchel-btn:hover { border-color: #f59e0b !important; box-shadow: 4px 4px 0 #000 !important; transform: translate(-1px, -1px) !important; }
 
-.pixel-satchel-btn:active {
-    transform: translate(1px, 1px) !important;
-    box-shadow: 1px 1px 0 #000 !important;
-}
+.pixel-satchel-btn:active { transform: translate(1px, 1px) !important; box-shadow: 1px 1px 0 #000 !important; }
 
-.pixel-satchel-card {
-    background: #1e130b !important;
-    border: 3px solid #b45309 !important;
-    box-shadow: 6px 6px 0 #000, 0 0 30px rgba(0, 0, 0, 0.9) !important;
-}
+.pixel-satchel-card { background: #1e130b !important; border: 3px solid #b45309 !important; box-shadow: 6px 6px 0 #000, 0 0 30px rgba(0, 0, 0, 0.9) !important; }
 
 .satchel-tool-card {
     background: #28170c !important;
@@ -1861,69 +1584,35 @@ body:has(#gameTitleScreen:not(.hidden)) #pixelSatchelMount,
     transform: translateY(-2px) !important;
 }
 
-.satchel-tool-card:active {
-    transform: translateY(1px) !important;
-    box-shadow: 1px 1px 0 #000 !important;
-}
+.satchel-tool-card:active { transform: translateY(1px) !important; box-shadow: 1px 1px 0 #000 !important; }
 
-[data-skin="pixel-paper"] .pixel-satchel-card {
-    background: #2e1d13 !important;
-    border-color: #d97706 !important;
-}
+[data-skin="pixel-paper"] .pixel-satchel-card { background: #2e1d13 !important; border-color: #d97706 !important; }
 
-[data-skin="pixel-paper"] .satchel-tool-card {
-    background: #382417 !important;
-    border-color: #92400e !important;
-}
+[data-skin="pixel-paper"] .satchel-tool-card { background: #382417 !important; border-color: #92400e !important; }
 
-[data-skin="pixel-paper"] .satchel-tool-card:hover {
-    background: #472d1d !important;
-    border-color: #fbbf24 !important;
-}
+[data-skin="pixel-paper"] .satchel-tool-card:hover { background: #472d1d !important; border-color: #fbbf24 !important; }
 
-/* ============================================================================
-   14. GIAI ĐOẠN 9: PHÒNG GIÁM SÁT SHADOWING (MGS CODEC SURVEILLANCE LAB)
-   ============================================================================ */
+/* --- 14. GIAI ĐOẠN 9: PHÒNG GIÁM SÁT SHADOWING (MGS CODEC SURVEILLANCE LAB) --- */
 [data-skin="pixel-dark"] #shadowingSection,
-[data-skin="pixel-paper"] #shadowingSection {
-    height: 100% !important; max-height: calc(100vh - 48px) !important;
-    overflow: hidden !important; gap: 0.45rem !important; padding-bottom: 0.5rem !important;
-}
+[data-skin="pixel-paper"] #shadowingSection { height: 100% !important; max-height: calc(100vh - 48px) !important; overflow: hidden !important; gap: 0.45rem !important; padding-bottom: 0.5rem !important; }
 /* Tối giản hóa: Ẩn thanh lệnh web cũ và chẩn đoán để tập trung nói đuổi */
 [data-skin="pixel-dark"] #shadowingSection > div:nth-child(2),
 [data-skin="pixel-paper"] #shadowingSection > div:nth-child(2),
 [data-skin="pixel-dark"] #shadowingSection > div:last-child > div:last-child,
-[data-skin="pixel-paper"] #shadowingSection > div:last-child > div:last-child {
-    display: none !important;
-}
+[data-skin="pixel-paper"] #shadowingSection > div:last-child > div:last-child { display: none !important; }
 /* Hộp Teleprompter Quân Sự Phosphor */
 [data-skin="pixel-dark"] #shadowingSection > div:nth-child(3),
-[data-skin="pixel-paper"] #shadowingSection > div:nth-child(3) {
-    background: #031007 !important; border: 3px solid #065f46 !important;
-    box-shadow: 3px 3px 0 #000 !important; padding: 0.5rem 0.75rem !important; border-radius: 0 !important;
-}
+[data-skin="pixel-paper"] #shadowingSection > div:nth-child(3) { background: #031007 !important; border: 3px solid #065f46 !important; box-shadow: 3px 3px 0 #000 !important; padding: 0.5rem 0.75rem !important; border-radius: 0 !important; }
 [data-skin="pixel-dark"] #shadowingTeleprompter,
-[data-skin="pixel-paper"] #shadowingTeleprompter {
-    font-family: var(--px-font-mono), monospace !important; color: var(--px-codec-green, #10b981) !important;
-    font-size: 1.12rem !important; line-height: 1.4 !important; min-height: 44px !important;
-    text-shadow: 0 0 4px rgba(16, 185, 129, 0.4) !important;
-}
+[data-skin="pixel-paper"] #shadowingTeleprompter { font-family: var(--px-font-mono), monospace !important; color: var(--px-codec-green, #10b981) !important; font-size: 1.12rem !important; line-height: 1.4 !important; min-height: 44px !important; text-shadow: 0 0 4px rgba(16, 185, 129, 0.4) !important; }
 /* Dải Sóng Âm Đôi (Twin Acoustic Ribbons) */
 [data-skin="pixel-dark"] #shadowingSection > div:nth-child(4),
-[data-skin="pixel-paper"] #shadowingSection > div:nth-child(4) {
-    background: #020c06 !important; border: 3px solid #065f46 !important;
-    box-shadow: 3px 3px 0 #000 !important; padding: 0.45rem 0.75rem !important; border-radius: 0 !important;
-}
+[data-skin="pixel-paper"] #shadowingSection > div:nth-child(4) { background: #020c06 !important; border: 3px solid #065f46 !important; box-shadow: 3px 3px 0 #000 !important; padding: 0.45rem 0.75rem !important; border-radius: 0 !important; }
 [data-skin="pixel-dark"] #shadowingSection .waveform-box,
-[data-skin="pixel-paper"] #shadowingSection .waveform-box {
-    height: 38px !important; background: #000000 !important; border: 2px solid #047857 !important;
-}
+[data-skin="pixel-paper"] #shadowingSection .waveform-box { height: 38px !important; background: #000000 !important; border: 2px solid #047857 !important; }
 /* Thanh Hành Động Ghi Âm Tối Giản */
 [data-skin="pixel-dark"] #shadowingSection > div:nth-child(5),
-[data-skin="pixel-paper"] #shadowingSection > div:nth-child(5) {
-    background: #031007 !important; border: 3px solid #065f46 !important;
-    box-shadow: 3px 3px 0 #000 !important; padding: 0.45rem 0.75rem !important; border-radius: 0 !important;
-}
+[data-skin="pixel-paper"] #shadowingSection > div:nth-child(5) { background: #031007 !important; border: 3px solid #065f46 !important; box-shadow: 3px 3px 0 #000 !important; padding: 0.45rem 0.75rem !important; border-radius: 0 !important; }
 /* Nút Thu Âm To Bản Pixel (Big Shutter Record Button) */
 [data-skin="pixel-dark"] #btnToggleRecord,
 [data-skin="pixel-paper"] #btnToggleRecord {
@@ -1935,14 +1624,264 @@ body:has(#gameTitleScreen:not(.hidden)) #pixelSatchelMount,
 [data-skin="pixel-dark"] #btnToggleRecord::after,
 [data-skin="pixel-paper"] #btnToggleRecord::after { content: "🎙️ NÓI ĐUỔI (Space)"; }
 [data-skin="pixel-dark"] #btnToggleRecord.is-recording,
-[data-skin="pixel-paper"] #btnToggleRecord.is-recording {
-    background: #991b1b !important; border-color: #ef4444 !important; color: #fecaca !important;
-    animation: pxRecPulse 0.8s infinite alternate !important;
-}
+[data-skin="pixel-paper"] #btnToggleRecord.is-recording { background: #991b1b !important; border-color: #ef4444 !important; color: #fecaca !important; animation: pxRecPulse 0.8s infinite alternate !important; }
 [data-skin="pixel-dark"] #btnToggleRecord.is-recording::after,
 [data-skin="pixel-paper"] #btnToggleRecord.is-recording::after { content: "⏹ DỪNG THU (Space)"; }
 
 @keyframes pxRecPulse {
     from { box-shadow: 0 0 6px rgba(239, 68, 68, 0.4), 4px 4px 0 #000; }
     to { box-shadow: 0 0 16px rgba(239, 68, 68, 0.9), 4px 4px 0 #000; }
+}
+
+/* --- STAGE 3: TRI-VIEWPORT (ZONE 1: CHECKPOINT & ENHANCED BOOTH) --- */
+.pixel-checkpoint-viewport {
+    height: 125px;
+    background: #090c13;
+    border: 3px solid #1f2533;
+    box-shadow: inset 0 0 0 2px #000, 3px 3px 0 0 #000;
+}
+.checkpoint-loudspeaker-btn:hover { transform: scale(1.05); }
+.checkpoint-gate-arm { background: repeating-linear-gradient(45deg, #dc2626, #dc2626 10px, #ffffff 10px, #ffffff 20px); }
+.booth-height-ruler { font-family: 'JetBrains Mono', monospace; color: #f59e0b; opacity: 0.85; }
+.booth-height-ruler span { display: block; position: relative; }
+.booth-counter-bar { background: #141b24; border-top: 2px solid #000; }
+.speech-bubble-tail::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px 6px 0;
+    border-style: solid;
+    border-color: #fefffb transparent;
+    display: block;
+    width: 0;
+}
+
+/* --- STAGE 4: TACTILE DRAGGABLE DESK SANDBOX & MULTI-DOC SUITE --- */
+.pixel-desk-sandbox {
+    background: #181411;
+    border: 2px solid #3d342d;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.85);
+    border-radius: 4px;
+    padding: 6px 8px;
+    position: relative;
+    overflow: hidden;
+}
+.desk-documents-bay {
+    position: relative;
+    width: 100%;
+    min-height: 240px;
+    height: clamp(240px, 30vh, 290px);
+    overflow: hidden;
+    touch-action: none;
+}
+.desk-draggable-doc {
+    position: absolute;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+    will-change: transform, left, top;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.55), 0 2px 4px rgba(0,0,0,0.4);
+    transition: box-shadow 0.12s ease-out, transform 0.12s ease-out;
+}
+.desk-draggable-doc.is-dragging { cursor: grabbing !important; transform: scale(1.025); box-shadow: 0 16px 32px rgba(0,0,0,0.75), 0 8px 14px rgba(0,0,0,0.5); }
+.doc-passport {
+    width: clamp(280px, 44vw, 365px);
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 12px;
+}
+.doc-work-pass {
+    width: clamp(190px, 28vw, 225px);
+    background: #141726;
+    border: 2px solid #4338ca;
+    border-radius: 3px;
+    font-size: 12px;
+}
+.doc-id-supplement {
+    width: clamp(190px, 28vw, 225px);
+    background: #1e1a14;
+    border: 2px solid #b45309;
+    border-radius: 3px;
+    font-size: 12px;
+}
+.doc-flyer-secret {
+    width: clamp(170px, 24vw, 205px);
+    background: linear-gradient(135deg, #3b0764 0%, #1e112a 100%);
+    border: 2px solid #ec4899;
+    border-radius: 3px;
+    box-shadow: 0 0 12px rgba(236, 72, 153, 0.35);
+    font-size: 11.5px;
+}
+.doc-entry-permit {
+    width: clamp(190px, 28vw, 225px);
+    background: #fbf5e2;
+    border: 2px dashed #a89f81;
+    border-radius: 2px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.55);
+    font-size: 12px;
+}
+.btn-desk-action:hover { filter: brightness(1.15); }
+.passport-stamp-slot { background: rgba(0, 0, 0, 0.35); }
+@media (max-width: 640px) {
+    .desk-documents-bay { min-height: 290px; height: 290px; }
+    .doc-passport { width: 310px; }
+    .doc-work-pass, .doc-id-supplement, .doc-entry-permit { width: 200px; }
+    .doc-flyer-secret { width: 185px; }
+}
+
+/* --- STAGE 5: SPIRAL RULEBOOK & INTERACTIVE GEOPOLITICAL MAP --- */
+.rulebook-dual-page {
+    grid-column: span 12 !important;
+    max-width: 100% !important;
+    background: #14110e;
+    border: 3px solid #b45309;
+    box-shadow: 0 16px 36px rgba(0,0,0,0.85), 0 0 20px rgba(180,83,9,0.3);
+}
+.pixel-spiral-coil-center {
+    width: 16px;
+    background-image: repeating-linear-gradient(to bottom, #64748b 0px, #64748b 4px, transparent 4px, transparent 14px);
+    background-size: 16px 14px;
+    border-radius: 4px;
+}
+.rulebook-ribbon {
+    position: absolute;
+    top: -4px;
+    right: 28px;
+    width: 14px;
+    height: 28px;
+    background: #dc2626;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    z-index: 10;
+}
+.rulebook-seal-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    border-style: solid;
+    font-weight: 900;
+}
+.map-nation-btn { transition: all 0.15s ease; }
+.map-nation-btn.is-active, .map-nation-btn:hover { filter: brightness(1.2); transform: translateY(-1px); }
+
+/* --- STAGE 6: PULL-DOWN MECHANICAL STAMP RIG & CITATION PRINTER --- */
+.stamp-rig-frame {
+    background: linear-gradient(180deg, #2a2521 0%, #171412 100%);
+    border: 3px solid #3d352e;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.stamp-metal-plate {
+    background: #12100e;
+    border: 1px solid #453c34;
+    color: #928374;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 2px;
+}
+.stamp-block-btn {
+    position: relative;
+    padding: 8px 16px !important;
+    border-width: 3px !important;
+    border-radius: 4px;
+    font-weight: 900;
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    user-select: none;
+    -webkit-user-select: none;
+}
+.stamp-block-denied {
+    background: linear-gradient(180deg, #7f1d1d 0%, #450a0a 100%);
+    border-color: #991b1b #260505 #260505 #991b1b !important;
+    color: #fecaca;
+    box-shadow: 0 4px 0 0 #180303, 0 6px 12px rgba(0,0,0,0.6);
+}
+.stamp-block-approved {
+    background: linear-gradient(180deg, #14532d 0%, #052e16 100%);
+    border-color: #166534 #021f0d #021f0d #166534 !important;
+    color: #bbf7d0;
+    box-shadow: 0 4px 0 0 #021408, 0 6px 12px rgba(0,0,0,0.6);
+}
+.citation-torn-away {
+    transform: translateY(-20px) rotate(8deg);
+    opacity: 0;
+    transition: all 0.25s ease-out;
+}
+
+/* --- STAGE 7: DISCREPANCY INSPECTION MODE & INTERROGATION SYSTEM --- */
+.btn-inspection-triangular {
+    position: relative;
+    width: 38px;
+    height: 34px;
+    background: #3f1115;
+    border: 2px solid #b91c1c;
+    clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.6);
+    transition: all 0.15s ease;
+}
+.btn-inspection-triangular:hover, .btn-inspection-triangular.is-active-inspect {
+    background: #7f1d1d;
+    border-color: #ef4444;
+    box-shadow: 0 0 12px rgba(239,68,68,0.7);
+    transform: scale(1.08);
+}
+.btn-inspection-triangular .inspect-exclamation {
+    color: #fef08a;
+    font-weight: 900;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    margin-top: 6px;
+    text-shadow: 0 0 4px rgba(254,240,138,0.8);
+}
+.is-inspection-mode {
+    cursor: crosshair !important;
+}
+.is-inspection-mode .inspectable-item:hover {
+    outline: 2px dashed #f59e0b !important;
+    background: rgba(245, 158, 11, 0.15) !important;
+}
+.inspect-selected-1 { outline: 2px solid #38bdf8 !important; background: rgba(56, 189, 248, 0.25) !important; }
+.inspect-selected-2 { outline: 2px solid #f43f5e !important; background: rgba(244, 63, 94, 0.25) !important; }
+.booth-reason-tab {
+    background: #0f1f2e; border: 1px solid #0284c7; box-shadow: 0 0 8px rgba(14, 165, 233, 0.5);
+    padding: 2px 8px; border-radius: 2px; animation: reasonBounce 0.4s infinite alternate ease-in-out;
+}
+@keyframes reasonBounce {
+    from { transform: translateY(0); }
+    to { transform: translateY(-3px); }
+}
+
+/* --- STAGE 8: ACOUSTIC INTERROGATION TRANSCRIPT & RULEBOOK TYPOGRAPHY --- */
+.rulebook-pane, .rulebook-pane li { font-size: 12.5px !important; line-height: 1.5 !important; }
+.dialogue-text-stream { font-size: clamp(13px, 1.15vw, 16px) !important; line-height: 1.5 !important; }
+#boothSpeechBubble { font-size: 12px !important; line-height: 1.4 !important; padding: 4px 8px !important; max-width: 320px !important; white-space: normal !important; text-align: center !important; }
+.permit-stamp-scallop { background: #f4ebd0; border-bottom: 1px solid #a89f81; }
+.booth-crt-monitor {
+    width: 84px; height: 56px; background: #05140d; border: 2px solid #0f3d23; border-radius: 4px;
+    box-shadow: inset 0 0 8px rgba(16, 185, 129, 0.4), 0 2px 4px rgba(0,0,0,0.6);
+    position: relative; overflow: hidden;
+}
+.booth-crt-monitor::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,0.25) 0px, rgba(0,0,0,0.25) 1px, transparent 1px, transparent 2px);
+}
+.booth-crt-canvas { width: 100%; height: 100%; display: block; }
+
+/* --- STAGE 9: SHIFT ECONOMY & CLASS 8 APARTMENT DAY SUMMARY --- */
+.pixel-apartment-sheet {
+    background: #14110e; border: 3px solid #78350f;
+    box-shadow: 0 0 0 2px #000, 8px 8px 0 rgba(0,0,0,0.85); border-radius: 4px;
 }

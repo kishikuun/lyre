@@ -1,9 +1,23 @@
+/**
+ * ============================================================================
+ * LYRE STUDIO — MINIMALIST ICON GENERATOR
+ * ============================================================================
+ * Generates pristine, minimalist PWA app icons (icon-192.png & icon-512.png)
+ * using mathematical Signed Distance Fields (SDF) and 4x Super-Sampled (SSAA)
+ * sub-pixel anti-aliasing via pure Node.js (zlib + Buffer).
+ * 
+ * Motif: The Minimalist Acoustic Lyre
+ * - Deep Obsidian Void Squircle (#08090D -> #141824)
+ * - Warm Golden Amber Lyre Frame (#D97706 -> #F59E0B -> #FBBF24)
+ * - Triple Acoustic Voice Waveform Bars (Dictation, Pitch & Shadowing Echo)
+ * ============================================================================
+ */
+
 const fs = require('fs');
 const path = require('path');
 const zlib = require('zlib');
 
 function makePNG(width, height, pixelFn) {
-  // Each row has 1 filter byte (0) + width * 4 bytes (RGBA)
   const rowSize = 1 + width * 4;
   const rawData = Buffer.alloc(rowSize * height);
 
@@ -53,83 +67,126 @@ function makePNG(width, height, pixelFn) {
   return Buffer.concat([signature, ihdrChunk, idatChunk, iendChunk]);
 }
 
-function renderStudioIcon(x, y, w, h) {
+function sdRoundedBox(px, py, bx, by, r) {
+  const qx = Math.abs(px) - bx + r;
+  const qy = Math.abs(py) - by + r;
+  return Math.min(Math.max(qx, qy), 0) + Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) - r;
+}
+
+function sdSegment(px, py, ax, ay, bx, by, r) {
+  const pax = px - ax, pay = py - ay;
+  const bax = bx - ax, bay = by - ay;
+  const h = Math.max(0, Math.min(1, (pax * bax + pay * bay) / (bax * bax + bay * bay)));
+  return Math.hypot(pax - bax * h, pay - bay * h) - r;
+}
+
+function sampleMinimalistLyre(px, py, w, h) {
   const cx = w / 2;
   const cy = h / 2;
-  const dx = x - cx;
-  const dy = y - cy;
-  const dist = Math.sqrt(dx * dx + dy * dy);
-  const radius = w * 0.46;
+  const scale = w / 512;
 
-  // Background rounded rect check
-  const cornerR = w * 0.22;
-  const inBoxX = Math.abs(dx) <= cx - cornerR;
-  const inBoxY = Math.abs(dy) <= cy - cornerR;
-  const cornerDist = Math.hypot(
-    Math.max(0, Math.abs(dx) - (cx - cornerR)),
-    Math.max(0, Math.abs(dy) - (cy - cornerR))
-  );
+  const nx = (px - cx) / scale;
+  const ny = (py - cy) / scale;
 
-  if (cornerDist > cornerR) {
-    return [0, 0, 0, 0]; // Transparent outside icon bounding squircle
+  // 1. Squircle Bounding Box (460x460, corner radius 108)
+  const dBox = sdRoundedBox(nx, ny, 230, 230, 108);
+  if (dBox > 1.0) {
+    return [0, 0, 0, 0]; // Transparent outside squircle
   }
 
-  // Base background: Obsidian Dark Void (#08090C)
-  let r = 8, g = 9, b = 12, a = 255;
+  // Smooth background gradient (Midnight Obsidian)
+  const tBg = (nx + ny + 400) / 800;
+  let bgR = Math.round(20 * (1 - tBg) + 8 * tBg);
+  let bgG = Math.round(24 * (1 - tBg) + 10 * tBg);
+  let bgB = Math.round(36 * (1 - tBg) + 14 * tBg);
 
-  // Outer border glow
-  if (cornerDist > cornerR - 3) {
-    return [217, 119, 6, 180]; // Amber edge glow
+  // Squircle border
+  if (dBox > -2.5) {
+    return [34, 43, 61, 255];
   }
 
-  // Tape reel / Vinyl grooved platter
-  if (dist <= radius) {
-    // Platter background (#12151D)
-    r = 18; g = 21; b = 29;
+  // 2. Minimalist Lyre U-Frame:
+  // Arm radius 24, center X = 105, arc center Y = 30
+  let dFrame = 999;
+  const armR = 24;
+  const armX = 105;
+  const armTop = -100;
+  const arcY = 30;
 
-    // Outer rim of tape reel (#D97706)
-    if (dist > radius - w * 0.04) {
-      r = 217; g = 119; b = 6;
-    }
-    // Subtle acoustic concentric grooves
-    else if (dist > w * 0.22) {
-      const groove = Math.sin(dist * 0.35);
-      if (groove > 0.6) {
-        r = 28; g = 33; b = 44;
-      }
-    }
-
-    // 3 Cassette tape reel spokes / cutouts
-    const angle = Math.atan2(dy, dx);
-    const spokeDistMin = w * 0.22;
-    const spokeDistMax = w * 0.38;
-    if (dist >= spokeDistMin && dist <= spokeDistMax) {
-      // 3 holes at 0, 120, 240 degrees (2pi/3)
-      const normAngle = ((angle % ((2 * Math.PI) / 3)) + (2 * Math.PI) / 3) % ((2 * Math.PI) / 3);
-      const angleDiff = Math.abs(normAngle - Math.PI / 3);
-      if (angleDiff < 0.28) {
-        // Cutout hole showing deep void (#08090C) with amber rim
-        if (angleDiff > 0.25 || dist < spokeDistMin + 3 || dist > spokeDistMax - 3) {
-          r = 217; g = 119; b = 6; // Amber rim
-        } else {
-          r = 8; g = 9; b = 12;
-        }
-      }
-    }
-
-    // Center metallic hub ring
-    if (dist <= w * 0.18 && dist > w * 0.14) {
-      r = 217; g = 119; b = 6; // Amber metal ring
-    } else if (dist <= w * 0.14 && dist > w * 0.05) {
-      // Inner spindle hub (#1C222E)
-      r = 28; g = 34; b = 46;
-    } else if (dist <= w * 0.05) {
-      // Center spindle point (#00E5FF cyan indicator)
-      r = 0; g = 229; b = 255;
-    }
+  if (ny <= arcY) {
+    const dLeft = sdSegment(nx, ny, -armX, armTop, -armX, arcY, armR);
+    const dRight = sdSegment(nx, ny, armX, armTop, armX, arcY, armR);
+    dFrame = Math.min(dLeft, dRight);
+  } else {
+    const distToCenter = Math.hypot(nx, ny - arcY);
+    dFrame = Math.abs(distToCenter - armX) - armR;
   }
 
-  return [r, g, b, a];
+  // 3. Triple Voice Equalizer Strings (Dictation & Shadowing resonance):
+  // Center bar: Tallest (0, -95) to (0, 60), radius 12
+  const dStrCenter = sdSegment(nx, ny, 0, -95, 0, 60, 12);
+  // Left bar: Harmonic resonance (-52, -45) to (-52, 45), radius 10
+  const dStrLeft = sdSegment(nx, ny, -52, -45, -52, 45, 10);
+  // Right bar: Shadowing echo (52, -45) to (52, 45), radius 10
+  const dStrRight = sdSegment(nx, ny, 52, -45, 52, 45, 10);
+
+  const dStrings = Math.min(dStrCenter, dStrLeft, dStrRight);
+
+  // 4. Acoustic Base Foot:
+  const dBase = sdSegment(nx, ny, -24, 166, 24, 166, 8);
+
+  const dEmblem = Math.min(dFrame, dStrings, dBase);
+
+  // Color calculation with smooth Anti-Aliasing
+  if (dEmblem <= 0) {
+    // Gradient from golden amber (#FBBF24) to deep amber (#D97706)
+    const tGold = Math.max(0, Math.min(1, (ny + 100) / 266));
+    const rG = Math.round(251 * (1 - tGold) + 217 * tGold);
+    const gG = Math.round(191 * (1 - tGold) + 119 * tGold);
+    const bG = Math.round(36 * (1 - tGold) + 6 * tGold);
+
+    // Center bar subtle luminous glow
+    if (dStrCenter <= 0) {
+      return [254, 240, 138, 255]; // Warm yellow-gold
+    }
+    return [rG, gG, bG, 255];
+  } else if (dEmblem < 1.5) {
+    // Anti-aliased boundary edge ramp
+    const alpha = (1.5 - dEmblem) / 1.5;
+    const rG = 245, gG = 158, bG = 11;
+    return [
+      Math.round(rG * alpha + bgR * (1 - alpha)),
+      Math.round(gG * alpha + bgG * (1 - alpha)),
+      Math.round(bG * alpha + bgB * (1 - alpha)),
+      255
+    ];
+  }
+
+  // Subtle ambient acoustic glow around emblem
+  if (dEmblem < 32) {
+    const glow = (32 - dEmblem) / 32 * 0.10;
+    bgR = Math.round(bgR * (1 - glow) + 245 * glow);
+    bgG = Math.round(bgG * (1 - glow) + 158 * glow);
+    bgB = Math.round(bgB * (1 - glow) + 11 * glow);
+  }
+
+  return [bgR, bgG, bgB, 255];
+}
+
+function renderMinimalistIcon(x, y, w, h) {
+  // 4x Subsampling for pristine anti-aliasing
+  const subOffsets = [
+    [0.25, 0.25],
+    [0.75, 0.25],
+    [0.25, 0.75],
+    [0.75, 0.75]
+  ];
+  let r = 0, g = 0, b = 0, a = 0;
+  for (let i = 0; i < 4; i++) {
+    const s = sampleMinimalistLyre(x + subOffsets[i][0], y + subOffsets[i][1], w, h);
+    r += s[0]; g += s[1]; b += s[2]; a += s[3];
+  }
+  return [Math.round(r / 4), Math.round(g / 4), Math.round(b / 4), Math.round(a / 4)];
 }
 
 const iconsDir = path.join(__dirname, '..', 'icons');
@@ -137,12 +194,11 @@ if (!fs.existsSync(iconsDir)) {
   fs.mkdirSync(iconsDir, { recursive: true });
 }
 
-console.log('Generating PWA icons...');
-const png192 = makePNG(192, 192, renderStudioIcon);
+console.log('Generating Minimalist Lyre PWA icons...');
+const png192 = makePNG(192, 192, renderMinimalistIcon);
 fs.writeFileSync(path.join(iconsDir, 'icon-192.png'), png192);
 console.log('Created icons/icon-192.png (' + png192.length + ' bytes)');
 
-const png512 = makePNG(512, 512, renderStudioIcon);
+const png512 = makePNG(512, 512, renderMinimalistIcon);
 fs.writeFileSync(path.join(iconsDir, 'icon-512.png'), png512);
 console.log('Created icons/icon-512.png (' + png512.length + ' bytes)');
-

@@ -229,8 +229,274 @@
         }
     }
 
+    /**
+     * ============================================================================
+     * LYRE STUDIO — CLASS 8 APARTMENT DAY SUMMARY SCREEN (STAGE 9)
+     * Papers, Please authentic end-of-shift ledger & survival economy:
+     * - Shift earnings: $5 per correct entrant
+     * - Citations penalty: first 2 are warnings ($0), 3rd onward -$5 each
+     * - Fixed Rent: -$20
+     * - Checkbox Food: -$10 (unchecked -> Family hungry)
+     * - Checkbox Heat: -$10 (unchecked -> Family cold)
+     * - Medicine: -$15 (if family sick)
+     * - Live savings calculation & Bankruptcy check (< $0)
+     * ============================================================================
+     */
+    class PixelDaySummary {
+        constructor(options = {}) {
+            this.mountPoint = typeof options.mountPoint === 'string'
+                ? document.querySelector(options.mountPoint)
+                : (options.mountPoint || (typeof document !== 'undefined' ? document.body : null));
+            this.onNextDay = options.onNextDay || null;
+            this.modalEl = null;
+            this.isOpen = false;
+            this._handleKeyDown = this._handleKeyDown.bind(this);
+            this.data = null;
+        }
+
+        show(shiftData = {}) {
+            const defaults = {
+                dayNumber: 1,
+                date: '82.11.26',
+                clearedCount: 8,
+                salary: 40,
+                bonus: 10,
+                citationsCount: 1,
+                fine: 0,
+                startingSavings: 25,
+                rent: 20,
+                food: 10,
+                heat: 10,
+                medicine: 0,
+                foodEnabled: true,
+                heatEnabled: true,
+                medicineEnabled: false,
+                family: {
+                    wife: 'Khỏe mạnh',
+                    son: 'Khỏe mạnh',
+                    uncle: 'Khỏe mạnh'
+                }
+            };
+            this.data = Object.assign(defaults, shiftData);
+            if (this.data.citationsCount > 2) {
+                this.data.fine = (this.data.citationsCount - 2) * 5;
+            } else {
+                this.data.fine = 0;
+            }
+
+            this.close();
+            this._buildDOM();
+            this.isOpen = true;
+
+            const sfx = (root.App && root.App.PixelSFX) || null;
+            if (sfx && typeof sfx.playCoinOpChime === 'function') {
+                sfx.playCoinOpChime();
+            }
+
+            if (typeof window !== 'undefined') {
+                window.addEventListener('keydown', this._handleKeyDown);
+            }
+        }
+
+        _calculateTotal() {
+            const d = this.data;
+            const income = d.salary + (d.bonus || 0);
+            const foodCost = d.foodEnabled ? d.food : 0;
+            const heatCost = d.heatEnabled ? d.heat : 0;
+            const medCost = d.medicineEnabled ? d.medicine : 0;
+            const expenses = d.rent + foodCost + heatCost + medCost + d.fine;
+            return d.startingSavings + income - expenses;
+        }
+
+        _buildDOM() {
+            if (!this.mountPoint || typeof document === 'undefined') return;
+
+            const d = this.data;
+            const modal = document.createElement('div');
+            modal.id = 'pixelDaySummaryModal';
+            modal.className = 'fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md select-none overflow-y-auto';
+            modal.setAttribute('role', 'dialog');
+            modal.setAttribute('aria-modal', 'true');
+
+            const total = this._calculateTotal();
+            const fineNotice = d.citationsCount <= 2
+                ? `<span class="text-emerald-400 font-bold text-[9px]">(${d.citationsCount} cảnh cáo · $0)</span>`
+                : `<span class="text-red-400 font-bold text-[9px]">(${d.citationsCount} lỗi · -$${d.fine})</span>`;
+
+            modal.innerHTML = `
+                <div class="pixel-apartment-sheet max-w-xl w-full p-4 sm:p-6 text-slate-200 font-mono space-y-4 shadow-2xl relative">
+                    <!-- Header -->
+                    <div class="border-b-2 border-amber-600/40 pb-2 flex items-center justify-between">
+                        <div>
+                            <span class="text-amber-400 text-xs font-bold tracking-widest uppercase">CĂN HỘ HẠNG 8 · ĐÔNG GRESTIN</span>
+                            <h2 class="text-base sm:text-lg font-bold text-white px-font-arcade mt-0.5">TỔNG KẾT NGÀY #${d.dayNumber} · ${d.date}</h2>
+                        </div>
+                        <span class="w-3 h-3 rounded-full bg-amber-400 animate-pulse"></span>
+                    </div>
+
+                    <!-- Ledger Table -->
+                    <div class="space-y-1.5 text-xs bg-black/40 p-3 border border-gray-800 rounded">
+                        <div class="flex justify-between border-b border-gray-700/60 pb-1">
+                            <span class="text-gray-400">Số dư đầu ngày:</span>
+                            <b class="text-white">$${d.startingSavings}</b>
+                        </div>
+                        <div class="flex justify-between text-emerald-400">
+                            <span>Lương ca trực (${d.clearedCount} người hợp lệ):</span>
+                            <b>+$${d.salary}</b>
+                        </div>
+                        ${d.bonus > 0 ? `
+                        <div class="flex justify-between text-cyan-300">
+                            <span>Thưởng nghiệp vụ âm học:</span>
+                            <b>+$${d.bonus}</b>
+                        </div>` : ''}
+                        <div class="flex justify-between text-red-400">
+                            <span>Tiền phạt M.O.A. ${fineNotice}:</span>
+                            <b>-$${d.fine}</b>
+                        </div>
+                        <div class="flex justify-between text-amber-300">
+                            <span>Tiền thuê nhà (Rent - Cố định):</span>
+                            <b>-$${d.rent}</b>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <label class="flex items-center gap-2 cursor-pointer text-slate-300">
+                                <input type="checkbox" id="chkDayFood" ${d.foodEnabled ? 'checked' : ''} class="accent-amber-500 w-3.5 h-3.5">
+                                <span>Tiền ăn (Food):</span>
+                            </label>
+                            <b class="${d.foodEnabled ? 'text-amber-400' : 'text-gray-500 line-through'}">-$${d.food}</b>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <label class="flex items-center gap-2 cursor-pointer text-slate-300">
+                                <input type="checkbox" id="chkDayHeat" ${d.heatEnabled ? 'checked' : ''} class="accent-amber-500 w-3.5 h-3.5">
+                                <span>Tiền sưởi ấm mùa đông (Heat -15°C):</span>
+                            </label>
+                            <b class="${d.heatEnabled ? 'text-amber-400' : 'text-gray-500 line-through'}">-$${d.heat}</b>
+                        </div>
+                        ${d.medicine > 0 ? `
+                        <div class="flex items-center justify-between">
+                            <label class="flex items-center gap-2 cursor-pointer text-slate-300">
+                                <input type="checkbox" id="chkDayMedicine" ${d.medicineEnabled ? 'checked' : ''} class="accent-red-500 w-3.5 h-3.5">
+                                <span>Tiền thuốc men (Medicine):</span>
+                            </label>
+                            <b class="${d.medicineEnabled ? 'text-red-400' : 'text-gray-500 line-through'}">-$${d.medicine}</b>
+                        </div>` : ''}
+                        <div class="flex justify-between border-t-2 border-gray-600 pt-2 text-sm">
+                            <span class="font-bold text-white">SỐ DƯ MANG SANG NGÀY HÔM SAU:</span>
+                            <b id="txtDayFinalBalance" class="text-base font-bold ${total >= 0 ? 'text-emerald-400' : 'text-red-500 animate-pulse'}">$${total}</b>
+                        </div>
+                    </div>
+
+                    <!-- Family Status Section -->
+                    <div class="p-2.5 bg-black/30 border border-gray-800 rounded text-[11px] space-y-1">
+                        <span class="text-gray-400 uppercase text-[9px] font-bold block mb-1">TÌNH TRẠNG NGƯỜI THÂN:</span>
+                        <div class="grid grid-cols-3 gap-2 text-center" id="familyStatusGrid">
+                            <div class="p-1.5 bg-gray-900 border border-gray-700 rounded">
+                                <span class="text-gray-400 block text-[9px]">Vợ</span>
+                                <b id="statusWife" class="${d.foodEnabled && d.heatEnabled ? 'text-emerald-400' : 'text-amber-400'}">${d.foodEnabled && d.heatEnabled ? 'Khỏe mạnh' : (!d.foodEnabled ? 'Đói' : 'Lạnh')}</b>
+                            </div>
+                            <div class="p-1.5 bg-gray-900 border border-gray-700 rounded">
+                                <span class="text-gray-400 block text-[9px]">Con trai</span>
+                                <b id="statusSon" class="${d.foodEnabled && d.heatEnabled ? 'text-emerald-400' : 'text-amber-400'}">${d.foodEnabled && d.heatEnabled ? 'Khỏe mạnh' : (!d.foodEnabled ? 'Đói' : 'Lạnh')}</b>
+                            </div>
+                            <div class="p-1.5 bg-gray-900 border border-gray-700 rounded">
+                                <span class="text-gray-400 block text-[9px]">Chú</span>
+                                <b id="statusUncle" class="${d.heatEnabled ? 'text-emerald-400' : 'text-red-400'}">${d.heatEnabled ? 'Ấm áp' : 'Bị cảm lạnh'}</b>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bankruptcy Warning (if balance < 0) -->
+                    <div id="boxDayBankruptcy" class="${total < 0 ? '' : 'hidden'} p-2.5 bg-red-950/80 border-2 border-red-600 rounded text-red-300 text-xs font-bold text-center animate-pulse">
+                        ⚠️ CẢNH BÁO PHÁ SẢN: Bạn không đủ tiền nộp tiền thuê nhà! Nếu tiếp tục nợ, Bộ Nội Vụ sẽ bắt giữ bạn.
+                    </div>
+
+                    <!-- Footer Action -->
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-gray-800">
+                        <span class="text-[9px] text-gray-400">Bấm Space hoặc Enter để mở nhật báo</span>
+                        <button type="button" id="btnDayNextShift" class="pixel-btn pixel-btn-amber !py-2 !px-4 text-xs font-bold cursor-pointer">
+                            📰 PHÁT HÀNH NHẬT BÁO SÁNG MAI (ENTER)
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            this.mountPoint.appendChild(modal);
+            this.modalEl = modal;
+
+            // Wire up interactive toggles
+            const chkFood = modal.querySelector('#chkDayFood');
+            const chkHeat = modal.querySelector('#chkDayHeat');
+            const chkMed = modal.querySelector('#chkDayMedicine');
+            const txtBal = modal.querySelector('#txtDayFinalBalance');
+            const boxBank = modal.querySelector('#boxDayBankruptcy');
+            const statusWife = modal.querySelector('#statusWife');
+            const statusSon = modal.querySelector('#statusSon');
+            const statusUncle = modal.querySelector('#statusUncle');
+
+            const updateBalance = () => {
+                if (chkFood) d.foodEnabled = chkFood.checked;
+                if (chkHeat) d.heatEnabled = chkHeat.checked;
+                if (chkMed) d.medicineEnabled = chkMed.checked;
+
+                const curTotal = this._calculateTotal();
+                if (txtBal) {
+                    txtBal.textContent = `$${curTotal}`;
+                    txtBal.className = `text-base font-bold ${curTotal >= 0 ? 'text-emerald-400' : 'text-red-500 animate-pulse'}`;
+                }
+                if (boxBank) {
+                    boxBank.classList.toggle('hidden', curTotal >= 0);
+                }
+
+                if (statusWife && statusSon && statusUncle) {
+                    const healthy = d.foodEnabled && d.heatEnabled;
+                    statusWife.textContent = healthy ? 'Khỏe mạnh' : (!d.foodEnabled ? 'Đói' : 'Lạnh');
+                    statusWife.className = healthy ? 'text-emerald-400' : 'text-amber-400';
+                    statusSon.textContent = healthy ? 'Khỏe mạnh' : (!d.foodEnabled ? 'Đói' : 'Lạnh');
+                    statusSon.className = healthy ? 'text-emerald-400' : 'text-amber-400';
+                    statusUncle.textContent = d.heatEnabled ? 'Ấm áp' : 'Bị cảm lạnh';
+                    statusUncle.className = d.heatEnabled ? 'text-emerald-400' : 'text-red-400';
+                }
+
+                const sfx = (root.App && root.App.PixelSFX) || null;
+                if (sfx && typeof sfx.playTypewriterBlip === 'function') sfx.playTypewriterBlip();
+            };
+
+            if (chkFood) chkFood.addEventListener('change', updateBalance);
+            if (chkHeat) chkHeat.addEventListener('change', updateBalance);
+            if (chkMed) chkMed.addEventListener('change', updateBalance);
+
+            modal.querySelector('#btnDayNextShift')?.addEventListener('click', () => {
+                this.close();
+                if (typeof this.onNextDay === 'function') {
+                    this.onNextDay(this.data);
+                }
+            });
+        }
+
+        _handleKeyDown(e) {
+            if (!this.isOpen) return;
+            if (e.key === 'Escape' || e.key === 'Enter') {
+                e.preventDefault();
+                const btn = this.modalEl ? this.modalEl.querySelector('#btnDayNextShift') : null;
+                if (btn) btn.click();
+                else this.close();
+            }
+        }
+
+        close() {
+            if (this.modalEl && this.modalEl.parentNode) {
+                this.modalEl.parentNode.removeChild(this.modalEl);
+            }
+            this.modalEl = null;
+            this.isOpen = false;
+            if (typeof window !== 'undefined') {
+                window.removeEventListener('keydown', this._handleKeyDown);
+            }
+        }
+    }
+
     root.App = root.App || {};
     root.App.PixelGazette = PixelGazette;
+    root.App.PixelDaySummary = PixelDaySummary;
 
 })(typeof window !== 'undefined' ? window : global);
 

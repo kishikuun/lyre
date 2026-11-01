@@ -44,6 +44,7 @@
     </script>
     <!-- PWA Web App Manifest & App Icons -->
     <link rel="manifest" href="manifest.json" />
+    <link rel="icon" type="image/svg+xml" href="icons/favicon.svg" />
     <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
     <link rel="apple-touch-icon" href="icons/icon-192.png" />
     <!-- Project Stylesheet -->
@@ -239,34 +240,13 @@
 
                 <!-- Equipment Items Grid -->
                 <div class="space-y-2">
-                    <button type="button" id="dossierBtnCurated" class="w-full p-2.5 bg-black/60 border-2 border-gray-700 hover:border-amber-400 flex items-center justify-between text-left transition cursor-pointer">
-                        <div class="flex items-center gap-2.5"><span class="text-base">📋</span><div><b class="text-xs text-white block">6 Ca Trực Mẫu (A2-C1)</b><span class="text-[9px] text-gray-400">Nhận nhiệm vụ thẩm tra biên giới</span></div></div>
-                        <span class="text-amber-400 text-xs">MỞ →</span>
-                    </button>
-                    <button type="button" id="dossierBtnCustomAudio" class="w-full p-2.5 bg-black/60 border-2 border-gray-700 hover:border-emerald-400 flex items-center justify-between text-left transition cursor-pointer">
-                        <div class="flex items-center gap-2.5"><span class="text-base">📼</span><div><b class="text-xs text-white block">Nạp Băng Audio Tự Chọn</b><span class="text-[9px] text-gray-400">Đút file MP3 / WAV vào máy đọc</span></div></div>
-                        <span class="text-emerald-400 text-xs">NẠP →</span>
-                    </button>
-                    <button type="button" id="dossierBtnCustomSRT" class="w-full p-2.5 bg-black/60 border-2 border-gray-700 hover:border-sky-400 flex items-center justify-between text-left transition cursor-pointer">
-                        <div class="flex items-center gap-2.5"><span class="text-base">📄</span><div><b class="text-xs text-white block">Nạp Băng Phụ Đề SRT</b><span class="text-[9px] text-gray-400">Đút file phụ đề .srt / .vtt</span></div></div>
-                        <span class="text-sky-400 text-xs">NẠP →</span>
-                    </button>
-                    <button type="button" id="dossierBtnTeletype" class="w-full p-2.5 bg-black/60 border-2 border-gray-700 hover:border-indigo-400 flex items-center justify-between text-left transition cursor-pointer">
-                        <div class="flex items-center gap-2.5"><span class="text-base">📠</span><div><b class="text-xs text-white block">Điện Báo Teletype TTS</b><span class="text-[9px] text-gray-400">Tạo ca trực từ văn bản dán nhanh</span></div></div>
-                        <span class="text-indigo-400 text-xs">SOẠN →</span>
-                    </button>
-                    <button type="button" id="dossierBtnVocab" class="w-full p-2.5 bg-black/60 border-2 border-gray-700 hover:border-purple-400 flex items-center justify-between text-left transition cursor-pointer">
-                        <div class="flex items-center gap-2.5"><span class="text-base">📓</span><div><b class="text-xs text-white block">Sổ Tay Tịch Thu Từ Vựng</b><span class="text-[9px] text-gray-400">Flashcard SM-2 & Bẫy âm vị học</span></div></div>
-                        <span class="text-purple-400 text-xs">XEM →</span>
-                    </button>
-                    <button type="button" id="dossierBtnAnalytics" class="w-full p-2.5 bg-black/60 border-2 border-gray-700 hover:border-rose-400 flex items-center justify-between text-left transition cursor-pointer">
-                        <div class="flex items-center gap-2.5"><span class="text-base">📊</span><div><b class="text-xs text-white block">Báo Cáo Ca Trực & Túi Lỗi</b><span class="text-[9px] text-gray-400">Thống kê lỗi phát âm & Streak ngày</span></div></div>
-                        <span class="text-rose-400 text-xs">XEM →</span>
-                    </button>
-                    <button type="button" id="dossierBtnMixer" class="w-full p-2.5 bg-black/60 border-2 border-gray-700 hover:border-amber-400 flex items-center justify-between text-left transition cursor-pointer">
-                        <div class="flex items-center gap-2.5"><span class="text-base">🎛️</span><div><b class="text-xs text-white block">Bảng Điều Âm & Cài Đặt</b><span class="text-[9px] text-gray-400">Âm lượng, Tốc độ, Phím tắt</span></div></div>
-                        <span class="text-amber-400 text-xs">MỞ →</span>
-                    </button>
+                    <button type="button" id="dossierBtnCurated" class="w-full p-2.5 bg-black/60 border-2 border-gray-700 hover:border-amber-400 flex items-center justify-between text-left transition cursor-pointer"><div class="flex items-center gap-2.5"><span class="text-base">📋</span><div><b class="text-xs text-white block">6 Ca Trực Mẫu (A2-C1)</b><span class="text-[9px] text-gray-400">Nhận nhiệm vụ thẩm tra biên giới</span></div></div><span class="text-amber-400 text-xs">MỞ →</span></button>
+                    <button type="button" id="dossierBtnCustomAudio" class="w-full p-2.5 bg-black/60 border-2 border-gray-700 hover:border-emerald-400 flex items-center justify-between text-left transition cursor-pointer"><div class="flex items-center gap-2.5"><span class="text-base">📼</span><div><b class="text-xs text-white block">Nạp Băng Audio Tự Chọn</b><span class="text-[9px] text-gray-400">Đút file MP3 / WAV vào máy đọc</span></div></div><span class="text-emerald-400 text-xs">NẠP →</span></button>
+                    <button type="button" id="dossierBtnCustomSRT" class="w-full p-2.5 bg-black/60 border-2 border-gray-700 hover:border-sky-400 flex items-center justify-between text-left transition cursor-pointer"><div class="flex items-center gap-2.5"><span class="text-base">📄</span><div><b class="text-xs text-white block">Nạp Băng Phụ Đề SRT</b><span class="text-[9px] text-gray-400">Đút file phụ đề .srt / .vtt</span></div></div><span class="text-sky-400 text-xs">NẠP →</span></button>
+                    <button type="button" id="dossierBtnTeletype" class="w-full p-2.5 bg-black/60 border-2 border-gray-700 hover:border-indigo-400 flex items-center justify-between text-left transition cursor-pointer"><div class="flex items-center gap-2.5"><span class="text-base">📠</span><div><b class="text-xs text-white block">Điện Báo Teletype TTS</b><span class="text-[9px] text-gray-400">Tạo ca trực từ văn bản dán nhanh</span></div></div><span class="text-indigo-400 text-xs">SOẠN →</span></button>
+                    <button type="button" id="dossierBtnVocab" class="w-full p-2.5 bg-black/60 border-2 border-gray-700 hover:border-purple-400 flex items-center justify-between text-left transition cursor-pointer"><div class="flex items-center gap-2.5"><span class="text-base">📓</span><div><b class="text-xs text-white block">Sổ Tay Tịch Thu Từ Vựng</b><span class="text-[9px] text-gray-400">Flashcard SM-2 & Bẫy âm vị học</span></div></div><span class="text-purple-400 text-xs">XEM →</span></button>
+                    <button type="button" id="dossierBtnAnalytics" class="w-full p-2.5 bg-black/60 border-2 border-gray-700 hover:border-rose-400 flex items-center justify-between text-left transition cursor-pointer"><div class="flex items-center gap-2.5"><span class="text-base">📊</span><div><b class="text-xs text-white block">Báo Cáo Ca Trực & Túi Lỗi</b><span class="text-[9px] text-gray-400">Thống kê lỗi phát âm & Streak ngày</span></div></div><span class="text-rose-400 text-xs">XEM →</span></button>
+                    <button type="button" id="dossierBtnMixer" class="w-full p-2.5 bg-black/60 border-2 border-gray-700 hover:border-amber-400 flex items-center justify-between text-left transition cursor-pointer"><div class="flex items-center gap-2.5"><span class="text-base">🎛️</span><div><b class="text-xs text-white block">Bảng Điều Âm & Cài Đặt</b><span class="text-[9px] text-gray-400">Âm lượng, Tốc độ, Phím tắt</span></div></div><span class="text-amber-400 text-xs">MỞ →</span></button>
                 </div>
             </div>
 
@@ -327,29 +307,10 @@
 
             <!-- Vertical 4-Option Retro Menu -->
             <div class="w-full max-w-md space-y-3 my-2" id="titleScreenMenu">
-                <button type="button" id="btnTitleStartShift" class="title-menu-btn w-full p-3.5 bg-black/70 border-2 border-amber-500/60 hover:border-amber-400 hover:bg-amber-950/40 text-amber-300 hover:text-amber-200 text-xs sm:text-sm font-bold flex items-center justify-between cursor-pointer transition group shadow-lg">
-                    <span class="menu-pointer opacity-0 group-hover:opacity-100 text-amber-400 transition-opacity">▶</span>
-                    <span class="flex-1 text-center tracking-wider">BẮT ĐẦU CA TRỰC</span>
-                    <span class="text-[9px] text-gray-400 font-mono">[START]</span>
-                </button>
-
-                <button type="button" id="btnTitleDossier" class="title-menu-btn w-full p-3 bg-black/60 border-2 border-gray-700 hover:border-amber-400 hover:bg-black/80 text-gray-300 hover:text-white text-xs sm:text-sm font-bold flex items-center justify-between cursor-pointer transition group">
-                    <span class="menu-pointer opacity-0 group-hover:opacity-100 text-amber-400 transition-opacity">▶</span>
-                    <span class="flex-1 text-center tracking-wider">📁 CHỌN HỒ SƠ & BĂNG</span>
-                    <span class="text-[9px] text-gray-500 font-mono">[DOSSIER]</span>
-                </button>
-
-                <button type="button" id="btnTitleRulebook" class="title-menu-btn w-full p-3 bg-black/60 border-2 border-gray-700 hover:border-emerald-400 hover:bg-black/80 text-gray-300 hover:text-white text-xs sm:text-sm font-bold flex items-center justify-between cursor-pointer transition group">
-                    <span class="menu-pointer opacity-0 group-hover:opacity-100 text-emerald-400 transition-opacity">▶</span>
-                    <span class="flex-1 text-center tracking-wider">📜 QUY TẮC NHẬP CẢNH</span>
-                    <span class="text-[9px] text-gray-500 font-mono">[RULES]</span>
-                </button>
-
-                <button type="button" id="btnTitleSettings" class="title-menu-btn w-full p-3 bg-black/60 border-2 border-gray-700 hover:border-cyan-400 hover:bg-black/80 text-gray-300 hover:text-white text-xs sm:text-sm font-bold flex items-center justify-between cursor-pointer transition group">
-                    <span class="menu-pointer opacity-0 group-hover:opacity-100 text-cyan-400 transition-opacity">▶</span>
-                    <span class="flex-1 text-center tracking-wider">⚙️ THIẾT LẬP CA TRỰC</span>
-                    <span class="text-[9px] text-gray-500 font-mono">[CONFIG]</span>
-                </button>
+                <button type="button" id="btnTitleStartShift" class="title-menu-btn w-full p-3.5 bg-black/70 border-2 border-amber-500/60 hover:border-amber-400 hover:bg-amber-950/40 text-amber-300 hover:text-amber-200 text-xs sm:text-sm font-bold flex items-center justify-between cursor-pointer transition group shadow-lg"><span class="menu-pointer opacity-0 group-hover:opacity-100 text-amber-400 transition-opacity">▶</span><span class="flex-1 text-center tracking-wider">BẮT ĐẦU CA TRỰC</span><span class="text-[9px] text-gray-400 font-mono">[START]</span></button>
+                <button type="button" id="btnTitleDossier" class="title-menu-btn w-full p-3 bg-black/60 border-2 border-gray-700 hover:border-amber-400 hover:bg-black/80 text-gray-300 hover:text-white text-xs sm:text-sm font-bold flex items-center justify-between cursor-pointer transition group"><span class="menu-pointer opacity-0 group-hover:opacity-100 text-amber-400 transition-opacity">▶</span><span class="flex-1 text-center tracking-wider">📁 CHỌN HỒ SƠ & BĂNG</span><span class="text-[9px] text-gray-500 font-mono">[DOSSIER]</span></button>
+                <button type="button" id="btnTitleRulebook" class="title-menu-btn w-full p-3 bg-black/60 border-2 border-gray-700 hover:border-emerald-400 hover:bg-black/80 text-gray-300 hover:text-white text-xs sm:text-sm font-bold flex items-center justify-between cursor-pointer transition group"><span class="menu-pointer opacity-0 group-hover:opacity-100 text-emerald-400 transition-opacity">▶</span><span class="flex-1 text-center tracking-wider">📜 QUY TẮC NHẬP CẢNH</span><span class="text-[9px] text-gray-500 font-mono">[RULES]</span></button>
+                <button type="button" id="btnTitleSettings" class="title-menu-btn w-full p-3 bg-black/60 border-2 border-gray-700 hover:border-cyan-400 hover:bg-black/80 text-gray-300 hover:text-white text-xs sm:text-sm font-bold flex items-center justify-between cursor-pointer transition group"><span class="menu-pointer opacity-0 group-hover:opacity-100 text-cyan-400 transition-opacity">▶</span><span class="flex-1 text-center tracking-wider">⚙️ THIẾT LẬP CA TRỰC</span><span class="text-[9px] text-gray-500 font-mono">[CONFIG]</span></button>
             </div>
 
             <!-- Footer: System Status & Hotkey Help -->
@@ -383,95 +344,29 @@
 
             <!-- 6 Curated Shift Dossiers Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 my-3 flex-1 min-h-0 overflow-y-auto pr-1">
-                <!-- Shift 01 -->
                 <button type="button" class="campaign-shift-card p-3 bg-black/60 border-2 border-gray-700 hover:border-amber-400 text-left transition flex flex-col justify-between cursor-pointer group" data-shift-id="lesson-a2-hotel">
-                    <div>
-                        <div class="flex items-center justify-between text-[8px] mb-1.5 font-mono">
-                            <span class="text-amber-400 font-bold">CA TRỰC #01</span>
-                            <span class="px-1 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">A2</span>
-                        </div>
-                        <h3 class="text-[10px] text-white font-bold group-hover:text-amber-300 font-mono tracking-tight leading-snug">HOTEL FRONT DESK</h3>
-                        <p class="text-[9px] text-gray-400 font-mono mt-1 leading-relaxed">Thẩm tra đặt phòng & đối chiếu thông tin khách sạn.</p>
-                    </div>
-                    <div class="flex items-center justify-between text-[8px] font-mono border-t border-gray-700/60 pt-2 mt-2">
-                        <span class="text-emerald-400 font-bold">$50</span>
-                        <span class="text-amber-400 font-bold group-hover:translate-x-1 transition-transform">NHẬN CA →</span>
-                    </div>
+                    <div><div class="flex items-center justify-between text-[8px] mb-1.5 font-mono"><span class="text-amber-400 font-bold">CA TRỰC #01</span><span class="px-1 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">A2</span></div><h3 class="text-[10px] text-white font-bold group-hover:text-amber-300 font-mono tracking-tight leading-snug">HOTEL FRONT DESK</h3><p class="text-[9px] text-gray-400 font-mono mt-1 leading-relaxed">Thẩm tra đặt phòng & đối chiếu thông tin khách sạn.</p></div>
+                    <div class="flex items-center justify-between text-[8px] font-mono border-t border-gray-700/60 pt-2 mt-2"><span class="text-emerald-400 font-bold">$50</span><span class="text-amber-400 font-bold group-hover:translate-x-1 transition-transform">NHẬN CA →</span></div>
                 </button>
-                <!-- Shift 02 -->
                 <button type="button" class="campaign-shift-card p-3 bg-black/60 border-2 border-gray-700 hover:border-amber-400 text-left transition flex flex-col justify-between cursor-pointer group" data-shift-id="lesson-b1-interview">
-                    <div>
-                        <div class="flex items-center justify-between text-[8px] mb-1.5 font-mono">
-                            <span class="text-amber-400 font-bold">CA TRỰC #02</span>
-                            <span class="px-1 py-0.5 bg-amber-500/20 text-amber-400 border border-amber-500/40">B1</span>
-                        </div>
-                        <h3 class="text-[10px] text-white font-bold group-hover:text-amber-300 font-mono tracking-tight leading-snug">JOB INTERVIEW PROTOCOL</h3>
-                        <p class="text-[9px] text-gray-400 font-mono mt-1 leading-relaxed">Kiểm tra lý lịch xin việc & hồ sơ ứng viên.</p>
-                    </div>
-                    <div class="flex items-center justify-between text-[8px] font-mono border-t border-gray-700/60 pt-2 mt-2">
-                        <span class="text-emerald-400 font-bold">$80</span>
-                        <span class="text-amber-400 font-bold group-hover:translate-x-1 transition-transform">NHẬN CA →</span>
-                    </div>
+                    <div><div class="flex items-center justify-between text-[8px] mb-1.5 font-mono"><span class="text-amber-400 font-bold">CA TRỰC #02</span><span class="px-1 py-0.5 bg-amber-500/20 text-amber-400 border border-amber-500/40">B1</span></div><h3 class="text-[10px] text-white font-bold group-hover:text-amber-300 font-mono tracking-tight leading-snug">JOB INTERVIEW PROTOCOL</h3><p class="text-[9px] text-gray-400 font-mono mt-1 leading-relaxed">Kiểm tra lý lịch xin việc & hồ sơ ứng viên.</p></div>
+                    <div class="flex items-center justify-between text-[8px] font-mono border-t border-gray-700/60 pt-2 mt-2"><span class="text-emerald-400 font-bold">$80</span><span class="text-amber-400 font-bold group-hover:translate-x-1 transition-transform">NHẬN CA →</span></div>
                 </button>
-                <!-- Shift 03 -->
                 <button type="button" class="campaign-shift-card p-3 bg-black/60 border-2 border-gray-700 hover:border-amber-400 text-left transition flex flex-col justify-between cursor-pointer group" data-shift-id="lesson-b2-ai">
-                    <div>
-                        <div class="flex items-center justify-between text-[8px] mb-1.5 font-mono">
-                            <span class="text-amber-400 font-bold">CA TRỰC #03</span>
-                            <span class="px-1 py-0.5 bg-amber-500/20 text-amber-400 border border-amber-500/40">B2</span>
-                        </div>
-                        <h3 class="text-[10px] text-white font-bold group-hover:text-amber-300 font-mono tracking-tight leading-snug">MACHINE MIND INQUIRY</h3>
-                        <p class="text-[9px] text-gray-400 font-mono mt-1 leading-relaxed">Thẩm vấn hồ sơ trí tuệ nhân tạo & công nghệ cao.</p>
-                    </div>
-                    <div class="flex items-center justify-between text-[8px] font-mono border-t border-gray-700/60 pt-2 mt-2">
-                        <span class="text-emerald-400 font-bold">$120</span>
-                        <span class="text-amber-400 font-bold group-hover:translate-x-1 transition-transform">NHẬN CA →</span>
-                    </div>
+                    <div><div class="flex items-center justify-between text-[8px] mb-1.5 font-mono"><span class="text-amber-400 font-bold">CA TRỰC #03</span><span class="px-1 py-0.5 bg-amber-500/20 text-amber-400 border border-amber-500/40">B2</span></div><h3 class="text-[10px] text-white font-bold group-hover:text-amber-300 font-mono tracking-tight leading-snug">MACHINE MIND INQUIRY</h3><p class="text-[9px] text-gray-400 font-mono mt-1 leading-relaxed">Thẩm vấn hồ sơ trí tuệ nhân tạo & công nghệ cao.</p></div>
+                    <div class="flex items-center justify-between text-[8px] font-mono border-t border-gray-700/60 pt-2 mt-2"><span class="text-emerald-400 font-bold">$120</span><span class="text-amber-400 font-bold group-hover:translate-x-1 transition-transform">NHẬN CA →</span></div>
                 </button>
-                <!-- Shift 04 -->
                 <button type="button" class="campaign-shift-card p-3 bg-black/60 border-2 border-gray-700 hover:border-amber-400 text-left transition flex flex-col justify-between cursor-pointer group" data-shift-id="lesson-c1-oceans">
-                    <div>
-                        <div class="flex items-center justify-between text-[8px] mb-1.5 font-mono">
-                            <span class="text-amber-400 font-bold">CA TRỰC #04</span>
-                            <span class="px-1 py-0.5 bg-rose-500/20 text-rose-400 border border-rose-500/40">C1</span>
-                        </div>
-                        <h3 class="text-[10px] text-white font-bold group-hover:text-amber-300 font-mono tracking-tight leading-snug">DEEP OCEAN MANIFEST</h3>
-                        <p class="text-[9px] text-gray-400 font-mono mt-1 leading-relaxed">Giải mã báo cáo khoa học biển sâu hàn lâm.</p>
-                    </div>
-                    <div class="flex items-center justify-between text-[8px] font-mono border-t border-gray-700/60 pt-2 mt-2">
-                        <span class="text-emerald-400 font-bold">$160</span>
-                        <span class="text-amber-400 font-bold group-hover:translate-x-1 transition-transform">NHẬN CA →</span>
-                    </div>
+                    <div><div class="flex items-center justify-between text-[8px] mb-1.5 font-mono"><span class="text-amber-400 font-bold">CA TRỰC #04</span><span class="px-1 py-0.5 bg-rose-500/20 text-rose-400 border border-rose-500/40">C1</span></div><h3 class="text-[10px] text-white font-bold group-hover:text-amber-300 font-mono tracking-tight leading-snug">DEEP OCEAN MANIFEST</h3><p class="text-[9px] text-gray-400 font-mono mt-1 leading-relaxed">Giải mã báo cáo khoa học biển sâu hàn lâm.</p></div>
+                    <div class="flex items-center justify-between text-[8px] font-mono border-t border-gray-700/60 pt-2 mt-2"><span class="text-emerald-400 font-bold">$160</span><span class="text-amber-400 font-bold group-hover:translate-x-1 transition-transform">NHẬN CA →</span></div>
                 </button>
-                <!-- Shift 05 -->
                 <button type="button" class="campaign-shift-card p-3 bg-black/60 border-2 border-gray-700 hover:border-amber-400 text-left transition flex flex-col justify-between cursor-pointer group" data-shift-id="lesson-ielts-library">
-                    <div>
-                        <div class="flex items-center justify-between text-[8px] mb-1.5 font-mono">
-                            <span class="text-amber-400 font-bold">CA TRỰC #05</span>
-                            <span class="px-1 py-0.5 bg-rose-500/20 text-rose-400 border border-rose-500/40">IELTS</span>
-                        </div>
-                        <h3 class="text-[10px] text-white font-bold group-hover:text-amber-300 font-mono tracking-tight leading-snug">LIBRARY REGISTRATION</h3>
-                        <p class="text-[9px] text-gray-400 font-mono mt-1 leading-relaxed">Hồ sơ thủ tục thẻ thư viện chuẩn IELTS Section 1.</p>
-                    </div>
-                    <div class="flex items-center justify-between text-[8px] font-mono border-t border-gray-700/60 pt-2 mt-2">
-                        <span class="text-emerald-400 font-bold">$220</span>
-                        <span class="text-amber-400 font-bold group-hover:translate-x-1 transition-transform">NHẬN CA →</span>
-                    </div>
+                    <div><div class="flex items-center justify-between text-[8px] mb-1.5 font-mono"><span class="text-amber-400 font-bold">CA TRỰC #05</span><span class="px-1 py-0.5 bg-rose-500/20 text-rose-400 border border-rose-500/40">IELTS</span></div><h3 class="text-[10px] text-white font-bold group-hover:text-amber-300 font-mono tracking-tight leading-snug">LIBRARY REGISTRATION</h3><p class="text-[9px] text-gray-400 font-mono mt-1 leading-relaxed">Hồ sơ thủ tục thẻ thư viện chuẩn IELTS Section 1.</p></div>
+                    <div class="flex items-center justify-between text-[8px] font-mono border-t border-gray-700/60 pt-2 mt-2"><span class="text-emerald-400 font-bold">$220</span><span class="text-amber-400 font-bold group-hover:translate-x-1 transition-transform">NHẬN CA →</span></div>
                 </button>
-                <!-- Shift 06 -->
                 <button type="button" class="campaign-shift-card p-3 bg-black/60 border-2 border-gray-700 hover:border-amber-400 text-left transition flex flex-col justify-between cursor-pointer group" data-shift-id="lesson-phonics-flapt">
-                    <div>
-                        <div class="flex items-center justify-between text-[8px] mb-1.5 font-mono">
-                            <span class="text-amber-400 font-bold">CA TRỰC #06</span>
-                            <span class="px-1 py-0.5 bg-rose-500/20 text-rose-400 border border-rose-500/40">PHONICS</span>
-                        </div>
-                        <h3 class="text-[10px] text-white font-bold group-hover:text-amber-300 font-mono tracking-tight leading-snug">FLAP-T CONTRABAND</h3>
-                        <p class="text-[9px] text-gray-400 font-mono mt-1 leading-relaxed">Bẫy nuốt âm & âm vỗ T-flap của người bản ngữ.</p>
-                    </div>
-                    <div class="flex items-center justify-between text-[8px] font-mono border-t border-gray-700/60 pt-2 mt-2">
-                        <span class="text-emerald-400 font-bold">$300</span>
-                        <span class="text-amber-400 font-bold group-hover:translate-x-1 transition-transform">NHẬN CA →</span>
-                    </div>
+                    <div><div class="flex items-center justify-between text-[8px] mb-1.5 font-mono"><span class="text-amber-400 font-bold">CA TRỰC #06</span><span class="px-1 py-0.5 bg-rose-500/20 text-rose-400 border border-rose-500/40">PHONICS</span></div><h3 class="text-[10px] text-white font-bold group-hover:text-amber-300 font-mono tracking-tight leading-snug">FLAP-T CONTRABAND</h3><p class="text-[9px] text-gray-400 font-mono mt-1 leading-relaxed">Bẫy nuốt âm & âm vỗ T-flap của người bản ngữ.</p></div>
+                    <div class="flex items-center justify-between text-[8px] font-mono border-t border-gray-700/60 pt-2 mt-2"><span class="text-emerald-400 font-bold">$300</span><span class="text-amber-400 font-bold group-hover:translate-x-1 transition-transform">NHẬN CA →</span></div>
                 </button>
             </div>
 

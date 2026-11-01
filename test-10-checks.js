@@ -1374,12 +1374,43 @@ assert(
     const hasUnifiedDialogue = indexHTML.includes('src="js/pixel-dialogue.js"') && gameloopCode.includes('gameDialogueSlot');
     const hasUnifiedDesk = indexHTML.includes('src="js/pixel-desk.js"') && gameloopCode.includes('id="gameCitationMount"');
 
+    // 4. Stage 7 Discrepancy Inspection Mode Verification
+    desk.toggleInspectionMode(true);
+    const inspectActive = desk.isInspectionMode === true;
+    const mockItemA = {
+        getAttribute: (k) => (k === 'data-inspect-id' ? 'doc-weight' : '55 kg'),
+        textContent: '55 kg',
+        classList: { add: () => {}, remove: () => {} }
+    };
+    const mockItemB = {
+        getAttribute: (k) => (k === 'data-inspect-id' ? 'scale-weight' : '65 kg'),
+        textContent: '65 kg',
+        classList: { add: () => {}, remove: () => {} }
+    };
+    const weightDisc = desk.evaluateDiscrepancy(mockItemA, mockItemB);
+    const weightDiscValid = weightDisc && weightDisc.hasDiscrepancy && weightDisc.title.includes('CÂN NẶNG');
+
+    const mockItemCity = {
+        getAttribute: (k) => (k === 'data-inspect-id' ? 'passport-city' : 'Cobrastan City'),
+        textContent: 'Cobrastan City',
+        classList: { add: () => {}, remove: () => {} }
+    };
+    const cityDisc = desk.evaluateDiscrepancy(mockItemCity, mockItemB);
+    const cityDiscValid = cityDisc && cityDisc.hasDiscrepancy && cityDisc.title.includes('ĐỊA DANH');
+
+    desk.toggleInspectionMode(false);
+    const inspectInactive = desk.isInspectionMode === false;
+    const stage7Valid = inspectActive && weightDiscValid && cityDiscValid && inspectInactive &&
+        pixelCSS.includes('.btn-inspection-triangular') &&
+        pixelCSS.includes('.is-inspection-mode') &&
+        pixelCSS.includes('.booth-reason-tab');
+
     assert(
         colorCodeValid && hasDialogueMethods && stampResValid && citationValid && tabValid && xssProtectionValid &&
         hasPaperclipCSS && hasCitationCSS && hasChoiceHeartCSS && hasInkLockCSS &&
-        hasUnifiedDialogue && hasUnifiedDesk,
-        "Deltarune Dialogue Box Nâng Cao & Bàn Thanh Tra Papers, Please (Typewriter Color-Codes, Citation Slip Printer & Rulebook Tabs)",
-        `Color Codes: OK (Yellow/Red/White), Stamp Rig (Approved/Denied/Citations/XSS Guard): OK, Rulebook Tabs: OK, Unified Single-DOM Integration: OK`
+        hasUnifiedDialogue && hasUnifiedDesk && stage7Valid,
+        "Deltarune Dialogue Box Nâng Cao, Bàn Thanh Tra Papers, Please & Chế Độ Điều Tra Soi Lỗi Đối Chất (Stage 7)",
+        `Color Codes: OK, Stamp Rig: OK, Rulebook Tabs: OK, Discrepancy Inspection & Pair Matcher: OK, Unified Single-DOM: OK`
     );
 }
 
@@ -1416,10 +1447,19 @@ assert(
 
     const statsValid = hasDefaultStats && hasSwitchedChar && statsUpdated && hasGutsHearts;
 
-    // 2. PixelGazette Verification
+    // 2. PixelGazette & PixelDaySummary Verification (Stage 9)
     let gazetteMount = { appendChild: () => {}, innerHTML: '' };
     const gazette = new PixelGazette({ mountPoint: gazetteMount });
     const hasGazetteMethods = typeof gazette.publish === 'function' && typeof gazette.close === 'function';
+
+    const PixelDaySummary = fakeWindow.App.PixelDaySummary;
+    const daySummary = new PixelDaySummary({ mountPoint: gazetteMount });
+    const hasDaySummaryMethods = typeof daySummary.show === 'function' && typeof daySummary.close === 'function';
+    daySummary.data = {
+        startingSavings: 30, salary: 50, bonus: 10, fine: 5, rent: 20, food: 10, heat: 10, medicine: 0,
+        foodEnabled: true, heatEnabled: true, medicineEnabled: false
+    };
+    const daySummaryCalcValid = daySummary._calculateTotal() === 45; // 30 + 60 - 45 = 45
 
     // 3. Spring-Loaded Stamp Verification
     const desk = new PixelDesk();
@@ -1476,12 +1516,16 @@ assert(
         pixelCSS.includes('.pixel-hud') && pixelCSS.includes('.hud-popup') && pixelCSS.includes('.pixel-stamp-drawer');
     const hudValid = hudPass && antiFarm && comboGrows && failValid && overclockValid && floorValid && garbageSafe && modeCycle && hubBounty && hudIntegration;
 
+    const hasApartmentCSS = pixelCSS.includes('.pixel-apartment-sheet');
+    const hasShiftClock = boothSrc.includes('boothTimeVal') && gameloopCode.includes('triggerEndOfDaySummary');
+    const stage9Valid = hasDaySummaryMethods && daySummaryCalcValid && hasApartmentCSS && hasShiftClock;
+
     assert(
         statsValid && hasGazetteMethods && springValid && hudValid &&
         hasSpringCSS && hasStatsCSS && hasGazetteCSS &&
-        hasUnifiedStats && hasUnifiedGazette && hasUnifiedSpringButtons,
-        "Thẻ Chỉ Số RPG Deltarune (PixelStats), Báo Paperboy 1984 Atari (PixelGazette) & Con Dấu Lò Xo Nén (Spring-Loaded Stamps)",
-        `PixelStats: OK (Byte/Susie/Stats/Guts), PixelGazette: OK (Publish/Spin), Spring Stamp Rig: OK (Tension/Slam), Unified Single-DOM: OK`
+        hasUnifiedStats && hasUnifiedGazette && hasUnifiedSpringButtons && stage9Valid,
+        "Thẻ Chỉ Số RPG Deltarune (PixelStats), Báo Grestin 1984 Atari (PixelGazette) & Tổng Kết Căn Hộ Hạng 8 (Stage 9)",
+        `PixelStats: OK, PixelGazette: OK, Spring Stamp: OK, Class 8 Apartment & Shift Economy: OK, Single-DOM: OK`
     );
 }
 

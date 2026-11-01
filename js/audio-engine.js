@@ -49,8 +49,10 @@
         if (!vuContainer) return;
         const bars = vuContainer.querySelectorAll('div');
 
+        let wasPlaying = false;
         function loop() {
             if (state.isPlaying && state.analyserNode) {
+                wasPlaying = true;
                 state.analyserNode.getByteFrequencyData(data);
                 let sum = 0;
                 for (let i = 0; i < data.length; i++) sum += data[i];
@@ -67,7 +69,8 @@
                         bar.className = 'w-1 h-3 rounded-xs bg-studio-800';
                     }
                 });
-            } else {
+            } else if (wasPlaying) {
+                wasPlaying = false;
                 bars.forEach(bar => bar.className = 'w-1 h-3 rounded-xs bg-studio-800');
             }
             requestAnimationFrame(loop);
@@ -138,7 +141,13 @@
      */
     function play(targetOffset = null) {
         if (!state.audioBuffer) {
-            alert("Vui lòng nạp file âm thanh MP3 trước!");
+            if (root.App && root.App.PixelDialogue) {
+                root.App.PixelDialogue.say('Inspector Byte', 'Chưa có băng cassette âm thanh! Hãy mở Cặp Hồ Sơ để nạp bài học.', 'sweating');
+            } else if (root.App && typeof root.App.openCuratedModal === 'function') {
+                root.App.openCuratedModal();
+            } else {
+                console.warn("Vui lòng nạp file âm thanh MP3 trước!");
+            }
             return;
         }
 
@@ -526,13 +535,16 @@
                 btnPlay.className = "tactile-btn px-4 bg-accent-amber text-studio-950 font-bold";
                 playIcon.setAttribute('data-lucide', 'play');
             }
-            if (window.lucide) lucide.createIcons();
         }
 
         const mobilePlayIcon = document.getElementById('mobilePlayIcon');
         if (mobilePlayIcon) {
             mobilePlayIcon.setAttribute('data-lucide', playing ? 'pause' : 'play');
-            if (window.lucide) lucide.createIcons();
+        }
+
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+            const controls = document.getElementById('transportControls') || document.body;
+            window.lucide.createIcons({ root: controls });
         }
 
         // Stage 10 (Lyre Studio V5.0): Synchronize Retro Game Booth Traveler Talking mouth flap

@@ -148,6 +148,40 @@
         },
 
         // ====================================================================
+        // 1b. PAPERS, PLEASE: TIẾNG KÉO LÊ GIẤY TỜ TRÊN BÀN (TACTILE PAPER RUSTLE)
+        // ====================================================================
+        playPaperRustle: function () {
+            const ctx = getContext();
+            if (!ctx || isMuted) return;
+            const now = ctx.currentTime;
+
+            // Xung Bandpass Noise mô phỏng ma sát bề mặt giấy khi nhấc hoặc kéo trượt
+            const bufSize = Math.floor(ctx.sampleRate * 0.08);
+            const noiseBuf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+            const output = noiseBuf.getChannelData(0);
+            for (let i = 0; i < bufSize; i++) {
+                output[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufSize * 0.45));
+            }
+
+            const noiseSrc = ctx.createBufferSource();
+            noiseSrc.buffer = noiseBuf;
+
+            const filter = ctx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.setValueAtTime(1450, now);
+            filter.Q.setValueAtTime(1.9, now);
+
+            const gain = createSubGain(ctx, 0.22);
+            gain.gain.setValueAtTime(0.22 * volumeLevel, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+
+            noiseSrc.connect(filter);
+            filter.connect(gain);
+            noiseSrc.start(now);
+            noiseSrc.stop(now + 0.08);
+        },
+
+        // ====================================================================
         // 2. PAPERS, PLEASE: CÒI BÁO ĐỘNG TỪ CHỐI NHẬP CẢNH (CITATION BUZZER)
         // ====================================================================
         playDeniedBuzzer: function () {

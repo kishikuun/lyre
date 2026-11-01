@@ -25,25 +25,7 @@
     let openCuratedModal = null;
     let closeCuratedModal = null;
 
-    const DEMO_SRT_TEXT = `1
-00:00:00,000 --> 00:00:09,000
-You hear a travel agent leaving a telephone message for a customer called Mr. Hope, who needs help at the airport.
-
-2
-00:00:09,000 --> 00:00:13,500
-Hello Mr. Hope, it's Sarah from Travel First here.
-
-3
-00:00:13,500 --> 00:00:22,000
-Sorry that I couldn't reach you earlier, but I've got the information you asked me for about the passenger assistance service at the airport.
-
-4
-00:00:22,000 --> 00:00:31,000
-Right. Well, firstly, when you arrive at the departures hall at the airport, you will need to find the passenger assistance office.
-
-5
-00:00:31,000 --> 00:00:38,000
-If you go in through the main departures entrance, you'll see the flight information screen right in front of you.`;
+    const DEMO_SRT_TEXT = '1\n00:00:00,000 --> 00:00:09,000\nYou hear a travel agent leaving a telephone message for a customer called Mr. Hope, who needs help at the airport.\n\n2\n00:00:09,000 --> 00:00:13,500\nHello Mr. Hope, it\'s Sarah from Travel First here.\n\n3\n00:00:13,500 --> 00:00:22,000\nSorry that I couldn\'t reach you earlier, but I\'ve got the information you asked me for about the passenger assistance service at the airport.\n\n4\n00:00:22,000 --> 00:00:31,000\nRight. Well, firstly, when you arrive at the departures hall at the airport, you will need to find the passenger assistance office.\n\n5\n00:00:31,000 --> 00:00:38,000\nIf you go in through the main departures entrance, you\'ll see the flight information screen right in front of you.';
 
     document.addEventListener('DOMContentLoaded', async () => {
         initUI();
@@ -197,7 +179,7 @@ If you go in through the main departures entrance, you'll see the flight informa
                 setTimeout(() => {
                     Shadowing.redrawWaveforms();
                     Shadowing.updateABButtonUI();
-                    if (window.lucide) lucide.createIcons();
+                    if (window.lucide && shadowingSection) lucide.createIcons({ root: shadowingSection });
                 }, 50);
             });
         }
@@ -222,7 +204,7 @@ If you go in through the main departures entrance, you'll see the flight informa
                 const rackChevronIcon = document.getElementById('rackChevronIcon');
                 if (rackChevronIcon) {
                     rackChevronIcon.setAttribute('data-lucide', rackExpandedSection.classList.contains('hidden') ? 'chevron-up' : 'chevron-down');
-                    if (window.lucide) lucide.createIcons();
+                    if (window.lucide && rackExpandedSection.parentElement) lucide.createIcons({ root: rackExpandedSection.parentElement });
                 }
             });
         }
@@ -481,7 +463,7 @@ If you go in through the main departures entrance, you'll see the flight informa
                 `;
             }).join('');
 
-            if (window.lucide) lucide.createIcons();
+            if (window.lucide && curatedLessonsGrid) lucide.createIcons({ root: curatedLessonsGrid });
 
             // Attach click listener on lesson buttons
             curatedLessonsGrid.querySelectorAll('[data-load-lesson-id]').forEach(btn => {
@@ -1605,7 +1587,7 @@ If you go in through the main departures entrance, you'll see the flight informa
         drawerSentenceList.appendChild(frag);
 
         drawerRenderedCount = nextCount;
-        if (window.lucide) lucide.createIcons();
+        if (window.lucide && drawerSentenceList) lucide.createIcons({ root: drawerSentenceList });
     }
 
     function scrollToActiveSentenceInDrawer() {
@@ -1621,7 +1603,7 @@ If you go in through the main departures entrance, you'll see the flight informa
                 list.appendChild(tempDiv.firstChild);
             }
             drawerRenderedCount = nextCount;
-            if (window.lucide) lucide.createIcons();
+            if (window.lucide && list) lucide.createIcons({ root: list });
         }
 
         const activeCard = list.querySelector(`[data-sentence-idx="${state.currentIdx}"]`);
@@ -1681,10 +1663,13 @@ If you go in through the main departures entrance, you'll see the flight informa
         }
     }
 
-    let currentDockState = 'idle'; // 'idle' | 'playing' | 'typing' | 'graded' | 'shadowing-ready' | 'shadowing-recording' | 'shadowing-recorded'
+    let currentDockState = ''; // 'idle' | 'playing' | 'typing' | 'graded' | 'shadowing-ready' | 'shadowing-recording' | 'shadowing-recorded'
 
     function updateSmartActionDock(stateName) {
-        currentDockState = stateName || 'idle';
+        const targetState = stateName || 'idle';
+        if (currentDockState === targetState) return;
+        currentDockState = targetState;
+
         const dock = document.getElementById('smartActionDock');
         if (!dock) return;
 
@@ -1758,7 +1743,6 @@ If you go in through the main departures entrance, you'll see the flight informa
             if (dockBtnPrimaryText) dockBtnPrimaryText.textContent = 'Tiếp tục câu sau';
             if (dockBtnPrimaryIcon) dockBtnPrimaryIcon.setAttribute('data-lucide', 'arrow-right');
             if (dockBtnPrimaryKbd) dockBtnPrimaryKbd.textContent = 'Enter';
-
             if (dockBtnLeftText) dockBtnLeftText.textContent = 'Nghe bạn';
             if (dockBtnLeftIcon) dockBtnLeftIcon.setAttribute('data-lucide', 'play');
             if (dockBtnRightText) dockBtnRightText.textContent = 'Thu lại';
@@ -1768,7 +1752,6 @@ If you go in through the main departures entrance, you'll see the flight informa
             if (dockBtnPrimaryText) dockBtnPrimaryText.textContent = 'Nghe câu';
             if (dockBtnPrimaryIcon) dockBtnPrimaryIcon.setAttribute('data-lucide', 'play');
             if (dockBtnPrimaryKbd) dockBtnPrimaryKbd.textContent = 'Space';
-
             if (dockBtnLeftText) dockBtnLeftText.textContent = '-2s';
             if (dockBtnLeftIcon) dockBtnLeftIcon.setAttribute('data-lucide', 'rotate-ccw');
             if (dockBtnRightText) dockBtnRightText.textContent = '+2s';
@@ -1776,7 +1759,7 @@ If you go in through the main departures entrance, you'll see the flight informa
         }
 
         if (window.lucide && typeof window.lucide.createIcons === 'function') {
-            window.lucide.createIcons();
+            window.lucide.createIcons({ root: dock });
         }
     }
 
@@ -1794,12 +1777,8 @@ If you go in through the main departures entrance, you'll see the flight informa
         }
         const tabDictationBtn = document.getElementById('tabDictation');
         if (tabDictationBtn) tabDictationBtn.click();
-        if (Dictation && typeof Dictation.loadCurrentSegment === 'function') {
-            Dictation.loadCurrentSegment();
-        }
-        if (state.audioBuffer && AudioEngine) {
-            AudioEngine.play(0);
-        }
+        if (Dictation && typeof Dictation.loadCurrentSegment === 'function') Dictation.loadCurrentSegment();
+        if (state.audioBuffer && AudioEngine) AudioEngine.play(0);
         updateSmartActionDock('playing');
         renderDrawerList();
     }
@@ -1821,13 +1800,9 @@ If you go in through the main departures entrance, you'll see the flight informa
                 } else if (currentDockState === 'graded') {
                     if (btnNext) btnNext.click();
                 } else if (currentDockState === 'shadowing-ready') {
-                    if (Shadowing && typeof Shadowing.startRecording === 'function') {
-                        Shadowing.startRecording();
-                    }
+                    if (Shadowing && typeof Shadowing.startRecording === 'function') Shadowing.startRecording();
                 } else if (currentDockState === 'shadowing-recording') {
-                    if (Shadowing && typeof Shadowing.stopRecording === 'function') {
-                        Shadowing.stopRecording();
-                    }
+                    if (Shadowing && typeof Shadowing.stopRecording === 'function') Shadowing.stopRecording();
                 } else if (currentDockState === 'shadowing-recorded') {
                     continueDualMasteryNextSentence();
                 } else {
@@ -1850,9 +1825,7 @@ If you go in through the main departures entrance, you'll see the flight informa
                 } else if (currentDockState === 'graded' || currentDockState === 'shadowing-ready') {
                     AudioEngine.replay();
                 } else if (currentDockState === 'shadowing-recorded') {
-                    if (Shadowing && typeof Shadowing.playUserAudio === 'function') {
-                        Shadowing.playUserAudio();
-                    }
+                    if (Shadowing && typeof Shadowing.playUserAudio === 'function') Shadowing.playUserAudio();
                 } else {
                     AudioEngine.rewind(2.0);
                 }
@@ -1868,9 +1841,7 @@ If you go in through the main departures entrance, you'll see the flight informa
                 } else if (currentDockState === 'shadowing-ready') {
                     continueDualMasteryNextSentence();
                 } else if (currentDockState === 'shadowing-recorded') {
-                    if (Shadowing && typeof Shadowing.startRecording === 'function') {
-                        Shadowing.startRecording();
-                    }
+                    if (Shadowing && typeof Shadowing.startRecording === 'function') Shadowing.startRecording();
                 } else {
                     AudioEngine.forward(2.0);
                 }
@@ -1891,7 +1862,6 @@ If you go in through the main departures entrance, you'll see the flight informa
     root.App.jumpToSentence = function (idx) {
         state.currentIdx = idx;
         onSentenceChanged();
-
         const sentenceDrawer = document.getElementById('sentenceDrawer');
         const drawerPanel = document.getElementById('drawerPanel');
         if (sentenceDrawer && drawerPanel) {

@@ -18,5 +18,6 @@ Thumbs.db
 
 # Local planning & task workspace
 tasks/
+.tmp_cdp_profile/
 
 

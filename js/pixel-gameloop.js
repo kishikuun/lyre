@@ -240,6 +240,9 @@
 
                 const satchelMount = document.getElementById('pixelSatchelMount');
                 if (satchelMount) satchelMount.classList.remove('hidden');
+                const checkpointMount = document.getElementById('pixelCheckpointMount');
+                if (checkpointMount) checkpointMount.classList.remove('hidden');
+                if (this.checkpoint) this.checkpoint.resizeCanvas();
 
                 if (this.sfx) this.sfx.playCoinOpChime();
 
@@ -262,6 +265,8 @@
 
                 const satchelMount = document.getElementById('pixelSatchelMount');
                 if (satchelMount) satchelMount.classList.add('hidden');
+                const checkpointMount = document.getElementById('pixelCheckpointMount');
+                if (checkpointMount) checkpointMount.classList.add('hidden');
                 const satchelModal = document.getElementById('inspectorSatchelModal');
                 if (satchelModal) satchelModal.classList.add('hidden');
 
@@ -636,6 +641,15 @@
             const standardArea = document.getElementById('standardModeArea');
             if (!workspaceArea || !dictSection || !standardArea) return;
 
+            // 00. Zone 1: Grestin Border Checkpoint Exterior Viewport (#pixelCheckpointMount)
+            let checkpointMount = document.getElementById('pixelCheckpointMount');
+            if (!checkpointMount) {
+                checkpointMount = document.createElement('div');
+                checkpointMount.id = 'pixelCheckpointMount';
+                checkpointMount.className = 'w-full select-none shrink-0 mb-1';
+                dictSection.insertBefore(checkpointMount, dictSection.firstChild);
+            }
+
             // 0. Top: Grestin Border Checkpoint Booth Window (#pixelBoothMount)
             let boothMount = document.getElementById('pixelBoothMount');
             if (!boothMount) {
@@ -705,32 +719,25 @@
                 sideRig.id = 'gameSideRig';
                 sideRig.className = 'hidden lg:col-span-4 space-y-4 select-none';
                 sideRig.innerHTML = `
-                    <!-- Citation Printer Slot -->
                     <div class="bg-black/40 border-2 border-gray-800 p-2.5 rounded space-y-1">
                         <div class="flex items-center justify-between text-xs px-font-arcade text-red-400 font-bold">
                             <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span> MÁY IN PHIẾU PHẠT</span>
                             <span class="text-slate-200 font-bold font-mono text-xs">M.O.A. PRINTER</span>
                         </div>
-                        <div id="gameCitationMount" class="max-h-36 overflow-y-auto space-y-2 pt-1">
-                            <span class="text-xs font-mono text-slate-200 italic block">Chưa có vi phạm nào.</span>
-                        </div>
+                        <div id="gameCitationMount" class="max-h-36 overflow-y-auto space-y-2 pt-1"><span class="text-xs font-mono text-slate-200 italic block">Chưa có vi phạm nào.</span></div>
                     </div>
-
-                    <!-- 4-Tab Investigation Rulebook Ledger -->
                     <div class="pixel-spiral-notebook p-3 space-y-2.5" id="gameRulebookSlot">
                         <div class="pixel-spiral-coil"></div>
                         <div class="flex items-center justify-between border-b border-gray-600/40 pb-1.5 pl-3">
                             <span class="font-mono font-bold text-xs text-amber-300 tracking-wider">SỔ TAY THANH TRA</span>
                             <span class="text-xs font-mono text-amber-400 font-bold">OBRA DINN V.5</span>
                         </div>
-
                         <div class="pixel-notebook-tabs pl-3 flex gap-1">
                             <button type="button" class="pixel-tab-btn is-active" data-tab="rules">QUY TẮC</button>
                             <button type="button" class="pixel-tab-btn" data-tab="phonetics">BẪY ÂM</button>
                             <button type="button" class="pixel-tab-btn" data-tab="vocab">TỪ VỰNG</button>
                             <button type="button" class="pixel-tab-btn" data-tab="config">CẤU HÌNH</button>
                         </div>
-
                         <div class="rulebook-pane space-y-1.5 text-xs font-mono pt-1 pl-3" data-pane="rules">
                             <ul class="list-disc pl-4 space-y-1.5 text-slate-100 text-xs leading-relaxed font-medium">
                                 <li>Nghe kỹ từng cụm phụ âm đuôi và âm nối.</li>
@@ -738,35 +745,20 @@
                                 <li>Đạt <b class="text-emerald-300">&gt;= 80%</b> để được cấp dấu <b class="text-emerald-300">APPROVED</b>.</li>
                             </ul>
                         </div>
-
                         <div class="rulebook-pane hidden space-y-1.5 text-xs font-mono pt-1 pl-3" data-pane="phonetics">
-                            <div class="p-2 bg-black/20 border border-gray-700/60 space-y-1 text-xs">
-                                <b class="text-amber-300 font-bold">Bẫy đuôi -ed & Nối âm:</b>
-                                <p class="text-slate-200 leading-relaxed">Âm vô thanh (/p/, /k/, /f/, /s/, /ʃ/, /tʃ/) + -ed phát âm là /t/.</p>
-                            </div>
+                            <div class="p-2 bg-black/20 border border-gray-700/60 space-y-1 text-xs"><b class="text-amber-300 font-bold">Bẫy đuôi -ed & Nối âm:</b><p class="text-slate-200 leading-relaxed">Âm vô thanh (/p/, /k/, /f/, /s/, /ʃ/, /tʃ/) + -ed phát âm là /t/.</p></div>
                         </div>
-
                         <div class="rulebook-pane hidden space-y-1.5 text-xs font-mono pt-1 pl-3" data-pane="vocab">
                             <p class="text-xs text-slate-200 italic leading-relaxed">Nhấp vào bất kỳ từ nào ở bảng Kết quả đối chiếu để tra nghĩa và khóa mực vĩnh viễn.</p>
                         </div>
-
                         <div class="rulebook-pane hidden space-y-1.5 text-xs font-mono pt-1 pl-3" data-pane="config">
                             <div class="p-2 bg-black/20 border border-gray-700/60 space-y-2 text-xs">
-                                <label class="flex items-center gap-2 cursor-pointer text-slate-200 font-medium">
-                                    <input type="checkbox" id="chkGameShake" checked class="accent-amber-500 w-3.5 h-3.5">
-                                    <span>Rung bàn khi đập dấu</span>
-                                </label>
-                                <label class="flex items-center gap-2 cursor-pointer text-slate-200 font-medium">
-                                    <input type="checkbox" id="chkGameBlips" checked class="accent-amber-500 w-3.5 h-3.5">
-                                    <span>Âm bíp gõ thoại</span>
-                                </label>
-                                <button type="button" id="btnSwitchPixelSkin" class="pixel-btn pixel-btn-amber !py-1.5 !px-3 text-xs w-full mt-1 font-bold">
-                                    🎨 ĐỔI BÀN GIẤY (CRT / MANILA)
-                                </button>
+                                <label class="flex items-center gap-2 cursor-pointer text-slate-200 font-medium"><input type="checkbox" id="chkGameShake" checked class="accent-amber-500 w-3.5 h-3.5"><span>Rung bàn khi đập dấu</span></label>
+                                <label class="flex items-center gap-2 cursor-pointer text-slate-200 font-medium"><input type="checkbox" id="chkGameBlips" checked class="accent-amber-500 w-3.5 h-3.5"><span>Âm bíp gõ thoại</span></label>
+                                <button type="button" id="btnSwitchPixelSkin" class="pixel-btn pixel-btn-amber !py-1.5 !px-3 text-xs w-full mt-1 font-bold">🎨 ĐỔI BÀN GIẤY (CRT / MANILA)</button>
                             </div>
                         </div>
-                    </div>
-                `;
+                    </div>`;
 
                 deskContainer.appendChild(mainCol);
                 deskContainer.appendChild(sideRig);
@@ -779,26 +771,7 @@
                 permitTopStrip = document.createElement('div');
                 permitTopStrip.id = 'gamePermitTopStrip';
                 permitTopStrip.className = 'hidden space-y-3 mb-4 select-none';
-                permitTopStrip.innerHTML = `
-                    <div class="pixel-paperclip" title="Kẹp kim loại giữ tờ khai nhập cảnh"></div>
-                    <div class="flex items-center justify-between border-b border-gray-600/40 pb-2 pl-6">
-                        <div class="flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-                            <span class="px-font-arcade text-[10px] tracking-wider text-amber-300" id="gamePassportHeader">ENTRY PERMIT · CÂU #01</span>
-                        </div>
-                        <div class="flex items-center gap-3 text-xs font-mono">
-                            <span id="gamePermitDuration" class="text-cyan-300 font-bold">THỜI LƯỢNG: 0.0s</span>
-                            <span id="gameCharCountBadge" class="text-amber-300 font-bold">0 KÝ TỰ</span>
-                            <span id="gameWordCountBadge" class="text-emerald-300 font-bold">0 TỪ</span>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] font-mono bg-black/25 p-2 border border-gray-600/40">
-                        <div><span class="text-slate-300 font-bold">QUỐC TỊCH:</span> <b class="text-amber-300 font-bold">ARSTOTZKA</b></div>
-                        <div><span class="text-slate-300 font-bold">GIỌNG NÓI:</span> <b class="text-cyan-300 font-bold" id="gameSpeakerBadge">NATIVE US</b></div>
-                        <div><span class="text-slate-300 font-bold">TỐC ĐỘ:</span> <b class="text-amber-300 font-bold" id="gameSpeedBadge">1.0x NORMAL</b></div>
-                        <div><span class="text-slate-300 font-bold">NHIỆM VỤ:</span> <b class="text-emerald-300 font-bold">THẨM ĐỊNH</b></div>
-                    </div>
-                `;
+                permitTopStrip.innerHTML = `<div class="pixel-paperclip" title="Kẹp kim loại giữ tờ khai nhập cảnh"></div><div class="flex items-center justify-between border-b border-gray-600/40 pb-2 pl-6"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span><span class="px-font-arcade text-[10px] tracking-wider text-amber-300" id="gamePassportHeader">ENTRY PERMIT · CÂU #01</span></div><div class="flex items-center gap-3 text-xs font-mono"><span id="gamePermitDuration" class="text-cyan-300 font-bold">THỜI LƯỢNG: 0.0s</span><span id="gameCharCountBadge" class="text-amber-300 font-bold">0 KÝ TỰ</span><span id="gameWordCountBadge" class="text-emerald-300 font-bold">0 TỪ</span></div></div><div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] font-mono bg-black/25 p-2 border border-gray-600/40"><div><span class="text-slate-300 font-bold">QUỐC TỊCH:</span> <b class="text-amber-300 font-bold">ARSTOTZKA</b></div><div><span class="text-slate-300 font-bold">GIỌNG NÓI:</span> <b class="text-cyan-300 font-bold" id="gameSpeakerBadge">NATIVE US</b></div><div><span class="text-slate-300 font-bold">TỐC ĐỘ:</span> <b class="text-amber-300 font-bold" id="gameSpeedBadge">1.0x NORMAL</b></div><div><span class="text-slate-300 font-bold">NHIỆM VỤ:</span> <b class="text-emerald-300 font-bold">THẨM ĐỊNH</b></div></div>`;
                 standardArea.insertBefore(permitTopStrip, standardArea.firstChild);
             }
 
@@ -808,53 +781,7 @@
                 permitStampStrip = document.createElement('div');
                 permitStampStrip.id = 'gamePermitStampStrip';
                 permitStampStrip.className = 'hidden space-y-3 pt-4 mt-3 border-t border-gray-600/40 select-none';
-                permitStampStrip.innerHTML = `
-                    <div class="pixel-stamp-drawer" id="gameStampDrawer">
-                    <div class="pixel-stamp-tray min-h-[72px] flex flex-wrap items-center justify-between gap-3 p-3 bg-black/20 border border-dashed border-gray-600/50" id="gameStampTray">
-                        <button type="button" id="btnStampTrayToggle" class="pixel-stamp-tab" aria-expanded="true" aria-controls="gameStampTray" title="Kéo khay con dấu ra / vào"><span>⇆</span></button>
-                        <div class="text-xs font-mono text-gray-400">
-                            <span>CON DẤU PHÊ DUYỆT:</span>
-                            <div id="gameStampSlot" class="mt-1">
-                                <span class="text-xs italic text-gray-500">Chưa đóng dấu phê duyệt.</span>
-                            </div>
-                        </div>
-                        <div class="flex flex-wrap items-center gap-2">
-                            <button type="button" id="btnGameStampApproved" class="pixel-btn pixel-btn-green flex items-center gap-1.5 cursor-pointer select-none" title="Bấm giữ để nén lò xo, thả tay để dập dấu & chấm điểm">
-                                <span class="w-3 h-3 rounded-full stamp-handle-wood inline-block"></span>
-                                <span>[✓] APPROVED (LÒ XO)</span>
-                            </button>
-                            <button type="button" id="btnGameStampDenied" class="pixel-btn pixel-btn-red flex items-center gap-1.5 cursor-pointer select-none" title="Bấm giữ để nén lò xo, thả tay để dập phạt">
-                                <span class="w-3 h-3 rounded-full stamp-handle-wood inline-block"></span>
-                                <span>[✕] DENIED (LÒ XO)</span>
-                            </button>
-                            <button type="button" id="btnGameClearStamps" class="pixel-btn !py-1.5 !px-2 text-[8px] bg-gray-700" title="Gỡ dấu">
-                                GỠ DẤU
-                            </button>
-                        </div>
-                    </div>
-                    </div>
-
-                    <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
-                        <div class="flex items-center gap-2">
-                            <button type="button" id="btnGameHoldIt" class="pixel-btn pixel-btn-amber !py-1 !px-2.5 text-[9px] flex items-center gap-1" title="Lùi lại 2 giây để đối chiếu âm thanh">
-                                <span>✋</span> [HOLD IT!] (-2s)
-                            </button>
-                            <button type="button" id="btnGameObjection" class="pixel-btn pixel-btn-red !py-1 !px-2.5 text-[9px] flex items-center gap-1" title="Chỉ ra bẫy âm vị nuốt âm">
-                                <span>⚡</span> [OBJECTION!]
-                            </button>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <button type="button" id="btnOpenStatsModal" class="pixel-btn !py-1 !px-2.5 text-[9px] flex items-center gap-1 text-amber-300">
-                                <span>❤️</span> HỒ SƠ RPG
-                            </button>
-                            <button type="button" id="btnTriggerGazetteManual" class="pixel-btn !py-1 !px-2.5 text-[9px] flex items-center gap-1 text-cyan-300">
-                                <span>📰</span> XUẤT BẢN BÁO
-                            </button>
-                        </div>
-                    </div>
-
-                    <div id="gameStarburstSlot" class="min-h-[4px] flex items-center justify-center"></div>
-                `;
+                permitStampStrip.innerHTML = `<div class="pixel-stamp-drawer" id="gameStampDrawer"><div class="pixel-stamp-tray min-h-[72px] flex flex-wrap items-center justify-between gap-3 p-3 bg-black/20 border border-dashed border-gray-600/50" id="gameStampTray"><button type="button" id="btnStampTrayToggle" class="pixel-stamp-tab" aria-expanded="true" aria-controls="gameStampTray" title="Kéo khay con dấu ra / vào"><span>⇆</span></button><div class="text-xs font-mono text-gray-400"><span>CON DẤU PHÊ DUYỆT:</span><div id="gameStampSlot" class="mt-1"><span class="text-xs italic text-gray-500">Chưa đóng dấu phê duyệt.</span></div></div><div class="flex flex-wrap items-center gap-2"><button type="button" id="btnGameStampApproved" class="pixel-btn pixel-btn-green flex items-center gap-1.5 cursor-pointer select-none" title="Bấm giữ để nén lò xo, thả tay để dập dấu & chấm điểm"><span class="w-3 h-3 rounded-full stamp-handle-wood inline-block"></span><span>[✓] APPROVED (LÒ XO)</span></button><button type="button" id="btnGameStampDenied" class="pixel-btn pixel-btn-red flex items-center gap-1.5 cursor-pointer select-none" title="Bấm giữ để nén lò xo, thả tay để dập phạt"><span class="w-3 h-3 rounded-full stamp-handle-wood inline-block"></span><span>[✕] DENIED (LÒ XO)</span></button><button type="button" id="btnGameClearStamps" class="pixel-btn !py-1.5 !px-2 text-[8px] bg-gray-700" title="Gỡ dấu">GỠ DẤU</button></div></div></div><div class="flex flex-wrap items-center justify-between gap-2 pt-1"><div class="flex items-center gap-2"><button type="button" id="btnGameHoldIt" class="pixel-btn pixel-btn-amber !py-1 !px-2.5 text-[9px] flex items-center gap-1" title="Lùi lại 2 giây để đối chiếu âm thanh"><span>✋</span> [HOLD IT!] (-2s)</button><button type="button" id="btnGameObjection" class="pixel-btn pixel-btn-red !py-1 !px-2.5 text-[9px] flex items-center gap-1" title="Chỉ ra bẫy âm vị nuốt âm"><span>⚡</span> [OBJECTION!]</button></div><div class="flex items-center gap-2"><button type="button" id="btnOpenStatsModal" class="pixel-btn !py-1 !px-2.5 text-[9px] flex items-center gap-1 text-amber-300"><span>❤️</span> HỒ SƠ RPG</button><button type="button" id="btnTriggerGazetteManual" class="pixel-btn !py-1 !px-2.5 text-[9px] flex items-center gap-1 text-cyan-300"><span>📰</span> XUẤT BẢN BÁO</button></div></div><div id="gameStarburstSlot" class="min-h-[4px] flex items-center justify-center"></div>`;
                 const diffCard = document.getElementById('diffResultsCard');
                 if (diffCard && diffCard.parentNode === standardArea) {
                     standardArea.insertBefore(permitStampStrip, diffCard);
@@ -869,19 +796,7 @@
                 const deckBar = document.createElement('div');
                 deckBar.id = 'pixelCassetteDeckBar';
                 deckBar.className = 'pixel-cassette-deck-bar flex items-center gap-2 select-none pr-2.5 border-r border-amber-500/40 mr-1.5';
-                deckBar.innerHTML = `
-                    <div class="pixel-tape-spool tape-paused" id="tapeReelWheelLeft" title="Trục cuộn băng cassette trái">
-                        <div class="spool-cog"></div>
-                    </div>
-                    <div class="pixel-tape-window flex flex-col items-center justify-center">
-                        <div class="tape-magnetic-strip"></div>
-                        <span class="text-[7px] font-mono tracking-widest text-amber-300 font-bold uppercase">C-60 TAPE</span>
-                    </div>
-                    <div class="pixel-tape-spool tape-paused" id="tapeReelWheelRight" title="Trục cuộn băng cassette phải">
-                        <div class="spool-cog"></div>
-                    </div>
-                    <span class="pixel-tape-counter font-mono text-[9px] px-1.5 py-0.5 bg-black border border-gray-700 text-amber-400 font-bold" id="tapeCounterDisplay" title="Bộ đếm mét băng cơ học">00:00.0</span>
-                `;
+                deckBar.innerHTML = `<div class="pixel-tape-spool tape-paused" id="tapeReelWheelLeft" title="Trục cuộn băng cassette trái"><div class="spool-cog"></div></div><div class="pixel-tape-window flex flex-col items-center justify-center"><div class="tape-magnetic-strip"></div><span class="text-[7px] font-mono tracking-widest text-amber-300 font-bold uppercase">C-60 TAPE</span></div><div class="pixel-tape-spool tape-paused" id="tapeReelWheelRight" title="Trục cuộn băng cassette phải"><div class="spool-cog"></div></div><span class="pixel-tape-counter font-mono text-[9px] px-1.5 py-0.5 bg-black border border-gray-700 text-amber-400 font-bold" id="tapeCounterDisplay" title="Bộ đếm mét băng cơ học">00:00.0</span>`;
                 smartDock.insertBefore(deckBar, smartDock.firstChild);
             }
 
@@ -891,18 +806,12 @@
                 statsModal = document.createElement('div');
                 statsModal.id = 'gameStatsModal';
                 statsModal.className = 'hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-sm';
-                statsModal.innerHTML = `
-                    <div class="max-w-3xl w-full relative">
-                        <button type="button" id="btnCloseStatsModal" class="absolute -top-3 -right-3 w-8 h-8 bg-red-600 text-white font-bold text-xs border-2 border-black flex items-center justify-center hover:bg-red-700 z-10 shadow-[2px_2px_0px_#000]">
-                            ✕
-                        </button>
-                        <div id="gameStatsSheetMount"></div>
-                    </div>
-                `;
+                statsModal.innerHTML = `<div class="max-w-3xl w-full relative"><button type="button" id="btnCloseStatsModal" class="absolute -top-3 -right-3 w-8 h-8 bg-red-600 text-white font-bold text-xs border-2 border-black flex items-center justify-center hover:bg-red-700 z-10 shadow-[2px_2px_0px_#000]">✕</button><div id="gameStatsSheetMount"></div></div>`;
                 dictSection.appendChild(statsModal);
             }
 
             this.dom.workbench = dictSection;
+            this.dom.checkpointMount = checkpointMount || document.getElementById('pixelCheckpointMount');
             this.dom.dialogueSlot = dialogueSlot;
             this.dom.boothMount = boothMount;
             this.dom.hudMount = hudMount;
@@ -927,6 +836,18 @@
          * Khởi tạo các controller thành phần và gắn các listener
          */
         _initSubControllers() {
+            // 00. PixelCheckpoint (Zone 1: Khung nhìn Checkpoint Ngoài Trời)
+            if (root.App && root.App.PixelCheckpoint && this.dom.checkpointMount && !this.checkpoint) {
+                this.checkpoint = new root.App.PixelCheckpoint({
+                    container: this.dom.checkpointMount,
+                    onCallNext: () => {
+                        if (this.booth && this.booth.btnCallNext) {
+                            this.booth.btnCallNext.click();
+                        }
+                    }
+                });
+            }
+
             // 0. PixelBooth (Ô kính Buồng gác Grestin & Procedural NPC Traveler)
             if (root.App && root.App.PixelBooth && this.dom.boothMount) {
                 this.booth = new root.App.PixelBooth();
@@ -1290,6 +1211,8 @@
                 this.dom.toggleBtn.classList.add('border-green-500/60', 'text-green-300', 'bg-green-950/30');
             }
 
+            if (this.dom.checkpointMount) this.dom.checkpointMount.classList.remove('hidden');
+            if (this.checkpoint) this.checkpoint.resizeCanvas();
             if (this.dom.dialogueSlot) this.dom.dialogueSlot.classList.remove('hidden');
             if (this.dom.hudMount) this.dom.hudMount.classList.remove('hidden');
             if (this.dom.boothMount) {
@@ -1298,6 +1221,9 @@
                     const idx = root.App.state.currentIdx || 0;
                     const sub = root.App.state.subs[idx];
                     this.booth.presentTraveler(idx, sub ? sub.text : '');
+                    if (this.desk && typeof this.desk.spawnDocuments === 'function') {
+                        this.desk.spawnDocuments(this.booth.currentTraveler);
+                    }
                 }
             }
             if (this.dom.permitTopStrip) this.dom.permitTopStrip.classList.remove('hidden');
@@ -1343,6 +1269,7 @@
                 this.dom.toggleBtn.classList.remove('border-green-500/60', 'text-green-300', 'bg-green-950/30');
             }
 
+            if (this.dom.checkpointMount) this.dom.checkpointMount.classList.add('hidden');
             if (this.dom.dialogueSlot) this.dom.dialogueSlot.classList.add('hidden');
             if (this.dom.boothMount) this.dom.boothMount.classList.add('hidden');
             if (this.dom.hudMount) this.dom.hudMount.classList.add('hidden');
@@ -1410,8 +1337,19 @@
             if (this.hud && root.App && root.App.state) this.hud.setModeLabel(root.App.state.dictationMode || 'standard');
 
             if (this.booth && root.App && root.App.state && root.App.state.subs) {
+                const total = root.App.state.subs.length || 1;
+                const mins = 360 + Math.round((idx / Math.max(1, total)) * 720);
+                const h = Math.floor(mins / 60).toString().padStart(2, '0');
+                const m = (mins % 60).toString().padStart(2, '0');
+                if (typeof this.booth.setTime === 'function') {
+                    this.booth.setTime(`${h}:${m}`);
+                }
                 const sub = root.App.state.subs[idx];
                 this.booth.presentTraveler(idx, sub ? sub.text : '');
+                if (this.desk && typeof this.desk.spawnDocuments === 'function') {
+                    this.desk.spawnDocuments(this.booth.currentTraveler);
+                }
+                if (this.checkpoint) this.checkpoint.callNext();
             }
 
             if (this.dialogue && root.App && root.App.state) {
@@ -1435,6 +1373,9 @@
 
             if (this.booth) {
                 this.booth.setVerdict(accuracy >= 80);
+            }
+            if (this.checkpoint) {
+                this.checkpoint.setVerdict(accuracy >= 80);
             }
 
             this._setStampTray(true, true);
@@ -1465,7 +1406,7 @@
                     const state = root.App.state;
                     if (state.subs && state.subs.length > 0 && state.completedSentences && state.completedSentences.size === state.subs.length) {
                         setTimeout(() => {
-                            this.triggerGazetteCelebration();
+                            this.triggerEndOfDaySummary();
                         }, 1200);
                     }
                 }
@@ -1522,6 +1463,50 @@
             this.hud.awardBonus(bounty);
             this.hud.update();
             this.hud.popup('SHIFT BONUS +$' + bounty, 'green');
+        }
+
+        /**
+         * Kích hoạt Màn hình Tổng kết cuối ngày tại Căn hộ Hạng 8 (Stage 9)
+         */
+        triggerEndOfDaySummary() {
+            if (this.booth && typeof this.booth.closeShutter === 'function') {
+                this.booth.closeShutter();
+            }
+            if (this.booth && typeof this.booth.setTime === 'function') {
+                this.booth.setTime('18:00');
+            }
+
+            const state = (root.App && root.App.state) || {};
+            const completed = state.completedSentences ? state.completedSentences.size : 10;
+            const citationsCount = this.desk && this.desk.citations ? this.desk.citations.length : 0;
+            const startingSavings = this.hud ? this.hud.credits : 30;
+
+            const daySummary = (root.App && root.App.PixelDaySummary)
+                ? new root.App.PixelDaySummary({
+                    onNextDay: (data) => {
+                        this.dayNumber = (this.dayNumber || 1) + 1;
+                        try { localStorage.setItem('lyre_game_day', this.dayNumber.toString()); } catch (e) {}
+                        if (this.booth && typeof this.booth.setTime === 'function') {
+                            this.booth.setTime('06:00');
+                        }
+                        this.triggerGazetteCelebration();
+                    }
+                })
+                : null;
+
+            if (daySummary) {
+                daySummary.show({
+                    dayNumber: this.dayNumber || 1,
+                    date: '82.11.26',
+                    clearedCount: completed,
+                    salary: completed * 5,
+                    bonus: (this.hud && this.hud.combo >= 5) ? 15 : 5,
+                    citationsCount: citationsCount,
+                    startingSavings: startingSavings
+                });
+            } else {
+                this.triggerGazetteCelebration();
+            }
         }
 
         /**
@@ -1658,6 +1643,7 @@
 
                 if (this._codecInterval) clearInterval(this._codecInterval);
                 this._codecInterval = setInterval(() => {
+                    if (!barsBox || barsBox.offsetParent === null) return;
                     const isAudioPlaying = (root.App && root.App.state && root.App.state.isPlaying) || false;
                     const isRecording = (root.App && root.App.state && root.App.state.isRecording) || false;
                     const bars = barsBox.children;
@@ -1745,14 +1731,7 @@
                 satchelMount = document.createElement('div');
                 satchelMount.id = 'pixelSatchelMount';
                 satchelMount.className = 'pixel-satchel-mount fixed bottom-3 right-4 z-40 select-none hidden';
-                satchelMount.innerHTML = `
-                    <button type="button" id="btnSatchelToggle" class="pixel-satchel-btn flex items-center gap-2 px-3 py-2 text-xs font-mono font-bold tracking-wider cursor-pointer" title="Mở Balo Đồ Nghề Thanh Tra [Phím I hoặc ESC]">
-                        <span class="text-base select-none">🎒</span>
-                        <span class="hidden sm:inline">BALO ĐỒ NGHỀ</span>
-                        <span class="pixel-satchel-badge bg-amber-500 text-stone-950 px-1.5 py-0.2 text-[9px] font-bold rounded">6</span>
-                        <kbd class="text-[9px] px-1 py-0.2 bg-black/50 text-amber-300 border border-amber-600/50 rounded font-mono">I</kbd>
-                    </button>
-                `;
+                satchelMount.innerHTML = `<button type="button" id="btnSatchelToggle" class="pixel-satchel-btn flex items-center gap-2 px-3 py-2 text-xs font-mono font-bold tracking-wider cursor-pointer" title="Mở Balo Đồ Nghề Thanh Tra [Phím I hoặc ESC]"><span class="text-base select-none">🎒</span><span class="hidden sm:inline">BALO ĐỒ NGHỀ</span><span class="pixel-satchel-badge bg-amber-500 text-stone-950 px-1.5 py-0.2 text-[9px] font-bold rounded">6</span><kbd class="text-[9px] px-1 py-0.2 bg-black/50 text-amber-300 border border-amber-600/50 rounded font-mono">I</kbd></button>`;
                 document.body.appendChild(satchelMount);
             }
 
@@ -1765,53 +1744,19 @@
                 satchelModal.innerHTML = `
                     <div class="pixel-satchel-card max-w-2xl w-full p-4 sm:p-5 relative space-y-4" id="inspectorSatchelCard">
                         <div class="flex items-center justify-between border-b-2 border-amber-700/60 pb-2.5">
-                            <div class="flex items-center gap-2.5">
-                                <span class="text-2xl select-none">🎒</span>
-                                <div>
-                                    <h2 class="px-font-arcade text-xs sm:text-sm text-amber-300 font-bold tracking-wider">BALO ĐỒ NGHỀ THANH TRA GRESTIN</h2>
-                                    <p class="text-[10px] font-mono text-amber-200/80">INSPECTOR'S SATCHEL · TRANG THIẾT BỊ NGHIỆP VỤ & CÔNG CỤ HỖ TRỢ</p>
-                                </div>
-                            </div>
+                            <div class="flex items-center gap-2.5"><span class="text-2xl select-none">🎒</span><div><h2 class="px-font-arcade text-xs sm:text-sm text-amber-300 font-bold tracking-wider">BALO ĐỒ NGHỀ THANH TRA GRESTIN</h2><p class="text-[10px] font-mono text-amber-200/80">INSPECTOR'S SATCHEL · TRANG THIẾT BỊ NGHIỆP VỤ & CÔNG CỤ HỖ TRỢ</p></div></div>
                             <button type="button" id="btnCloseSatchelModal" class="pixel-btn !py-1 !px-2.5 text-xs text-red-300 bg-red-950/60 border border-red-500/50 hover:bg-red-900/80 cursor-pointer" title="Đóng Balo [ESC]">✕ ĐÓNG [ESC]</button>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" id="satchelToolsGrid">
-                            <button type="button" id="satchelBtnShadowing" class="satchel-tool-card flex flex-col items-start gap-1 p-3 text-left cursor-pointer">
-                                <div class="flex items-center justify-between w-full"><span class="text-xl">🎙️</span><span class="satchel-tool-tag text-[8px] font-mono text-emerald-400 bg-emerald-950/80 px-1 py-0.5 border border-emerald-500/40">GIÁM SÁT</span></div>
-                                <span class="font-bold text-xs text-emerald-300 font-mono mt-1">[1] PHÒNG SHADOWING</span>
-                                <p class="text-[10px] text-gray-300 leading-tight">Phân tích sóng âm & luyện phát âm nói đuổi theo băng chuẩn.</p>
-                            </button>
-                            <button type="button" id="satchelBtnVocab" class="satchel-tool-card flex flex-col items-start gap-1 p-3 text-left cursor-pointer">
-                                <div class="flex items-center justify-between w-full"><span class="text-xl">📖</span><span class="satchel-tool-tag text-[8px] font-mono text-amber-400 bg-amber-950/80 px-1 py-0.5 border border-amber-500/40">SỔ TAY</span></div>
-                                <span class="font-bold text-xs text-amber-300 font-mono mt-1">[2] SỔ TỪ VỰNG</span>
-                                <p class="text-[10px] text-gray-300 leading-tight">Tra cứu kho từ vựng, bẫy âm vị & các cụm từ quan trọng.</p>
-                            </button>
-                            <button type="button" id="satchelBtnFlashcards" class="satchel-tool-card flex flex-col items-start gap-1 p-3 text-left cursor-pointer">
-                                <div class="flex items-center justify-between w-full"><span class="text-xl">🎴</span><span class="satchel-tool-tag text-[8px] font-mono text-cyan-400 bg-cyan-950/80 px-1 py-0.5 border border-cyan-500/40">THẺ NHỚ</span></div>
-                                <span class="font-bold text-xs text-cyan-300 font-mono mt-1">[3] FLASHCARDS SM-2</span>
-                                <p class="text-[10px] text-gray-300 leading-tight">Luyện phản xạ ngắt quãng (SRS) ghi nhớ từ vựng và câu khó.</p>
-                            </button>
-                            <button type="button" id="satchelBtnAnalytics" class="satchel-tool-card flex flex-col items-start gap-1 p-3 text-left cursor-pointer">
-                                <div class="flex items-center justify-between w-full"><span class="text-xl">📊</span><span class="satchel-tool-tag text-[8px] font-mono text-purple-400 bg-purple-950/80 px-1 py-0.5 border border-purple-500/40">TIẾN ĐỘ</span></div>
-                                <span class="font-bold text-xs text-purple-300 font-mono mt-1">[4] BẢNG TIẾN ĐỘ & LỖI</span>
-                                <p class="text-[10px] text-gray-300 leading-tight">Thống kê tốc độ WPM, tỷ lệ chính xác và túi câu lỗi cần ôn.</p>
-                            </button>
-                            <button type="button" id="satchelBtnMixer" class="satchel-tool-card flex flex-col items-start gap-1 p-3 text-left cursor-pointer">
-                                <div class="flex items-center justify-between w-full"><span class="text-xl">🎛️</span><span class="satchel-tool-tag text-[8px] font-mono text-orange-400 bg-orange-950/80 px-1 py-0.5 border border-orange-500/40">EQUALIZER</span></div>
-                                <span class="font-bold text-xs text-orange-300 font-mono mt-1">[5] STUDIO MIXER</span>
-                                <p class="text-[10px] text-gray-300 leading-tight">Điều chỉnh cao độ, tốc độ phát, lọc tạp âm và âm lượng SFX.</p>
-                            </button>
-                            <button type="button" id="satchelBtnExitTitle" class="satchel-tool-card flex flex-col items-start gap-1 p-3 text-left cursor-pointer">
-                                <div class="flex items-center justify-between w-full"><span class="text-xl">🏠</span><span class="satchel-tool-tag text-[8px] font-mono text-rose-400 bg-rose-950/80 px-1 py-0.5 border border-rose-500/40">CA TRỰC</span></div>
-                                <span class="font-bold text-xs text-rose-300 font-mono mt-1">[6] VỀ TRANG CHỦ</span>
-                                <p class="text-[10px] text-gray-300 leading-tight">Kết thúc ca trực hiện tại, hoàn trả hồ sơ về màn hình Title Screen.</p>
-                            </button>
+                            <button type="button" id="satchelBtnShadowing" class="satchel-tool-card flex flex-col items-start gap-1 p-3 text-left cursor-pointer"><div class="flex items-center justify-between w-full"><span class="text-xl">🎙️</span><span class="satchel-tool-tag text-[8px] font-mono text-emerald-400 bg-emerald-950/80 px-1 py-0.5 border border-emerald-500/40">GIÁM SÁT</span></div><span class="font-bold text-xs text-emerald-300 font-mono mt-1">[1] PHÒNG SHADOWING</span><p class="text-[10px] text-gray-300 leading-tight">Phân tích sóng âm & luyện phát âm nói đuổi theo băng chuẩn.</p></button>
+                            <button type="button" id="satchelBtnVocab" class="satchel-tool-card flex flex-col items-start gap-1 p-3 text-left cursor-pointer"><div class="flex items-center justify-between w-full"><span class="text-xl">📖</span><span class="satchel-tool-tag text-[8px] font-mono text-amber-400 bg-amber-950/80 px-1 py-0.5 border border-amber-500/40">SỔ TAY</span></div><span class="font-bold text-xs text-amber-300 font-mono mt-1">[2] SỔ TỪ VỰNG</span><p class="text-[10px] text-gray-300 leading-tight">Tra cứu kho từ vựng, bẫy âm vị & các cụm từ quan trọng.</p></button>
+                            <button type="button" id="satchelBtnFlashcards" class="satchel-tool-card flex flex-col items-start gap-1 p-3 text-left cursor-pointer"><div class="flex items-center justify-between w-full"><span class="text-xl">🎴</span><span class="satchel-tool-tag text-[8px] font-mono text-cyan-400 bg-cyan-950/80 px-1 py-0.5 border border-cyan-500/40">THẺ NHỚ</span></div><span class="font-bold text-xs text-cyan-300 font-mono mt-1">[3] FLASHCARDS SM-2</span><p class="text-[10px] text-gray-300 leading-tight">Luyện phản xạ ngắt quãng (SRS) ghi nhớ từ vựng và câu khó.</p></button>
+                            <button type="button" id="satchelBtnAnalytics" class="satchel-tool-card flex flex-col items-start gap-1 p-3 text-left cursor-pointer"><div class="flex items-center justify-between w-full"><span class="text-xl">📊</span><span class="satchel-tool-tag text-[8px] font-mono text-purple-400 bg-purple-950/80 px-1 py-0.5 border border-purple-500/40">TIẾN ĐỘ</span></div><span class="font-bold text-xs text-purple-300 font-mono mt-1">[4] BẢNG TIẾN ĐỘ & LỖI</span><p class="text-[10px] text-gray-300 leading-tight">Thống kê tốc độ WPM, tỷ lệ chính xác và túi câu lỗi cần ôn.</p></button>
+                            <button type="button" id="satchelBtnMixer" class="satchel-tool-card flex flex-col items-start gap-1 p-3 text-left cursor-pointer"><div class="flex items-center justify-between w-full"><span class="text-xl">🎛️</span><span class="satchel-tool-tag text-[8px] font-mono text-orange-400 bg-orange-950/80 px-1 py-0.5 border border-orange-500/40">EQUALIZER</span></div><span class="font-bold text-xs text-orange-300 font-mono mt-1">[5] STUDIO MIXER</span><p class="text-[10px] text-gray-300 leading-tight">Điều chỉnh cao độ, tốc độ phát, lọc tạp âm và âm lượng SFX.</p></button>
+                            <button type="button" id="satchelBtnExitTitle" class="satchel-tool-card flex flex-col items-start gap-1 p-3 text-left cursor-pointer"><div class="flex items-center justify-between w-full"><span class="text-xl">🏠</span><span class="satchel-tool-tag text-[8px] font-mono text-rose-400 bg-rose-950/80 px-1 py-0.5 border border-rose-500/40">CA TRỰC</span></div><span class="font-bold text-xs text-rose-300 font-mono mt-1">[6] VỀ TRANG CHỦ</span><p class="text-[10px] text-gray-300 leading-tight">Kết thúc ca trực hiện tại, hoàn trả hồ sơ về màn hình Title Screen.</p></button>
                         </div>
                         <div class="flex items-center justify-between pt-2 border-t border-amber-800/40 text-[10px] font-mono text-amber-200/70">
-                            <div class="flex items-center gap-2">
-                                <span>PHÍM TẮT:</span>
-                                <kbd class="px-1.5 py-0.5 bg-black/40 border border-amber-600/50 rounded text-amber-300">[I] BẬT/TẮT</kbd>
-                                <kbd class="px-1.5 py-0.5 bg-black/40 border border-amber-600/50 rounded text-amber-300">[ESC] ĐÓNG</kbd>
-                            </div>
+                            <div class="flex items-center gap-2"><span>PHÍM TẮT:</span><kbd class="px-1.5 py-0.5 bg-black/40 border border-amber-600/50 rounded text-amber-300">[I] BẬT/TẮT</kbd><kbd class="px-1.5 py-0.5 bg-black/40 border border-amber-600/50 rounded text-amber-300">[ESC] ĐÓNG</kbd></div>
                             <span class="text-amber-400/90 italic hidden sm:inline">Mặt bàn trực luôn sạch sẽ & tối giản 100%</span>
                         </div>
                     </div>

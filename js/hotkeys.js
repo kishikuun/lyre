@@ -213,6 +213,15 @@
             // Space: Global Play / Pause, or Shadowing Record in Shadowing tab
             if (e.key === ' ' || e.code === 'Space') {
                 e.preventDefault();
+                // Hỗ trợ người dùng mới: Nếu đang ở Title Screen, Space kích hoạt vào ca trực
+                const titleScreen = document.getElementById('gameTitleScreen');
+                if (titleScreen && !titleScreen.classList.contains('hidden')) {
+                    const btnStart = document.getElementById('btnTitleStartShift');
+                    if (btnStart) {
+                        btnStart.click();
+                        return;
+                    }
+                }
                 if (state.activeTab === 'shadowing' && Shadowing && typeof Shadowing.toggleRecording === 'function') {
                     Shadowing.toggleRecording();
                     return;

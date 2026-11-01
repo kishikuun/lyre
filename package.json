@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "node test-10-checks.js"
+    "test": "node test-10-checks.js",
+    "audit:cdp": "node scripts/cdp-zero-scroll-audit.js"
   },
   "keywords": [
     "lyre",

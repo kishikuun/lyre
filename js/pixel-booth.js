@@ -179,6 +179,24 @@
                 </g>
             `);
 
+            const heightCm = 152 + (s * 7) % 36; // 152cm đến 187cm
+            const heightM = (heightCm / 100).toFixed(2);
+            const weightKg = 48 + (s * 11) % 48; // 48kg đến 95kg
+            const birthYear = 1935 + (s * 3) % 28;
+            const birthMonth = String(1 + (s * 5) % 12).padStart(2, '0');
+            const birthDay = String(1 + (s * 7) % 28).padStart(2, '0');
+
+            const cities = {
+                arstotzka: ['Orvech Von', 'East Grestin', 'Paradizna'],
+                kolechia: ['Yurko City', 'Vraden', 'West Grestin'],
+                obristan: ['Skal', 'Lorndaz', 'Mergerous'],
+                antegria: ['St. Marmero', 'Glorian', 'Outer Grouse'],
+                republia: ['True Glorian', 'Lesrenadi', 'Bostan'],
+                neutral: ['Enfield', 'Concordia', 'Sanctuary']
+            };
+            const cityList = cities[nationKey] || ['Grestin'];
+            const issuingCity = cityList[(s * 2) % cityList.length];
+
             const svg = `
                 <svg viewBox="0 0 32 32" width="100%" height="100%" shape-rendering="crispEdges" class="pixel-traveler-svg select-none">
                     ${rects.join('\n')}
@@ -191,6 +209,12 @@
                 nationality: palette.name,
                 profession: nameObj.prof,
                 passportId: passportId,
+                heightCm: heightCm,
+                heightM: heightM,
+                weightKg: weightKg,
+                birthDate: `${birthYear}.${birthMonth}.${birthDay}`,
+                issuingCity: issuingCity,
+                gender: (s % 2 === 0) ? 'M' : 'F',
                 svg: svg
             };
         }
@@ -238,24 +262,59 @@
                     <!-- 2. Kính chắn gió phản quang với vết ố kính -->
                     <div class="booth-glass-overlay absolute inset-0 pointer-events-none"></div>
 
-                    <!-- 3. Khu vực đứng của Khách Nhập Cảnh (Traveler Sprite) -->
-                    <div class="relative z-10 h-full flex items-end justify-between px-3 sm:px-6 pb-1">
-                        <!-- Left: Tên & Hồ sơ của khách -->
-                        <div class="traveler-dossier-pill flex flex-col gap-0.5 bg-black/85 border border-gray-600 p-1.5 rounded text-[11px] font-mono shadow-md max-w-[140px] sm:max-w-[200px]">
-                            <div class="flex items-center gap-1.5 text-amber-300 font-bold truncate">
-                                <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-                                <span id="boothTravelerName">KHÁCH CHỜ DUYỆT</span>
+                    <!-- 2b. Thước vạch đo chiều cao trên tường (Height Scale: 1.1m - 1.9m) -->
+                    <div class="booth-height-ruler absolute left-2 top-2 bottom-10 z-10 flex flex-col justify-between text-[8px] font-mono font-bold text-amber-400/80 border-r border-amber-500/40 pr-1 select-none pointer-events-none" title="Thước đo chiều cao hành khách">
+                        <span>1.9</span>
+                        <span>1.8</span>
+                        <span>1.7</span>
+                        <span>1.6</span>
+                        <span>1.5</span>
+                        <span>1.4</span>
+                        <span>1.3</span>
+                        <span>1.2</span>
+                        <span>1.1</span>
+                    </div>
+
+                    <!-- 3. Khu vực đứng của Khách Nhập Cảnh (Traveler Sprite) & Bóng thoại -->
+                    <div class="relative z-10 h-full flex items-end justify-between px-3 sm:px-6 pb-9">
+                        <!-- Left: Tên & Hồ sơ của khách & CRT Audio Monitor -->
+                        <div class="flex items-center gap-2 ml-4">
+                            <div class="traveler-dossier-pill flex flex-col gap-0.5 bg-black/85 border border-gray-600 p-1.5 rounded text-[11px] font-mono shadow-md max-w-[120px] sm:max-w-[160px]">
+                                <div class="flex items-center gap-1.5 text-amber-300 font-bold truncate">
+                                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                                    <span id="boothTravelerName">KHÁCH CHỜ DUYỆT</span>
+                                </div>
+                                <div class="flex items-center gap-1 text-gray-200 text-[10px] font-semibold truncate">
+                                    <span id="boothTravelerNation" class="text-emerald-400 uppercase font-bold">ARSTOTZKA</span>
+                                    <span>·</span>
+                                    <span id="boothTravelerPassport" class="text-gray-300">AR-8402</span>
+                                </div>
                             </div>
-                            <div class="flex items-center gap-1 text-gray-200 text-[10px] font-semibold truncate">
-                                <span id="boothTravelerNation" class="text-emerald-400 uppercase font-bold">ARSTOTZKA</span>
-                                <span>·</span>
-                                <span id="boothTravelerPassport" class="text-gray-300">AR-8402</span>
+
+                            <!-- CRT Audio Oscilloscope Monitor (Stage 8) -->
+                            <div class="booth-crt-monitor hidden sm:flex flex-col justify-between p-1" title="Màn hình giám sát âm học M.O.A. 140.85">
+                                <div class="flex items-center justify-between text-[6px] font-mono font-bold text-emerald-400 leading-none">
+                                    <span>MIC 140.85</span>
+                                    <span class="w-1 h-1 rounded-full bg-emerald-400 animate-ping"></span>
+                                </div>
+                                <canvas id="boothOscilloscopeCanvas" class="booth-crt-canvas" width="80" height="30"></canvas>
+                                <div class="flex items-center justify-between text-[6px] font-mono text-emerald-500/80 leading-none">
+                                    <span>ACOUSTIC</span>
+                                    <span id="boothMonitorStatus">STANDBY</span>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Center: Sprite Nhân Vật Pixel 32x32 -->
-                        <div class="traveler-sprite-box relative flex items-end justify-center w-24 h-24 sm:w-28 sm:h-28 -mb-1" id="boothTravelerSprite">
-                            <!-- Procedural SVG inserted here -->
+                        <!-- Center: Sprite Nhân Vật Pixel 32x32 & Bóng thoại -->
+                        <div class="relative flex flex-col items-center">
+                            <!-- Speech Bubble -->
+                            <div id="boothSpeechBubble" class="hidden absolute -top-9 px-3 py-1.5 bg-[#fefffb] border-2 border-black text-[#181212] text-xs sm:text-sm font-mono font-bold max-w-[280px] sm:max-w-[340px] whitespace-normal text-center shadow-lg speech-bubble-tail z-30">
+                                <span id="boothSpeechText">Papers, please.</span>
+                            </div>
+                            <!-- Sprite Box -->
+                            <div class="traveler-sprite-box relative flex items-end justify-center w-24 h-24 sm:w-28 sm:h-28 -mb-1" id="boothTravelerSprite">
+                                <!-- Procedural SVG inserted here -->
+                            </div>
                         </div>
 
                         <!-- Right: Loa Phóng Thanh [📢 CALL NEXT] & Cửa Cuốn -->
@@ -270,7 +329,32 @@
                         </div>
                     </div>
 
-                    <!-- 4. CỬA CUỐN SẮT CƠ HỌC (Mechanical Iron Shutter) -->
+                    <!-- 4. GỜ BÀN CÂN KIM LOẠI DƯỚI CÙNG (Counter Ledge: Weight Scale, Date Clock, Mic) -->
+                    <div class="booth-counter-bar absolute bottom-0 inset-x-0 h-8 bg-[#18202c] border-t-2 border-black z-15 flex items-center justify-between px-3 font-mono text-[10px] select-none">
+                        <!-- Left: Cân điện tử kỹ thuật số -->
+                        <div class="flex items-center gap-1.5" title="Bàn cân trọng lượng hành khách">
+                            <span class="text-[9px] text-gray-400 font-bold uppercase">CÂN:</span>
+                            <span id="boothScaleVal" class="px-1.5 py-0.2 bg-black border border-amber-500/70 text-amber-300 font-bold font-mono text-[10px] tracking-wider">55 kg</span>
+                        </div>
+                        <!-- Center: Đồng hồ ngày trực & Giờ ca trực (06:00 - 18:00) -->
+                        <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-1.5" title="Đồng hồ ngày trực hải quan">
+                                <span class="text-[9px] text-gray-400 font-bold uppercase">NGÀY:</span>
+                                <span id="boothDateVal" class="px-1.5 py-0.2 bg-black border border-emerald-500/70 text-emerald-300 font-bold font-mono text-[10px] tracking-wider">82.11.26</span>
+                            </div>
+                            <div class="flex items-center gap-1.5" title="Đồng hồ đếm giờ ca trực hải quan (06:00 - 18:00)">
+                                <span class="text-[9px] text-gray-400 font-bold uppercase">GIỜ:</span>
+                                <span id="boothTimeVal" class="px-1.5 py-0.2 bg-black border border-cyan-500/70 text-cyan-300 font-bold font-mono text-[10px] tracking-wider">06:00</span>
+                            </div>
+                        </div>
+                        <!-- Right: Lưới micro đàm thoại -->
+                        <div class="flex items-center gap-1" title="Micro thu âm thẩm vấn M.O.A.">
+                            <span class="w-3.5 h-3.5 rounded-full bg-slate-700 border border-slate-500 flex items-center justify-center text-[8px] text-gray-300 shadow-inner">🎙️</span>
+                            <span class="text-[9px] text-gray-400 font-bold">01 · MOA</span>
+                        </div>
+                    </div>
+
+                    <!-- 5. CỬA CUỐN SẮT CƠ HỌC (Mechanical Iron Shutter) -->
                     <div class="pixel-shutter absolute inset-0 z-20 flex flex-col justify-between p-3 select-none transition-transform duration-500 ease-in-out" id="boothIronShutter">
                         <div class="flex items-center justify-between text-xs font-mono text-amber-400 font-bold uppercase tracking-wider border-b border-white/20 pb-1.5">
                             <span>M.O.A. GRESTIN CHECKPOINT</span>
@@ -288,7 +372,7 @@
                         </div>
                     </div>
 
-                    <!-- 5. Khung sắt đinh tán ngoài cùng (Rivet Border) -->
+                    <!-- 6. Khung sắt đinh tán ngoài cùng (Rivet Border) -->
                     <div class="booth-iron-frame absolute inset-0 pointer-events-none"></div>
                 </div>
             `;
@@ -336,7 +420,7 @@
         /**
          * Đón một vị khách mới tương ứng với câu nghe (sentenceIdx)
          */
-        presentTraveler(sentenceIdx, subtitleText) {
+        presentTraveler(sentenceIdx, subtitleText, options = {}) {
             const seed = (sentenceIdx !== undefined ? sentenceIdx : 0) * 17 + (subtitleText ? subtitleText.length : 12);
             this.currentTraveler = PixelTraveler.generate(seed);
 
@@ -361,6 +445,41 @@
             const passportHeader = document.getElementById('gamePassportHeader');
             if (passportHeader) {
                 passportHeader.textContent = `ENTRY PERMIT · ${this.currentTraveler.passportId}`;
+            }
+
+            // Cập nhật số cân điện tử buồng gác
+            const scaleDisplay = document.getElementById('boothScaleVal');
+            if (scaleDisplay) {
+                scaleDisplay.textContent = `${this.currentTraveler.weightKg} kg`;
+            }
+
+            // Cập nhật ngày trực đồng hồ buồng gác
+            const dateDisplay = document.getElementById('boothDateVal');
+            if (dateDisplay) {
+                dateDisplay.textContent = `82.11.26`;
+            }
+
+            // Cập nhật giờ ca trực nếu có
+            if (options.shiftTime) {
+                this.setTime(options.shiftTime);
+            }
+
+            // Hiển thị bóng thoại chào hỏi ngắn gọn
+            const bubble = document.getElementById('boothSpeechBubble');
+            const speechText = document.getElementById('boothSpeechText');
+            if (bubble && speechText) {
+                const greetings = [
+                    "Glory to Arstotzka.",
+                    "Papers, please.",
+                    "Here are my documents.",
+                    "Just visiting my family.",
+                    "Coming for business, officer."
+                ];
+                speechText.textContent = greetings[seed % greetings.length];
+                bubble.classList.remove('hidden');
+                setTimeout(() => {
+                    bubble.classList.add('hidden');
+                }, 3500);
             }
 
             // Mở cửa cuốn nếu đang đóng
@@ -398,11 +517,26 @@
         }
 
         /**
+         * Cập nhật đồng hồ ca trực đếm ngược / đếm tới (Stage 9)
+         */
+        setTime(timeStr) {
+            if (typeof document === 'undefined') return;
+            const timeDisplay = document.getElementById('boothTimeVal');
+            if (timeDisplay) timeDisplay.textContent = timeStr || '06:00';
+        }
+
+        /**
          * Hoạt ảnh nhép miệng theo âm thanh (Talking mouth-flap animation)
          */
         setTalking(isTalking) {
             if (this.isTalking === isTalking) return;
             this.isTalking = isTalking;
+
+            if (typeof document !== 'undefined') {
+                const monStatus = document.getElementById('boothMonitorStatus');
+                if (monStatus) monStatus.textContent = isTalking ? 'TRANSMITTING' : 'STANDBY';
+                this.drawOscilloscope(isTalking);
+            }
 
             const mouthGroup = (this.travelerMount && typeof this.travelerMount.querySelector === 'function')
                 ? this.travelerMount.querySelector('#travelerMouthGroup') : null;
@@ -426,6 +560,7 @@
                         if (open) open.classList.add('hidden');
                         if (tongue) tongue.classList.add('hidden');
                     }
+                    this.drawOscilloscope(true);
                 }, 130);
             } else {
                 if (this.talkingInterval) {
@@ -435,7 +570,45 @@
                 if (closed) closed.classList.remove('hidden');
                 if (open) open.classList.add('hidden');
                 if (tongue) tongue.classList.add('hidden');
+                this.drawOscilloscope(false);
             }
+        }
+
+        /**
+         * Vẽ sóng âm phosphor thời gian thực trên màn hình CRT buồng gác (Stage 8)
+         */
+        drawOscilloscope(active) {
+            if (typeof document === 'undefined') return;
+            const canvas = document.getElementById('boothOscilloscopeCanvas');
+            if (!canvas || typeof canvas.getContext !== 'function') return;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return;
+
+            const w = canvas.width || 80;
+            const h = canvas.height || 30;
+            ctx.fillStyle = '#05140d';
+            ctx.fillRect(0, 0, w, h);
+
+            ctx.strokeStyle = 'rgba(16, 185, 129, 0.2)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(0, h / 2);
+            ctx.lineTo(w, h / 2);
+            ctx.stroke();
+
+            ctx.strokeStyle = active ? '#34d399' : '#059669';
+            ctx.lineWidth = active ? 1.8 : 1.2;
+            ctx.beginPath();
+            const freq = active ? 0.22 : 0.08;
+            const amp = active ? (h / 2 - 3) : 2;
+            const phase = Date.now() * 0.015;
+
+            for (let x = 0; x < w; x++) {
+                const y = h / 2 + Math.sin(x * freq + phase) * amp * (active ? (0.6 + 0.4 * Math.sin(x * 0.12)) : 1);
+                if (x === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
         }
 
         /**
@@ -590,10 +763,248 @@
         }
     }
 
+    /**
+     * 4. KHUNG NHÌN CHECKPOINT NGOÀI TRỜI (Zone 1: PixelCheckpoint Viewport)
+     * Thể hiện khung cảnh ngoài trời trạm gác biên giới Grestin 1984:
+     * - Bầu trời tuyết rơi lất phất
+     * - Hàng người xếp hàng di dân (Queue)
+     * - Lính gác tuần tra (Pacing Guard)
+     * - Tháp canh và đèn quét tuần tra
+     * - Loa phóng thanh gọi "NEXT!"
+     * - Hoạt họa khách bước vào buồng gác khi đón khách và bước qua cổng khi được duyệt
+     */
+    class PixelCheckpoint {
+        constructor(options = {}) {
+            this.container = options.container || null;
+            this.canvas = null;
+            this.ctx = null;
+            this.animId = null;
+            this.snowflakes = [];
+            this.guardX = 260;
+            this.guardDir = 1;
+            this.travelerX = -40;
+            this.travelerTargetX = -40;
+            this.travelerWalking = false;
+            this.travelerVerdict = null; // null | 'approved' | 'denied'
+            this.isGateOpen = false;
+
+            this.onCallNext = options.onCallNext || null;
+            if (this.container) this.init();
+        }
+
+        init(mountPoint = null) {
+            const mount = mountPoint || this.container || document.getElementById('pixelCheckpointMount');
+            if (!mount) return;
+            this.container = mount;
+
+            this.container.innerHTML = `
+                <div class="pixel-checkpoint-viewport relative w-full h-[120px] sm:h-[145px] bg-[#0c1017] border-4 border-black overflow-hidden select-none mb-2" id="checkpointViewport">
+                    <canvas id="checkpointCanvas" class="w-full h-full block"></canvas>
+                    
+                    <!-- Loa phóng thanh gọi lượt kế tiếp (Loudspeaker Button) -->
+                    <button type="button" id="btnCheckpointLoudspeaker" class="checkpoint-loudspeaker-btn absolute top-2 left-3 sm:left-4 px-2.5 py-1 bg-black/85 border-2 border-amber-500/70 text-amber-300 text-[10px] font-mono font-bold flex items-center gap-1.5 cursor-pointer shadow-md hover:bg-amber-950/70 hover:border-amber-400 transition" title="Bấm loa gọi người kế tiếp (Space)">
+                        <span class="text-xs animate-bounce inline-block">📢</span>
+                        <span>NEXT! [Space]</span>
+                    </button>
+
+                    <!-- Cổng chắn Barrier đỏ trắng -->
+                    <div id="checkpointBarrierArm" class="checkpoint-gate-arm absolute bottom-4 right-6 w-20 h-2 bg-stripes-hazard border border-black origin-right transition-transform duration-500" title="Cổng biên giới Grestin"></div>
+
+                    <!-- Bảng hiệu Trạm kiểm soát -->
+                    <div class="absolute top-2 right-3 sm:right-4 text-[9px] font-mono font-bold text-gray-400 bg-black/75 px-2 py-0.5 border border-gray-700">
+                        <span class="text-red-400">●</span> GRESTIN BORDER · 1984
+                    </div>
+                </div>
+            `;
+
+            this.canvas = this.container.querySelector('#checkpointCanvas');
+            this.gateArm = this.container.querySelector('#checkpointBarrierArm');
+            const btnNext = this.container.querySelector('#btnCheckpointLoudspeaker');
+
+            if (this.canvas) {
+                this.ctx = this.canvas.getContext('2d');
+                this.resizeCanvas();
+                this.initSnow();
+                this.startAnimation();
+            }
+
+            if (btnNext) {
+                btnNext.addEventListener('click', () => {
+                    this.callNext();
+                    if (typeof this.onCallNext === 'function') {
+                        this.onCallNext();
+                    } else if (root.App && root.App.PixelGameLoop && root.App.PixelGameLoop.booth && root.App.PixelGameLoop.booth.btnCallNext) {
+                        root.App.PixelGameLoop.booth.btnCallNext.click();
+                    }
+                });
+            }
+
+            if (typeof window !== 'undefined') {
+                window.addEventListener('resize', () => this.resizeCanvas());
+            }
+        }
+
+        resizeCanvas() {
+            if (!this.canvas) return;
+            const rect = this.canvas.getBoundingClientRect();
+            this.canvas.width = rect.width || 600;
+            this.canvas.height = rect.height || 135;
+        }
+
+        initSnow() {
+            this.snowflakes = [];
+            const count = 35;
+            const w = this.canvas ? this.canvas.width : 600;
+            const h = this.canvas ? this.canvas.height : 135;
+            for (let i = 0; i < count; i++) {
+                this.snowflakes.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    r: Math.random() * 1.5 + 0.8,
+                    speed: Math.random() * 0.8 + 0.4
+                });
+            }
+        }
+
+        startAnimation() {
+            if (this.animId) cancelAnimationFrame(this.animId);
+            const loop = () => {
+                this.render();
+                this.animId = requestAnimationFrame(loop);
+            };
+            this.animId = requestAnimationFrame(loop);
+        }
+
+        callNext() {
+            this.travelerX = 80;
+            this.travelerTargetX = (this.canvas ? this.canvas.width * 0.48 : 240);
+            this.travelerWalking = true;
+            this.travelerVerdict = null;
+            if (this.gateArm) {
+                this.gateArm.style.transform = 'rotate(0deg)';
+                this.isGateOpen = false;
+            }
+        }
+
+        setVerdict(approved) {
+            this.travelerVerdict = approved ? 'approved' : 'denied';
+            if (approved) {
+                if (this.gateArm) {
+                    this.gateArm.style.transform = 'rotate(-60deg)';
+                    this.isGateOpen = true;
+                }
+                this.travelerTargetX = (this.canvas ? this.canvas.width + 40 : 640);
+                this.travelerWalking = true;
+            } else {
+                if (this.gateArm) {
+                    this.gateArm.style.transform = 'rotate(0deg)';
+                    this.isGateOpen = false;
+                }
+                this.travelerTargetX = -40;
+                this.travelerWalking = true;
+            }
+        }
+
+        render() {
+            if (!this.ctx || !this.canvas || this.canvas.offsetParent === null) return;
+            const ctx = this.ctx;
+            const w = this.canvas.width;
+            const h = this.canvas.height;
+
+            // 1. Nền trời xám xịt mùa đông 1984
+            ctx.fillStyle = '#0f141f';
+            ctx.fillRect(0, 0, w, h);
+
+            // 2. Tường bê tông & Dây thép gai xa
+            ctx.fillStyle = '#1b2230';
+            ctx.fillRect(0, h * 0.35, w, h * 0.35);
+
+            // Dây thép gai
+            ctx.strokeStyle = '#374151';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            for (let x = 0; x < w; x += 15) {
+                ctx.moveTo(x, h * 0.35);
+                ctx.lineTo(x + 8, h * 0.35 - 6);
+                ctx.lineTo(x + 15, h * 0.35);
+            }
+            ctx.stroke();
+
+            // 3. Mặt đường nhựa Grestin phủ tuyết
+            ctx.fillStyle = '#151a24';
+            ctx.fillRect(0, h * 0.7, w, h * 0.3);
+
+            // Vạch sơn đường kẻ
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+            for (let rx = 100; rx < w - 80; rx += 50) {
+                ctx.fillRect(rx, h * 0.82, 25, 3);
+            }
+
+            // 4. Hàng người xếp hàng (Queue Silhouettes bên trái)
+            ctx.fillStyle = '#080a0f';
+            const queueStartX = 25;
+            for (let i = 0; i < 6; i++) {
+                const qx = queueStartX + i * 16;
+                const qy = h * 0.72;
+                ctx.fillRect(qx, qy - 18, 7, 7); // Đầu
+                ctx.fillRect(qx - 2, qy - 11, 11, 14); // Thân
+            }
+
+            // 5. Lính gác tuần tra (Pacing Guard)
+            this.guardX += 0.4 * this.guardDir;
+            if (this.guardX > w * 0.75) this.guardDir = -1;
+            if (this.guardX < w * 0.45) this.guardDir = 1;
+
+            const gx = this.guardX;
+            const gy = h * 0.68;
+            ctx.fillStyle = '#1e293b'; // Quân phục
+            ctx.fillRect(gx, gy - 20, 8, 8); // Đầu
+            ctx.fillRect(gx - 3, gy - 12, 14, 16); // Áo
+            ctx.fillStyle = '#000000'; // Súng trường
+            ctx.fillRect(gx + (this.guardDir > 0 ? 8 : -4), gy - 18, 2, 20);
+
+            // 6. Hành khách đang di chuyển (Traveler Sprite)
+            if (this.travelerWalking) {
+                if (Math.abs(this.travelerX - this.travelerTargetX) > 2) {
+                    this.travelerX += (this.travelerTargetX > this.travelerX ? 1.5 : -1.5);
+                } else {
+                    this.travelerWalking = false;
+                }
+            }
+
+            if (this.travelerX > 0 && this.travelerX < w) {
+                const tx = this.travelerX;
+                const ty = h * 0.74;
+                ctx.fillStyle = this.travelerVerdict === 'denied' ? '#7f1d1d' : (this.travelerVerdict === 'approved' ? '#065f46' : '#d97706');
+                ctx.fillRect(tx, ty - 22, 9, 8); // Đầu
+                ctx.fillStyle = '#334155'; // Thân
+                ctx.fillRect(tx - 3, ty - 14, 15, 16);
+            }
+
+            // 7. Tuyết rơi nhẹ hạt pixel
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+            for (let i = 0; i < this.snowflakes.length; i++) {
+                const sf = this.snowflakes[i];
+                sf.y += sf.speed;
+                sf.x += Math.sin(sf.y * 0.05) * 0.3;
+                if (sf.y > h) {
+                    sf.y = 0;
+                    sf.x = Math.random() * w;
+                }
+                ctx.fillRect(sf.x, sf.y, sf.r, sf.r);
+            }
+        }
+
+        destroy() {
+            if (this.animId) cancelAnimationFrame(this.animId);
+        }
+    }
+
     // Xuất ra root.App
     root.App = root.App || {};
     root.App.PixelTraveler = PixelTraveler;
     root.App.PixelBooth = PixelBooth;
     root.App.PixelCampaignHub = PixelCampaignHub;
+    root.App.PixelCheckpoint = PixelCheckpoint;
 
 })(typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : this));

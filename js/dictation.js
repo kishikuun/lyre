@@ -30,7 +30,7 @@
                 if (soundFXLabel) soundFXLabel.textContent = state.soundFXEnabled ? 'Âm phím: Bật' : 'Âm phím: Tắt';
                 if (soundFXIcon) {
                     soundFXIcon.setAttribute('data-lucide', state.soundFXEnabled ? 'volume-2' : 'volume-x');
-                    if (window.lucide) lucide.createIcons();
+                    if (window.lucide && btnToggleSoundFX) lucide.createIcons({ root: btnToggleSoundFX });
                 }
                 if (state.soundFXEnabled) AudioEngine.playSynthesizedSound('click');
             });
@@ -1230,7 +1230,8 @@
             if (subDisplayCard) subDisplayCard.classList.add('hidden');
         }
 
-        if (window.lucide) lucide.createIcons();
+        const btnToggle = document.getElementById('btnToggleSubReveal');
+        if (window.lucide && btnToggle) lucide.createIcons({ root: btnToggle });
     }
 
     function toggleSubReveal() {
